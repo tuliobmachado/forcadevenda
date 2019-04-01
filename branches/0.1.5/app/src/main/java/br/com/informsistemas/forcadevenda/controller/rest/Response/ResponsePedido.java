@@ -18,4 +18,7 @@ public class ResponsePedido implements Serializable {
 
     @Expose
     public Date dataatualizacao;
+
+    @Expose
+    public String status;
 }
