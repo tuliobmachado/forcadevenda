@@ -64,7 +64,7 @@ public class ResumoActivity extends AppCompatActivity {
             edtTxtObservacao.setText(Constants.MOVIMENTO.movimento.observacao);
         }
 
-        if (Constants.MOVIMENTO.movimento.sincronizado.equals("T")){
+        if (Constants.MOVIMENTO.movimento.sincronizado.equals("T") || Constants.MOVIMENTO.movimento.sincronizado.equals("P")){
             linearLayoutBottomEnviar.setVisibility(View.GONE);
             edtTxtObservacao.setEnabled(false);
         }

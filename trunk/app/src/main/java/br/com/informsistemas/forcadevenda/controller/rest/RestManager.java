@@ -47,7 +47,7 @@ public class RestManager {
 
     public SincroniaService getSincroniaService(){
         if (sincroniaService == null){
-            Retrofit retrofit = getRetrofit(300, excludeExposeDefault);
+            Retrofit retrofit = getRetrofit(600, excludeExposeDefault);
 
             sincroniaService = retrofit.create(SincroniaService.class);
         }
@@ -57,7 +57,7 @@ public class RestManager {
 
     public PedidoService getPedidoService(){
         if (pedidoService == null){
-            Retrofit retrofit = getRetrofit(500, true);
+            Retrofit retrofit = getRetrofit(600, true);
 
             pedidoService = retrofit.create(PedidoService.class);
         }

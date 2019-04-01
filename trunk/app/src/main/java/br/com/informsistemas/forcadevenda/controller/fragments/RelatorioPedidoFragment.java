@@ -29,6 +29,7 @@ import br.com.informsistemas.forcadevenda.controller.adapter.RelatorioPedidoAdap
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Movimento;
+import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 
 public class RelatorioPedidoFragment extends Fragment {
 
@@ -117,11 +118,12 @@ public class RelatorioPedidoFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Parceiro parceiro = (Parceiro) data.getExtras().getSerializable("parceiro");
         String dataInicio = data.getStringExtra("dataInicio");
         String dataFim = data.getStringExtra("dataFim");
 
-        if (!dataInicio.equals("") && !dataFim.equals("")){
-            listMovimento = MovimentoDAO.getInstance(getActivity()).getMovimentoPeriodo(
+        if (!dataInicio.equals("") && !dataFim.equals("")) {
+            listMovimento = MovimentoDAO.getInstance(getActivity()).getMovimentoPeriodo((parceiro == null) ? "" : parceiro.codigoparceiro ,
                     Misc.getStringToDate(dataInicio, "dd/MM/yyyy"), Misc.getStringToDate(dataFim, "dd/MM/yyyy"));
             setAdapter(listMovimento);
 
@@ -131,21 +133,21 @@ public class RelatorioPedidoFragment extends Fragment {
 
     }
 
-    private void zeraDados(){
+    private void zeraDados() {
         edtQuantidadePedido.setText("0 Pedidos");
-        edtTotalPedido.setText("R$ "+ Misc.formatMoeda(0));
+        edtTotalPedido.setText("R$ " + Misc.formatMoeda(0));
     }
 
-    private void setQuantidade(Integer quantidade){
+    private void setQuantidade(Integer quantidade) {
         if (quantidade > 1) {
-            edtQuantidadePedido.setText(String.valueOf(quantidade)+" Pedidos");
-        }else{
-            edtQuantidadePedido.setText(String.valueOf(quantidade)+" Pedido");
+            edtQuantidadePedido.setText(String.valueOf(quantidade) + " Pedidos");
+        } else {
+            edtQuantidadePedido.setText(String.valueOf(quantidade) + " Pedido");
         }
 
     }
 
-    private void setTotal(List<Movimento> list){
+    private void setTotal(List<Movimento> list) {
 
         float value = 0;
 
@@ -153,6 +155,6 @@ public class RelatorioPedidoFragment extends Fragment {
             value = value + list.get(i).totalliquido;
         }
 
-        edtTotalPedido.setText("R$ "+Misc.formatMoeda(value));
+        edtTotalPedido.setText("R$ " + Misc.formatMoeda(value));
     }
 }
