@@ -12,6 +12,27 @@
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
+        android:text="Parceiro"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <AutoCompleteTextView
+        android:id="@+id/edtParceiro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginStart="20dp"
+        android:hint="Informe um parceiro"
+        android:backgroundTint="@android:color/black"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
         android:text="Data Inicial"
         android:textSize="16sp"
         android:textStyle="bold"/>
@@ -44,34 +65,5 @@
         android:layout_marginRight="20dp"
         android:layout_marginStart="20dp"
         android:focusable="false"/>
-
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_margin="30dp"-->
-        <!--android:orientation="horizontal">-->
-
-        <!--<Button-->
-            <!--android:id="@+id/btnCancelar"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:background="@android:color/transparent"-->
-            <!--android:gravity="left"-->
-            <!--android:text="Cancelar"-->
-            <!--android:textColor="@android:color/holo_red_dark"-->
-            <!--android:textStyle="bold" />-->
-
-        <!--<Button-->
-            <!--android:id="@+id/btnAplicar"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:background="@android:color/transparent"-->
-            <!--android:gravity="right"-->
-            <!--android:text="Aplicar"-->
-            <!--android:textColor="#39b44a"-->
-            <!--android:textStyle="bold" />-->
-    <!--</LinearLayout>-->
 
 </LinearLayout>

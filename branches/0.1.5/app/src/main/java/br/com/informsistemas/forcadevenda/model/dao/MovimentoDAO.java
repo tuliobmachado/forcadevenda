@@ -3,6 +3,7 @@ package br.com.informsistemas.forcadevenda.model.dao;
 import android.content.Context;
 
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -69,13 +70,18 @@ public class MovimentoDAO extends BaseDAO<Movimento> {
         return value;
     }
 
-    public List<Movimento> getMovimentoPeriodo(Date dataInicio, Date dataFim){
+    public List<Movimento> getMovimentoPeriodo(String codigoParceiro, Date dataInicio, Date dataFim){
         List<Movimento> items = null;
 
         QueryBuilder<Movimento, Object> builder = getHelper().getDAO(Movimento.class).queryBuilder();
+        Where<Movimento, Object> where = builder.where();
 
         try {
-            builder.where().between("data", dataInicio, dataFim);
+            where.between("data", dataInicio, dataFim);
+
+            if (codigoParceiro.length() > 0){
+                where.and().eq("codigoparceiro", codigoParceiro);
+            }
             items = builder.query();
         } catch (SQLException e) {
             e.printStackTrace();

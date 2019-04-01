@@ -10,19 +10,30 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
+import br.com.informsistemas.forcadevenda.controller.adapter.ParceiroAutoCompleteAdapter;
+import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
+import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 
 public class RelatorioPedidoModalFragment extends DialogFragment {
 
+    private Parceiro parceiroSelecionado;
     private Calendar myCalendar = Calendar.getInstance();
+    private AutoCompleteTextView edtParceiro;
     private EditText edtDataInicio;
     private EditText edtDataFim;
     DatePickerDialog.OnDateSetListener dateInicio = new DatePickerDialog.OnDateSetListener() {
@@ -57,6 +68,21 @@ public class RelatorioPedidoModalFragment extends DialogFragment {
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View view = inflater.inflate(R.layout.fragment_modal_relatorio_pedido, null);
+
+        edtParceiro = view.findViewById(R.id.edtParceiro);
+        edtParceiro.addTextChangedListener(onGetTextWatcher());
+        edtParceiro.setAdapter(new ParceiroAutoCompleteAdapter(getActivity(), Constants.DTO.listPesquisaParceiro));
+        edtParceiro.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Object item = parent.getItemAtPosition(position);
+
+                if (item instanceof Parceiro){
+                    parceiroSelecionado = (Parceiro) item;
+                }
+            }
+        });
+
         edtDataInicio = view.findViewById(R.id.edtDataInicio);
         edtDataInicio.setOnClickListener(onGetClickListener(dateInicio));
 
@@ -75,6 +101,7 @@ public class RelatorioPedidoModalFragment extends DialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent();
                 Bundle bundle = new Bundle();
+                bundle.putSerializable("parceiro", parceiroSelecionado);
                 bundle.putString("dataInicio", edtDataInicio.getText().toString());
                 bundle.putString("dataFim", edtDataFim.getText().toString());
                 intent.putExtras(bundle);
@@ -92,6 +119,25 @@ public class RelatorioPedidoModalFragment extends DialogFragment {
                 new DatePickerDialog(getActivity(), R.style.DialogDatePicker, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        };
+    }
+
+    private TextWatcher onGetTextWatcher(){
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         };
     }
