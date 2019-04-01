@@ -9,5 +9,6 @@
     <color name="color_excluido">#f44336</color>
     <color name="movSincronizado">#00C853</color>
     <color name="movNaoSincronizado">#D50000</color>
-    <color name="parceiroAVencer">#E6DD4A</color>
+    <color name="movPendente">#FF5C00</color>
+    <color name="parceiroAVencer">#FFF528</color>
 </resources>
