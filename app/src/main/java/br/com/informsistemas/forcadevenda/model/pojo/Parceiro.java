@@ -152,4 +152,12 @@ public class Parceiro implements IEntidade {
         this.codigoformapagamento = codigoformapagamento;
         this.formaspermitidas = formaspermitidas;
     }
+
+    public String toString(){
+        if (this.nomefantasia.length() == 0) {
+            return this.descricao;
+        }else{
+            return this.nomefantasia;
+        }
+    }
 }

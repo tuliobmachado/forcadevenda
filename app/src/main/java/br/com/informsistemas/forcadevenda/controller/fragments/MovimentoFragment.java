@@ -100,7 +100,7 @@ public class MovimentoFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
-        listMovimento = MovimentoDAO.getInstance(getActivity()).getMovimentoPeriodo(Misc.GetDateAtual(), Misc.GetDateAtual());
+        listMovimento = MovimentoDAO.getInstance(getActivity()).getMovimentoPeriodo("",Misc.GetDateAtual(), Misc.GetDateAtual());
 
         setAdapter(listMovimento);
         listener = getListener();
@@ -166,7 +166,7 @@ public class MovimentoFragment extends Fragment {
                     Misc.setTabelasPadrao();
                     Constants.MOVIMENTO.movimento = listMovimento.get(position);
 
-                    if (Constants.MOVIMENTO.movimento.sincronizado.equals("T")) {
+                    if (Constants.MOVIMENTO.movimento.sincronizado.equals("T") || Constants.MOVIMENTO.movimento.sincronizado.equals("P")) {
                         Intent intent = new Intent(getActivity(), ResumoActivity.class);
                         startActivity(intent);
                     } else {
@@ -252,11 +252,15 @@ public class MovimentoFragment extends Fragment {
     }
 
     private void deleteItem(int position) {
-        MovimentoDAO.getInstance(getActivity()).delete(listMovimento.get(position));
-        listMovimento.remove(position);
-        movimentoAdapter.notifyItemRemoved(position);
-        movimentoAdapter.notifyItemRangeChanged(position, movimentoAdapter.getItemCount());
-        getActivity().invalidateOptionsMenu();
+        if (checaMovimentoPendente(position)) {
+            MovimentoDAO.getInstance(getActivity()).delete(listMovimento.get(position));
+            listMovimento.remove(position);
+            movimentoAdapter.notifyItemRemoved(position);
+            movimentoAdapter.notifyItemRangeChanged(position, movimentoAdapter.getItemCount());
+            getActivity().invalidateOptionsMenu();
+        }else{
+            Toast.makeText(getActivity(), "Não é possível excluir um pedido pendente!", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void multiSelect(int position) {
@@ -288,8 +292,10 @@ public class MovimentoFragment extends Fragment {
 
     public void getSincronia(Boolean solicitaSincronia) {
         Constants.SINCRONIA.TABELA_ATUAL = 0;
-        SincroniaTask sincroniaTask = new SincroniaTask(this, solicitaSincronia);
-        sincroniaTask.execute();
+        if (Misc.verificaConexao(getActivity())) {
+            SincroniaTask sincroniaTask = new SincroniaTask(this, solicitaSincronia);
+            sincroniaTask.execute();
+        }
     }
 
     public void atualizaLista() {
@@ -418,6 +424,18 @@ public class MovimentoFragment extends Fragment {
         }else{
             Toast.makeText(getActivity(), "Não é possível sincronizar um pedido não finalizado!", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private boolean checaMovimentoPendente(Integer id){
+        boolean value = true;
+
+        Movimento mov = listMovimento.get(id);
+
+        if (mov.sincronizado.equals("P")){
+            value = false;
+        }
+
+        return value;
     }
 
     public void verificaPedido(Integer pedidoAtual){
