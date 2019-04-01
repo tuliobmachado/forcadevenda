@@ -61,7 +61,7 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
         Constants.PEDIDO.movimentoItems = null;
         Constants.PEDIDO.movimentoParcelas = null;
 
-        Log.i("JSON", Misc.getJsonString(reqPedido, true));
+//        Log.i("JSON", Misc.getJsonString(reqPedido, true));
 
         PedidoService sincroniaService = new RestManager().getPedidoService();
         Call<RestResponse<ResponsePedido>> requestPedido = sincroniaService.postPedido(reqPedido);
@@ -89,6 +89,8 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
             Constants.PEDIDO.listPedidos = null;
             Constants.PEDIDO.listPedidos = new ArrayList<>();
             Constants.MOVIMENTO.enviarPedido = false;
+            Movimento mov = getMovimentoAtual(reqPedido.movimento.id);
+            atualizaStatusMovimento(mov, "P");
             dialog.dismiss();
         }
 
@@ -101,17 +103,21 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
             fragment.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Movimento mov = MovimentoDAO.getInstance(fragment.getActivity()).findById(requestPedido.get(0).id);
-                    mov.sincronizado = "T";
-                    MovimentoDAO.getInstance(fragment.getActivity()).createOrUpdate(mov);
+                    Movimento mov = getMovimentoAtual(requestPedido.get(0).id);
+                    String status = "";
+
+                    if (requestPedido.get(0).status.equals("G")) {
+                        status = "T";
+                    }else{
+                        status = "P";
+                    }
+
+                    atualizaStatusMovimento(mov, status);
 
                     if (requestPedido.get(0).materialsaldo != null) {
                         atualizaSaldo(requestPedido.get(0).materialsaldo);
                     }
 
-//                    if (requestPedido.get(0).dataatualizacao != null){
-//                        setDataParcialAtualizacao(requestPedido.get(0).dataatualizacao);
-//                    }
                     DialogClass.dialogDismiss(dialog);
 
                     if (Constants.PEDIDO.PEDIDOATUAL > Constants.PEDIDO.listPedidos.size()) {
@@ -124,6 +130,7 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
             });
         } else {
             DialogClass.dialogDismiss(dialog);
+            ((MovimentoFragment) fragment).atualizaLista();
         }
     }
 
@@ -155,5 +162,14 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
         atualizacao.datasincparcial = data;
 
         AtualizacaoDAO.getInstance(fragment.getActivity()).createOrUpdate(atualizacao);
+    }
+
+    private Movimento getMovimentoAtual(Integer id){
+        return MovimentoDAO.getInstance(fragment.getActivity()).findById(id);
+    }
+
+    private  void atualizaStatusMovimento(Movimento mov, String status){
+        mov.sincronizado = status;
+        MovimentoDAO.getInstance(fragment.getActivity()).createOrUpdate(mov);
     }
 }

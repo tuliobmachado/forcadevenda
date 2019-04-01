@@ -49,7 +49,9 @@ public class MovimentoAdapter extends RecyclerView.Adapter<MovimentoAdapter.MyVi
 
         if (fList.get(position).sincronizado.equals("T")){
             myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movSincronizado));
-        }else{
+        }else if (fList.get(position).sincronizado.equals("P")){
+            myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.parceiroAVencer));
+        }else {
             myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movNaoSincronizado));
         }
 
