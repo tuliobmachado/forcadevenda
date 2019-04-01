@@ -35,44 +35,4 @@
         </android.support.v4.widget.NestedScrollView>
 
     </android.support.design.widget.CoordinatorLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_bottom_enviar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/white"
-        android:orientation="horizontal"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp">
-
-        <Button
-            android:id="@+id/btn_salvar_pedido"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:background="@color/colorPrimary"
-            android:text="SALVAR PEDIDO"
-            android:textColor="@color/colorAccent"
-            android:layout_marginRight="10sp"/>
-
-
-        <Button
-            android:id="@+id/btn_enviar_pedido"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:background="@color/colorPrimary"
-            android:text="ENVIAR PEDIDO"
-            android:textColor="@color/colorAccent" />
-
-    </LinearLayout>
-
-
-
-
 </RelativeLayout>
