@@ -19,9 +19,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.controller.adapter.ParceiroAutoCompleteAdapter;

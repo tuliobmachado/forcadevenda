@@ -10,30 +10,59 @@ import br.com.informsistemas.forcadevenda.model.pojo.TabelaPrecoItem;
 
 public class CalculoClass {
 
-    public static void getTributos(Context context, Material material){
+    private Context context;
+    private Material material;
+
+    public CalculoClass(Context context, Material m) {
+        this.context = context;
+        this.material = m;
+    }
+
+    public void setPrecoVenda() {
+        CalculaPrecoVenda();
+    }
+
+    public void setTributos() {
+        CalculaTributos();
+    }
+
+    public void setTotal() {
+        CalculaPrecoVenda();
+        CalculaTributos();
+    }
+
+    public float getPrecoVenda() {
+        return material.precovenda1;
+    }
+
+    public float getTotalLiquido(){
+        return material.totalliquido;
+    }
+
+    private void CalculaTributos() {
         MaterialEstado materialEstado = MaterialEstadoDAO.getInstance(context).getTributacoes(Constants.MOVIMENTO.estadoParceiro, material.codigomaterial);
 
         material.margemsubstituicao = materialEstado.mva;
         material.pautafiscal = materialEstado.pautafiscal;
-        getIPI(material);
-        getICMS(material, materialEstado);
-        getFecoep(material, materialEstado);
-        material.totalliquido = getTotalLiquido(material);
+        CalculaIPI();
+        CalculaICMS(materialEstado);
+        CalculaFecoep(materialEstado);
+        CalculaTotalLiquido();
     }
 
-    public static void getIPI(Material material){
+    private void CalculaIPI() {
         material.ipi = material.percipi;
 
         if (material.ipi > 0) {
-            material.valoripi = Misc.fRound(true,material.precovenda1 * (material.percipi / 100), 2);
+            material.valoripi = Misc.fRound(true, material.precovenda1 * (material.percipi / 100), 2);
         }
 
-        if (material.valoripi < 0){
+        if (material.valoripi < 0) {
             material.valoripi = 0;
         }
     }
 
-    private static void getFecoep(Material material, MaterialEstado materialEstado){
+    private void CalculaFecoep(MaterialEstado materialEstado){
         material.icmsfecoep = materialEstado.fecoep;
         material.icmsfecoepst = materialEstado.fecoep;
 
@@ -59,7 +88,7 @@ public class CalculoClass {
         }
     }
 
-    private static void getICMS(Material material, MaterialEstado materialEstado){
+    private void CalculaICMS(MaterialEstado materialEstado){
         if (Constants.MOVIMENTO.estadoParceiro.equals(Constants.DTO.registro.estado)) {
             material.icms = materialEstado.icms_interno;
             material.icmssubst = materialEstado.icms_interno;
@@ -109,33 +138,31 @@ public class CalculoClass {
         material.valoricmssubst = Misc.fRound(false, material.valoricmssubst, 2);
     }
 
-    private static float getTotalLiquido(Material m){
-        m.totalliquido = 0;
-        return m.precovenda1 + m.valoricmsfecoepst + m.valoricmssubst + m.valoripi;
+    private void CalculaTotalLiquido(){
+        material.totalliquido = material.precovenda1 + material.valoricmsfecoepst + material.valoricmssubst + material.valoripi;
     }
 
-    public static float getPrecoVenda(Context context, Material material){
+    private void CalculaPrecoVenda() {
         TabelaPrecoItem tabelaPrecoItem = null;
         float precovenda1 = 0;
 
-        if (Constants.MOVIMENTO.codigotabelapreco != Constants.DTO.registro.codigotabelapreco){
+        if (!Constants.MOVIMENTO.codigotabelapreco.equals(Constants.DTO.registro.codigotabelapreco)) {
             tabelaPrecoItem = TabelaPrecoItemDAO.getInstance(context).getTabelaPrecoItem(Constants.MOVIMENTO.codigotabelapreco, material.codigotabelaprecoitem);
 
-            if (tabelaPrecoItem != null){
+            if (tabelaPrecoItem != null) {
                 precovenda1 = tabelaPrecoItem.precovenda1;
-            }else{
+            } else {
                 precovenda1 = material.precovenda1;
             }
-        }else{
+        } else {
             precovenda1 = material.precovenda1;
         }
 
         material.custo = precovenda1;
-
-        return getDesconto(precovenda1, tabelaPrecoItem);
+        CalculaDesconto(tabelaPrecoItem);
     }
 
-    public static float getDesconto(float precovenda1, TabelaPrecoItem tbItem) {
+    private void CalculaDesconto(TabelaPrecoItem tbItem) {
         float value = 0;
         float percdesconto = 0;
         float valorDesconto = 0;
@@ -150,9 +177,9 @@ public class CalculoClass {
             percdesconto = Constants.MOVIMENTO.percdescontopadrao;
         }
 
-        valorDesconto = (precovenda1 * (percdesconto / 100));
-        value = precovenda1 - valorDesconto;
+        valorDesconto = (material.precovenda1 * (percdesconto / 100));
+        value = material.precovenda1 - valorDesconto;
 
-        return value;
+        material.precovenda1 = value;
     }
 }

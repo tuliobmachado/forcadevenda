@@ -122,7 +122,7 @@ public class Misc {
     }
 
     public static String gerarMD5(){
-        String chave = formatDate(new Date(), "yyyyMMddHHmmss");
+        String chave = Constants.DTO.registro.codigofuncionario + formatDate(new Date(), "yyyyMMddHHmmss");
         String value = DigestUtils.md5Hex(chave);
 
         return value;
