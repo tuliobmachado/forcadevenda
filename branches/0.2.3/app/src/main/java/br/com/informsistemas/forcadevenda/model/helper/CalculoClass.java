@@ -2,10 +2,16 @@ package br.com.informsistemas.forcadevenda.model.helper;
 
 import android.content.Context;
 
+import java.sql.SQLException;
+import java.util.List;
+
 import br.com.informsistemas.forcadevenda.model.dao.MaterialEstadoDAO;
+import br.com.informsistemas.forcadevenda.model.dao.MovimentoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.TabelaPrecoItemDAO;
 import br.com.informsistemas.forcadevenda.model.pojo.Material;
 import br.com.informsistemas.forcadevenda.model.pojo.MaterialEstado;
+import br.com.informsistemas.forcadevenda.model.pojo.Movimento;
+import br.com.informsistemas.forcadevenda.model.pojo.MovimentoItem;
 import br.com.informsistemas.forcadevenda.model.pojo.TabelaPrecoItem;
 
 public class CalculoClass {
@@ -181,5 +187,24 @@ public class CalculoClass {
         value = material.precovenda1 - valorDesconto;
 
         material.precovenda1 = value;
+    }
+
+    public void recalcularMovimento(Movimento mov, List<MovimentoItem> listMovItem) {
+        float total_fecoepst = 0;
+        float total_ipi = 0;
+        float total_icmssubst = 0;
+        float total_material = 0;
+
+        for (int i = 0; i < listMovItem.size(); i++) {
+            total_fecoepst = total_fecoepst + listMovItem.get(i).valoricmsfecoepst;
+            total_ipi = total_ipi + listMovItem.get(i).valoripi;
+            total_icmssubst = total_icmssubst + listMovItem.get(i).valoricmssubst;
+
+            total_material = total_material + (listMovItem.get(i).custo * listMovItem.get(i).quantidade);
+        }
+
+        mov.totalliquido = (total_material + total_fecoepst + total_ipi + total_icmssubst);
+
+        MovimentoDAO.getInstance(context).createOrUpdate(mov);
     }
 }

@@ -21,8 +21,11 @@ import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.controller.adapter.MovimentoParcelaAdapter;
+import br.com.informsistemas.forcadevenda.model.dao.MovimentoItemDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoParcelaDAO;
+import br.com.informsistemas.forcadevenda.model.helper.CalculoClass;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
+import br.com.informsistemas.forcadevenda.model.pojo.MovimentoItem;
 import br.com.informsistemas.forcadevenda.model.pojo.MovimentoParcela;
 import br.com.informsistemas.forcadevenda.model.pojo.FormaPagamento;
 import br.com.informsistemas.forcadevenda.model.utils.RecyclerItemClickListener;
@@ -100,6 +103,8 @@ public class MovimentoParcelaFragment extends Fragment {
     }
 
     private void getMovimentoParcela(){
+        RecalcularTotalMovimento();
+
         listMovimentoParcela = MovimentoParcelaDAO.getInstance(getActivity()).findByMovimentoId(Constants.MOVIMENTO.movimento.id);
 
         if (listMovimentoParcela.size() == 0){
@@ -221,5 +226,14 @@ public class MovimentoParcelaFragment extends Fragment {
         MovimentoParcelaDAO.getInstance(getActivity()).createOrUpdate(movimentoParcela);
         listMovimentoParcela.add(movimentoParcela);
         btn.setVisibility(View.VISIBLE);
+    }
+
+    private void RecalcularTotalMovimento(){
+        List<MovimentoItem> listMovItens = MovimentoItemDAO.getInstance(getActivity()).findByMovimentoId(Constants.MOVIMENTO.movimento.id);
+
+        if (listMovItens.size() > 0) {
+            CalculoClass calculoClass = new CalculoClass(getActivity(), null);
+            calculoClass.recalcularMovimento(Constants.MOVIMENTO.movimento, listMovItens);
+        }
     }
 }
