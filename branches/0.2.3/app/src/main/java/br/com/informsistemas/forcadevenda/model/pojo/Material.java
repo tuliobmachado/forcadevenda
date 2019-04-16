@@ -102,6 +102,8 @@ public class Material implements IEntidade, Cloneable  {
 
     public float totalliquido;
 
+    public float saldomaterial;
+
     public Material(){}
     public Material(String codigomaterial, String codigotabelaprecoitem, String descricao, String unidadesaida, float precovenda1,
                     String codigoauxiliar, String tipotributacao, Float percaliquota, String saldo,

@@ -20,9 +20,9 @@ public class Constants {
 
     public static final class URL {
 
-        public static final String BASE = "http://informnfe.com/NFeEmitir/ServicoApp.dll/api/";
+//        public static final String BASE = "http://informnfe.com/NFeEmitir/ServicoApp.dll/api/";
 //        public static final String BASE = "http://192.168.0.190:8089/api/";
-//        public static final String BASE = "http://192.168.0.67:8089/api/";
+        public static final String BASE = "http://192.168.0.91:8089/api/";
         public static final String LOGIN_REGISTRAR = "Login/Registrar";
         public static final String DEVICE_CONSULTAR = "Device/Consultar";
         public static final String SINCRONIA_CONSULTAR = "Sincronia/Consultar";
@@ -41,7 +41,7 @@ public class Constants {
     }
 
     public static final class APP {
-        public static final String VERSAO = "0.1.5";
+        public static final String VERSAO = "0.2.2";
     }
 
     public static final class REQUEST_LOGIN {
@@ -77,6 +77,7 @@ public class Constants {
         public static List<Atualizacao> listAtualizacaoServidor = null;
         public static List<Parceiro> listPesquisaParceiro = null;
         public static List<Material> listPesquisaMaterial = null;
+        public static List<Material> listMaterialPreco = null;
         public static List<FormaPagamento> listPesquisaPagamento = null;
         public static List<Categoria> listPesquisaCategoria = null;
         public static List<MaterialSaldo> listMaterialSaldo = null;

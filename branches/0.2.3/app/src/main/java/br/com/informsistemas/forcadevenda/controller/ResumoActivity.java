@@ -36,7 +36,6 @@ public class ResumoActivity extends AppCompatActivity {
     private LinearLayout linearLayoutParceiro;
     private LinearLayout linearLayoutMaterial;
     private LinearLayout linearLayoutPagamento;
-    private LinearLayout linearLayoutObservacao;
     private LinearLayout linearLayoutBottomEnviar;
     private EditText edtTxtObservacao;
     private float total_ipi;
@@ -56,7 +55,6 @@ public class ResumoActivity extends AppCompatActivity {
         linearLayoutParceiro = findViewById(R.id.layout_resumo_parceiro);
         linearLayoutMaterial = findViewById(R.id.layout_resumo_material);
         linearLayoutPagamento = findViewById(R.id.layout_resumo_pagamento);
-        linearLayoutObservacao = findViewById(R.id.layout_resumo_observacao);
         linearLayoutBottomEnviar = findViewById(R.id.layout_bottom_enviar);
         edtTxtObservacao = findViewById(R.id.edtObservacao);
 
@@ -145,7 +143,6 @@ public class ResumoActivity extends AppCompatActivity {
         TextView txtTitleDescricao = findViewById(R.id.txt_resumo_title_material_descricao);
         TextView txtTitleTotal = findViewById(R.id.txt_resumo_title_material_total);
 
-
         txtTitleDescricao.setText(Constants.PEDIDO.movimentoItems.size()+"x PRODUTOS");
         txtTitleTotal.setText("R$ " + Misc.formatMoeda(Constants.MOVIMENTO.movimento.totalliquido));
 
@@ -182,15 +179,6 @@ public class ResumoActivity extends AppCompatActivity {
         txttitleTotalIPI.setText("R$ " + Misc.formatMoeda(total_ipi));
         txtTitleTotalICMSSubst.setText("R$ " + Misc.formatMoeda(total_icmssubst));
         txtTitleTotalFecoepST.setText("R$ " + Misc.formatMoeda(total_fecoepst));
-    }
-
-    private void getObservacao(){
-        EditText editText = new EditText(this);
-        editText.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        editText.setHint("Observação");
-        editText.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES|InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        editText.setMaxLines(10);
-        linearLayoutObservacao.addView(editText);
     }
 
     private TextView newTextView(String descricao){

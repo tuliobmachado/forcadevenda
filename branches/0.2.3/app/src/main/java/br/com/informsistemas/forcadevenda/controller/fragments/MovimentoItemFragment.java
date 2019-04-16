@@ -43,6 +43,7 @@ public class MovimentoItemFragment extends Fragment {
     private ActionMode actionMode;
     private ActionMode.Callback callback;
     private List<Integer> selectedIds = new ArrayList<>();
+    private List<Material> listMaterialSelecionados;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -117,39 +118,43 @@ public class MovimentoItemFragment extends Fragment {
                         e.printStackTrace();
                     }
 
-                    material.precovenda1 = (material.precovenda1 * material.quantidade);
-
                     if (movimentoItem == null) {
                         movimentoItem = new MovimentoItem(Constants.MOVIMENTO.movimento, Constants.MOVIMENTO.codigotabelapreco,
                                 material.codigomaterial, material.unidadesaida, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                 0, 0, 0, 0, 0, 0, 0, 0, 0);
                     }
 
-                    CalculoClass.getTributos(getActivity(), material);
-                    movimentoItem.quantidade = material.quantidade;
-                    movimentoItem.custo = material.custo;
-                    movimentoItem.totalitem = (material.quantidade * material.custo);
-                    movimentoItem.icms = material.icms;
-                    movimentoItem.valoricms = material.valoricms;
-                    movimentoItem.baseicms = material.baseicms;
-                    movimentoItem.icmssubst = material.icmssubst;
-                    movimentoItem.baseicmssubst = material.baseicmssubst;
-                    movimentoItem.valoricmssubst = material.valoricmssubst;
-                    movimentoItem.ipi = material.ipi;
-                    movimentoItem.valoripi = material.valoripi;
-                    movimentoItem.margemsubstituicao = material.margemsubstituicao;
-                    movimentoItem.pautafiscal = material.pautafiscal;
-                    movimentoItem.icmsfecoep = material.icmsfecoep;
-                    movimentoItem.valoricmsfecoep = material.valoricmsfecoep;
-                    movimentoItem.icmsfecoepst = material.icmsfecoepst;
-                    movimentoItem.valoricmsfecoepst = material.valoricmsfecoepst;
-                    movimentoItem.totalliquido = (material.precovenda1 + material.valoricmsfecoepst + material.valoripi + material.valoricmssubst);
-
-
+                    CalculaMovimentoItem(movimentoItem, material);
                     MovimentoItemDAO.getInstance(getActivity()).createOrUpdate(movimentoItem);
                 }
             }
         }
+    }
+
+    private void CalculaMovimentoItem(MovimentoItem movItem, Material material) {
+        material.precovenda1 = (material.custo * material.quantidade);
+        CalculoClass calculoClass = new CalculoClass(getActivity(), material);
+        calculoClass.setTributos();
+
+        movItem.codigotabelapreco = Constants.MOVIMENTO.codigotabelapreco;
+        movItem.quantidade = material.quantidade;
+        movItem.custo = material.custo;
+        movItem.totalitem = (material.quantidade * material.custo);
+        movItem.icms = material.icms;
+        movItem.valoricms = material.valoricms;
+        movItem.baseicms = material.baseicms;
+        movItem.icmssubst = material.icmssubst;
+        movItem.baseicmssubst = material.baseicmssubst;
+        movItem.valoricmssubst = material.valoricmssubst;
+        movItem.ipi = material.ipi;
+        movItem.valoripi = material.valoripi;
+        movItem.margemsubstituicao = material.margemsubstituicao;
+        movItem.pautafiscal = material.pautafiscal;
+        movItem.icmsfecoep = material.icmsfecoep;
+        movItem.valoricmsfecoep = material.valoricmsfecoep;
+        movItem.icmsfecoepst = material.icmsfecoepst;
+        movItem.valoricmsfecoepst = material.valoricmsfecoepst;
+        movItem.totalliquido = (material.precovenda1 + material.valoricmsfecoepst + material.valoripi + material.valoricmssubst);
     }
 
     private MovimentoItem checaMaterialMovimento(String codigomaterial) {
@@ -165,6 +170,30 @@ public class MovimentoItemFragment extends Fragment {
             listMovimentoItem = new ArrayList<>();
         } else {
             listMovimentoItem = MovimentoItemDAO.getInstance(getActivity()).findByMovimentoId(Constants.MOVIMENTO.movimento.id);
+
+            if (listMovimentoItem.size() > 0) {
+
+                if (movimentoItemAdapter == null) {
+                    listMaterialSelecionados = new ArrayList<>();
+
+                    for (int i = 0; i < listMovimentoItem.size(); i++) {
+                        for (int j = 0; j < Constants.DTO.listMaterialPreco.size(); j++) {
+                            if (listMovimentoItem.get(i).codigomaterial.equals(Constants.DTO.listMaterialPreco.get(j).codigomaterial)) {
+                                Constants.DTO.listMaterialPreco.get(j).quantidade = listMovimentoItem.get(i).quantidade;
+                                try {
+                                    listMaterialSelecionados.add(Misc.cloneMaterial(Constants.DTO.listMaterialPreco.get(j)));
+                                } catch (CloneNotSupportedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+                }else{
+                    listMaterialSelecionados = null;
+                }
+            }
         }
     }
 
@@ -239,12 +268,13 @@ public class MovimentoItemFragment extends Fragment {
         Constants.MOVIMENTO.movimento.totalliquido = Constants.MOVIMENTO.movimento.totalliquido - (listMovimentoItem.get(position).totalitem +
                 listMovimentoItem.get(position).valoripi + listMovimentoItem.get(position).valoricmsfecoepst + listMovimentoItem.get(position).valoricmssubst);
         txtTotalItem.setText("R$ " + Misc.formatMoeda(Constants.MOVIMENTO.movimento.totalliquido));
+        removeQuantidadeLista(listMovimentoItem.get(position));
         MovimentoItemDAO.getInstance(getActivity()).delete(listMovimentoItem.get(position));
         listMovimentoItem.remove(position);
         movimentoItemAdapter.notifyItemRemoved(position);
         movimentoItemAdapter.notifyItemRangeChanged(position, movimentoItemAdapter.getItemCount());
 
-        if (Constants.MOVIMENTO.movimento.totalliquido < 0){
+        if (Constants.MOVIMENTO.movimento.totalliquido < 0) {
             Constants.MOVIMENTO.movimento.totalliquido = 0;
         }
 
@@ -273,7 +303,25 @@ public class MovimentoItemFragment extends Fragment {
         }
     }
 
-    public List<MovimentoItem> getListMovimentoItem() {
-        return listMovimentoItem;
+    public List<Material> getListMaterialSelecionados() {
+        return listMaterialSelecionados;
+    }
+
+    private void removeQuantidadeLista(MovimentoItem movimentoItem){
+        for (int i = 0; i < Constants.DTO.listMaterialPreco.size(); i++) {
+            if (Constants.DTO.listMaterialPreco.get(i).codigomaterial.equals(movimentoItem.codigomaterial)){
+                Constants.DTO.listMaterialPreco.get(i).quantidade = 0;
+                break;
+            }
+        }
+
+        if (listMaterialSelecionados != null) {
+            for (int i = 0; i < listMaterialSelecionados.size(); i++) {
+                if (listMaterialSelecionados.get(i).codigomaterial.equals(movimentoItem.codigomaterial)) {
+                    listMaterialSelecionados.remove(i);
+                    break;
+                }
+            }
+        }
     }
 }
