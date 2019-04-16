@@ -62,7 +62,6 @@ public class MovimentoItemFragment extends Fragment {
         btn.setVisibility(View.VISIBLE);
 
         txtTotalItem = getActivity().findViewById(R.id.txt_total_item);
-        txtTotalItem.setText("R$ " + Misc.formatMoeda(Constants.MOVIMENTO.movimento.totalliquido));
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -72,6 +71,8 @@ public class MovimentoItemFragment extends Fragment {
         recyclerView.setLayoutManager(llm);
 
         getMovimentoItem();
+
+        txtTotalItem.setText("R$ " + Misc.formatMoeda(Constants.MOVIMENTO.movimento.totalliquido));
 
         setAdapter(listMovimentoItem);
         listener = getListener();
@@ -193,6 +194,9 @@ public class MovimentoItemFragment extends Fragment {
                 }else{
                     listMaterialSelecionados = null;
                 }
+
+                CalculoClass calculoClass = new CalculoClass(getActivity(), null);
+                calculoClass.recalcularMovimento(Constants.MOVIMENTO.movimento, listMovimentoItem);
             }
         }
     }
