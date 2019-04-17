@@ -23,21 +23,20 @@ public class ParceiroConsultaAdapter extends RecyclerView.Adapter<ParceiroConsul
     private List<Parceiro> fList;
     private LayoutInflater fLayoutInflater;
     private Context context;
-    private ItemClickListener itemClickListener;
+    private ItemClickListener fItemClickListener;
 
-    public ParceiroConsultaAdapter(Context c, List<Parceiro> list){
+    public ParceiroConsultaAdapter(Context c, List<Parceiro> list, ItemClickListener itemClickListener){
         this.fList = list;
         this.context = c;
         this.fLayoutInflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.fItemClickListener = itemClickListener;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = fLayoutInflater.inflate(R.layout.recycler_item_parceiro, viewGroup, false);
-        MyViewHolder mvh = new MyViewHolder(v);
-
-        return mvh;
+        return new MyViewHolder(v, fItemClickListener);
     }
 
     @Override
@@ -69,10 +68,6 @@ public class ParceiroConsultaAdapter extends RecyclerView.Adapter<ParceiroConsul
         }
     }
 
-    public void setItemClickListener(ItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
-    }
-
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         public TextView txtCodigo;
@@ -80,8 +75,9 @@ public class ParceiroConsultaAdapter extends RecyclerView.Adapter<ParceiroConsul
         public TextView txtNomeFantasia;
         public TextView txtCPFCGC;
         public FrameLayout frmStatus;
+        public ItemClickListener fItemClickListener;
 
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull View itemView, ItemClickListener itemClickListener) {
             super(itemView);
 
             txtCodigo = itemView.findViewById(R.id.txt_codigo);
@@ -89,15 +85,14 @@ public class ParceiroConsultaAdapter extends RecyclerView.Adapter<ParceiroConsul
             txtNomeFantasia = itemView.findViewById(R.id.txt_nome_fantasia);
             txtCPFCGC = itemView.findViewById(R.id.txt_cpfcgc);
             frmStatus = itemView.findViewById(R.id.frm_status);
+            fItemClickListener = itemClickListener;
 
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            if (itemClickListener != null){
-                itemClickListener.onItemClick(v, getAdapterPosition());
-            }
+            fItemClickListener.onItemClick(getAdapterPosition());
         }
     }
 }

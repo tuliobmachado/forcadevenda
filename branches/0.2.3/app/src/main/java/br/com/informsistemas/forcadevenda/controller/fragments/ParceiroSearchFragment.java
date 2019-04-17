@@ -27,7 +27,7 @@ import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
 
-public class ParceiroSearchFragment extends Fragment {
+public class ParceiroSearchFragment extends Fragment implements ItemClickListener {
 
     private List<Parceiro> listParceiro;
     private SearchView searchView;
@@ -104,25 +104,28 @@ public class ParceiroSearchFragment extends Fragment {
     }
 
     private void setAdapter(List<Parceiro> list){
-        parceiroSearchAdapter = new ParceiroSearchAdapter(getActivity(), list);
-        parceiroSearchAdapter.setItemClickListener(new ItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("Parceiro", listParceiro.get(position));
-                intent.putExtras(bundle);
-                searchView.clearFocus();
-
-                if (Constants.MOVIMENTO.movimento.datainicio == null){
-                    Constants.MOVIMENTO.movimento.datainicio = new Date();
-                }
-
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
-        });
+        parceiroSearchAdapter = new ParceiroSearchAdapter(getActivity(), list, this);
         recyclerView.setAdapter(parceiroSearchAdapter);
     }
 
+    @Override
+    public void onItemClick(int position) {
+        Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("Parceiro", listParceiro.get(position));
+        intent.putExtras(bundle);
+        searchView.clearFocus();
+
+        if (Constants.MOVIMENTO.movimento.datainicio == null){
+            Constants.MOVIMENTO.movimento.datainicio = new Date();
+        }
+
+        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+        getActivity().getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onItemClickLong(int position) {
+
+    }
 }

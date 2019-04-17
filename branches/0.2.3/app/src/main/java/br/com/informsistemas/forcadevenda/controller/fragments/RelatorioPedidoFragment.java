@@ -25,13 +25,16 @@ import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.controller.MainActivity;
+import br.com.informsistemas.forcadevenda.controller.ResumoActivity;
 import br.com.informsistemas.forcadevenda.controller.adapter.RelatorioPedidoAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoDAO;
+import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Movimento;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
+import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
 
-public class RelatorioPedidoFragment extends Fragment {
+public class RelatorioPedidoFragment extends Fragment implements ItemClickListener {
 
     private List<Movimento> listMovimento;
     private RecyclerView recyclerView;
@@ -112,7 +115,7 @@ public class RelatorioPedidoFragment extends Fragment {
     }
 
     private void setAdapter(List<Movimento> list) {
-        relatorioPedidoAdapter = new RelatorioPedidoAdapter(getActivity(), list);
+        relatorioPedidoAdapter = new RelatorioPedidoAdapter(getActivity(), list, this);
         recyclerView.setAdapter(relatorioPedidoAdapter);
     }
 
@@ -156,5 +159,19 @@ public class RelatorioPedidoFragment extends Fragment {
         }
 
         edtTotalPedido.setText("R$ " + Misc.formatMoeda(value));
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Misc.setTabelasPadrao();
+        Constants.MOVIMENTO.movimento = listMovimento.get(position);
+
+        Intent intent = new Intent(getActivity(), ResumoActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onItemClickLong(int position) {
+
     }
 }

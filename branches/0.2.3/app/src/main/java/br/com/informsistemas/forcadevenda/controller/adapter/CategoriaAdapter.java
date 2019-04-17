@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
@@ -23,22 +22,21 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.MyVi
     private List<Categoria> fList;
     private LayoutInflater fLayoutInflater;
     private Context context;
-    private ItemClickListener itemClickListener;
+    private ItemClickListener fItemClickListener;
     private Integer idSelecionado = 0;
 
-    public CategoriaAdapter(Context context, List<Categoria> fList) {
+    public CategoriaAdapter(Context context, List<Categoria> fList, ItemClickListener itemClickListener) {
         this.fList = fList;
         this.context = context;
         this.fLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.fItemClickListener = itemClickListener;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = fLayoutInflater.inflate(R.layout.recycler_item_categoria, viewGroup, false);
-        MyViewHolder mvh = new MyViewHolder(v);
-
-        return mvh;
+        return new MyViewHolder(v, fItemClickListener);
     }
 
     @Override
@@ -66,10 +64,6 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.MyVi
             return 0;
     }
 
-    public void setItemClickListener(ItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
-    }
-
     public void setIdSelecionado(Integer idSelecionado) {
         this.idSelecionado = idSelecionado;
     }
@@ -78,21 +72,21 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.MyVi
 
         public TextView txtDescricao;
         public CardView cardView;
+        public ItemClickListener fItemClickListener;
 
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull View itemView, ItemClickListener itemClickListener) {
             super(itemView);
 
             txtDescricao = itemView.findViewById(R.id.txt_descricao);
             cardView = itemView.findViewById(R.id.card_categoria);
+            fItemClickListener = itemClickListener;
 
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            if (itemClickListener != null){
-                itemClickListener.onItemClick(v, getAdapterPosition());
-            }
+            fItemClickListener.onItemClick(getAdapterPosition());
         }
     }
 }

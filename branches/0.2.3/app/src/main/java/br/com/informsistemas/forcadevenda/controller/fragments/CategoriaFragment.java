@@ -26,7 +26,7 @@ import br.com.informsistemas.forcadevenda.model.dao.CategoriaDAO;
 import br.com.informsistemas.forcadevenda.model.pojo.Categoria;
 import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
 
-public class CategoriaFragment extends Fragment {
+public class CategoriaFragment extends Fragment implements ItemClickListener {
 
     private List<Categoria> listCategoria;
     private SearchView searchView;
@@ -103,23 +103,27 @@ public class CategoriaFragment extends Fragment {
     }
 
     private void setAdapter(List<Categoria> list){
-        categoriaAdapter = new CategoriaAdapter(getActivity(), list);
+        categoriaAdapter = new CategoriaAdapter(getActivity(), list, this);
         if (categoriaSelecionada != null){
             categoriaAdapter.setIdSelecionado(categoriaSelecionada.id);
         }else{
             categoriaAdapter.setIdSelecionado(1);
         }
-        categoriaAdapter.setItemClickListener(new ItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("Categoria", listCategoria.get(position));
-                intent.putExtras(bundle);
-                searchView.clearFocus();
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-            }
-        });
         recyclerView.setAdapter(categoriaAdapter);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("Categoria", listCategoria.get(position));
+        intent.putExtras(bundle);
+        searchView.clearFocus();
+        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+    }
+
+    @Override
+    public void onItemClickLong(int position) {
+
     }
 }
