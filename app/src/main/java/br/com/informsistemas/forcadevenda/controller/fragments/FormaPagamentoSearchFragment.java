@@ -27,7 +27,7 @@ import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.pojo.FormaPagamento;
 import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
 
-public class FormaPagamentoSearchFragment extends Fragment {
+public class FormaPagamentoSearchFragment extends Fragment implements ItemClickListener {
 
     private List<FormaPagamento> listPagamento;
     private SearchView searchView;
@@ -104,19 +104,23 @@ public class FormaPagamentoSearchFragment extends Fragment {
     }
 
     private void setAdapter(List<FormaPagamento> list){
-        pagamentoSearchAdapter = new PagamentoSearchAdapter(getActivity(), list);
-        pagamentoSearchAdapter.setItemClickListener(new ItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("Pagamento", listPagamento.get(position));
-                intent.putExtras(bundle);
-                searchView.clearFocus();
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
-        });
+        pagamentoSearchAdapter = new PagamentoSearchAdapter(getActivity(), list, this);
         recyclerView.setAdapter(pagamentoSearchAdapter);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("Pagamento", listPagamento.get(position));
+        intent.putExtras(bundle);
+        searchView.clearFocus();
+        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+        getActivity().getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onItemClickLong(int position) {
+
     }
 }
