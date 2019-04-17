@@ -1,5 +1,6 @@
 package br.com.informsistemas.forcadevenda.controller.adapter;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -16,26 +17,27 @@ import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Movimento;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
+import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
 
 public class RelatorioPedidoAdapter extends RecyclerView.Adapter<RelatorioPedidoAdapter.MyViewHolder> {
 
     private List<Movimento> fList;
     private LayoutInflater fLayoutInflater;
     private Context context;
+    private ItemClickListener fItemClickListener;
 
-    public RelatorioPedidoAdapter(Context c, List<Movimento> list) {
+    public RelatorioPedidoAdapter(Context c, List<Movimento> list, ItemClickListener itemClickListener) {
         this.fList = list;
         this.context = c;
         this.fLayoutInflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.fItemClickListener = itemClickListener;
     }
 
     @NonNull
     @Override
     public RelatorioPedidoAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = fLayoutInflater.inflate(R.layout.recycler_item_relatorio_pedido, viewGroup, false);
-        RelatorioPedidoAdapter.MyViewHolder mvh = new RelatorioPedidoAdapter.MyViewHolder(v);
-
-        return mvh;
+        return new RelatorioPedidoAdapter.MyViewHolder(v, fItemClickListener);
     }
 
     @Override
@@ -70,7 +72,7 @@ public class RelatorioPedidoAdapter extends RecyclerView.Adapter<RelatorioPedido
         }
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView txtCodigoParceiro;
         public TextView txtDescricao;
@@ -79,8 +81,9 @@ public class RelatorioPedidoAdapter extends RecyclerView.Adapter<RelatorioPedido
         public TextView txtHoraFim;
         public TextView txtTotal;
         public FrameLayout frmStatus;
+        public ItemClickListener fItemClickListener;
 
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull View itemView, ItemClickListener itemClickListener) {
             super(itemView);
 
             txtCodigoParceiro = itemView.findViewById(R.id.txt_relatorio_pedido_codigo);
@@ -90,6 +93,14 @@ public class RelatorioPedidoAdapter extends RecyclerView.Adapter<RelatorioPedido
             txtHoraFim = itemView.findViewById(R.id.txt_relatorio_pedido_fim);
             txtTotal = itemView.findViewById(R.id.txt_relatorio_pedido_total);
             frmStatus = itemView.findViewById(R.id.frm_status);
+            fItemClickListener = itemClickListener;
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            fItemClickListener.onItemClick(getAdapterPosition());
         }
     }
 }

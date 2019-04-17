@@ -26,7 +26,7 @@ import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
 
-public class ParceiroConsultaFragment extends Fragment {
+public class ParceiroConsultaFragment extends Fragment implements ItemClickListener {
 
     private List<Parceiro> listParceiro;
     private SearchView searchView;
@@ -117,26 +117,7 @@ public class ParceiroConsultaFragment extends Fragment {
     }
 
     private void setAdapter(List<Parceiro> list) {
-        parceiroConsultaAdapter = new ParceiroConsultaAdapter(getActivity(), list);
-        parceiroConsultaAdapter.setItemClickListener(new ItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                searchView.clearFocus();;
-
-                ParceiroDadosFragment parceiroDadosFragment = (ParceiroDadosFragment) getActivity().getSupportFragmentManager().findFragmentByTag("parceiroDadosFragment");
-
-                if (parceiroDadosFragment == null) {
-                    parceiroDadosFragment = new ParceiroDadosFragment();
-                }
-
-                parceiroDadosFragment.setTargetFragment(ParceiroConsultaFragment.this, 0);
-                parceiroDadosFragment.setArguments(getDadosArguments(position));
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_container, parceiroDadosFragment, "parceiroDadosFragment");
-                ft.addToBackStack(null);
-                ft.commit();
-            }
-        });
+        parceiroConsultaAdapter = new ParceiroConsultaAdapter(getActivity(), list, this);
         recyclerView.setAdapter(parceiroConsultaAdapter);
     }
 
@@ -145,5 +126,28 @@ public class ParceiroConsultaFragment extends Fragment {
         bundle.putSerializable("Parceiro", listParceiro.get(position));
 
         return bundle;
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        searchView.clearFocus();
+
+        ParceiroDadosFragment parceiroDadosFragment = (ParceiroDadosFragment) getActivity().getSupportFragmentManager().findFragmentByTag("parceiroDadosFragment");
+
+        if (parceiroDadosFragment == null) {
+            parceiroDadosFragment = new ParceiroDadosFragment();
+        }
+
+        parceiroDadosFragment.setTargetFragment(ParceiroConsultaFragment.this, 0);
+        parceiroDadosFragment.setArguments(getDadosArguments(position));
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_container, parceiroDadosFragment, "parceiroDadosFragment");
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    @Override
+    public void onItemClickLong(int position) {
+
     }
 }

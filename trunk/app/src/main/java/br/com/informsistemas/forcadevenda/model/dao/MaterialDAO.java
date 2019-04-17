@@ -36,17 +36,27 @@ public class MaterialDAO extends BaseDAO<Material> {
         super.ctx = context;
     }
 
-    public List<Material> pesquisaLista(String s) {
+    public List<Material> pesquisaLista(String s, List<Material> listFiltro) {
         List<Material> materialList = new ArrayList<>();
 
         for (Material m : listPesquisa){
-            if (m.descricao.toUpperCase().contains(s.toUpperCase())){
-                try {
-                    materialList.add(Misc.cloneMaterial(m));
-                } catch (CloneNotSupportedException e) {
-                    e.printStackTrace();
-                }
+//                Constants.DTO.listMaterialPreco){
+            if (m.descricao.toUpperCase().contains(s.toUpperCase())) {
+                materialList.add(m);
             }
+//            if (listFiltro != null) {
+//                for (int i = 0; i < listFiltro.size(); i++) {
+//                    if (listFiltro.get(i).codigomaterial.equals(m.codigomaterial)) {
+//                        if (m.descricao.toUpperCase().contains(s.toUpperCase())) {
+//                            materialList.add(m);
+//                        }
+//                    }
+//                }
+//            }else{
+//                if (m.descricao.toUpperCase().contains(s.toUpperCase())) {
+//                    materialList.add(m);
+//                }
+//            }
         }
 
         return materialList;

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,15 +37,11 @@ import br.com.informsistemas.forcadevenda.model.pojo.Categoria;
 import br.com.informsistemas.forcadevenda.model.pojo.Material;
 import br.com.informsistemas.forcadevenda.model.pojo.MovimentoItem;
 import br.com.informsistemas.forcadevenda.model.utils.IOnBackPressed;
-import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
 
-public class MaterialSearchFragment extends Fragment implements IOnBackPressed {
+public class MaterialSearchFragment extends Fragment implements IOnBackPressed, MaterialSearchAdapter.OnMaterialListener {
 
     private SearchView searchView;
     private List<Material> listMaterial;
-    private List<MovimentoItem> listMovimentoItem;
-    private List<Material> listSelecionado;
-    private List<Integer> listIds;
     private RecyclerView recyclerView;
     private MaterialSearchAdapter materialSearchAdapter;
     private TextView txtCategoriaSelecionada;
@@ -52,6 +49,10 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed {
     private TabLayout tabLayout;
     private CategoriaFragment categoriaFragment;
     private Categoria categoriaFiltro;
+    private List<Material> listMaterialFiltro;
+    private List<Material> listSelecionado;
+    private List<String> listCodigoMaterial;
+    private List<Material> listMaterialMovItens;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,7 +74,93 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed {
         tabLayout = getActivity().findViewById(R.id.tab_layout);
         tabLayout.setVisibility(View.VISIBLE);
         tabLayout.clearOnTabSelectedListeners();
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(getOnTabSelectedListener());
+
+        txtTotalItem = getActivity().findViewById(R.id.txt_total_item);
+        txtTotalItem.setText("R$ " + Misc.formatMoeda(Constants.MOVIMENTO.movimento.totalliquido));
+
+        recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+
+        recyclerView.setLayoutManager(llm);
+        listMaterialMovItens = (List<Material>) getArguments().getSerializable("listMaterialSelecionados");
+        getArguments().clear();
+
+        if (categoriaFiltro != null) {
+
+            if (categoriaFiltro.descricao.equals("TODAS")) {
+                listMaterial = Constants.DTO.listMaterialPreco;
+                listMaterialFiltro = null;
+            } else {
+                listMaterial = getListFiltro(categoriaFiltro.codigogrupo);
+            }
+
+            txtCategoriaSelecionada.setText(categoriaFiltro.descricao);
+        } else {
+            txtCategoriaSelecionada.setText("TODAS");
+            listMaterial = Constants.DTO.listMaterialPreco;
+            listMaterialFiltro = null;
+
+            if (listMaterialMovItens != null){
+                for (int i = 0; i < listMaterialMovItens.size(); i++) {
+                    onAddSelecionado(listMaterialMovItens.get(i));
+                }
+            }
+        }
+
+        MaterialDAO.getInstance(getActivity()).setListPesquisa(listMaterial);
+        setAdapter(listMaterial);
+
+        return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                listMaterial = MaterialDAO.getInstance(getActivity()).pesquisaLista(newText, listMaterialFiltro);
+                setAdapter(listMaterial);
+                return false;
+            }
+        });
+        searchView.setQueryHint("Pesquisar Materiais...");
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().onBackPressed();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+    private void setAdapter(List<Material> list) {
+        materialSearchAdapter = new MaterialSearchAdapter(getActivity(), list, this);
+        recyclerView.setAdapter(materialSearchAdapter);
+    }
+
+    private TabLayout.OnTabSelectedListener getOnTabSelectedListener(){
+        return new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
@@ -109,180 +196,24 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed {
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
-        });
-
-        txtTotalItem = getActivity().findViewById(R.id.txt_total_item);
-        txtTotalItem.setText("R$ " + Misc.formatMoeda(Constants.MOVIMENTO.movimento.totalliquido));
-
-        recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
-
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-
-        recyclerView.setLayoutManager(llm);
-
-        listMovimentoItem = (List<MovimentoItem>) getArguments().getSerializable("listMovimentoItem");
-        getArguments().clear();
-
-        if (categoriaFiltro != null) {
-
-            if (listMovimentoItem == null) {
-                listMovimentoItem = new ArrayList<>();
-            }
-
-            if (categoriaFiltro.id > 1) {
-                listMaterial = MaterialDAO.getInstance(getActivity()).aplicarFiltro(categoriaFiltro.codigogrupo);
-            } else {
-                listMaterial = MaterialDAO.getInstance(getActivity()).getListMaterial();
-            }
-
-            txtCategoriaSelecionada.setText(categoriaFiltro.descricao);
-
-            if (listSelecionado != null) {
-                for (int i = 0; i < listSelecionado.size(); i++) {
-                    listMovimentoItem.add(new MovimentoItem(null, Constants.MOVIMENTO.codigotabelapreco,
-                            listSelecionado.get(i).codigomaterial, listSelecionado.get(i).unidadesaida,
-                            listSelecionado.get(i).quantidade, listSelecionado.get(i).custo, 0,
-                            listSelecionado.get(i).icms, listSelecionado.get(i).baseicms, listSelecionado.get(i).valoricms,
-                            listSelecionado.get(i).icmssubst, listSelecionado.get(i).baseicmssubst, listSelecionado.get(i).valoricmssubst,
-                            listSelecionado.get(i).ipi, listSelecionado.get(i).valoripi,
-                            listSelecionado.get(i).margemsubstituicao, listSelecionado.get(i).pautafiscal,
-                            listSelecionado.get(i).icmsfecoep, listSelecionado.get(i).valoricmsfecoep,
-                            listSelecionado.get(i).icmsfecoepst, listSelecionado.get(i).valoricmsfecoepst,
-                            (listSelecionado.get(i).custo * listSelecionado.get(i).quantidade) +
-                            (listSelecionado.get(i).valoricmssubst + listSelecionado.get(i).valoripi + listSelecionado.get(i).valoricmsfecoepst)));
-
-                    addQuantidadeList(listSelecionado.get(i).codigomaterial, listSelecionado.get(i).quantidade);
-                }
-            }
-        } else {
-            txtCategoriaSelecionada.setText("TODAS");
-            listMaterial = MaterialDAO.getInstance(getActivity()).getListMaterial();
-
-            if (listMovimentoItem != null) {
-                for (int i = 0; i < listMovimentoItem.size(); i++) {
-                    addListSelecionadoMovItem(listMovimentoItem.get(i));
-                }
-            }
-        }
-
-        MaterialDAO.getInstance(getActivity()).setListPesquisa(getListPesquisa(listMaterial));
-        setAdapter(listMaterial, false);
-
-        return view;
+        };
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        inflater.inflate(R.menu.menu_search, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
+    private List<Material> getListFiltro(String codigogrupo){
+        listMaterialFiltro = MaterialDAO.getInstance(getActivity()).aplicarFiltro(codigogrupo);
+        List<Material> listFiltro = new ArrayList<>();
 
-        searchView = (SearchView) searchItem.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                listMaterial = MaterialDAO.getInstance(getActivity()).pesquisaLista(newText);
-                setAdapter(listMaterial, true);
-                return false;
-            }
-        });
-//        searchView.setFocusable(true);
-//        searchView.setIconified(false);
-        searchView.setQueryHint("Pesquisar Materiais...");
-
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                getActivity().onBackPressed();
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-    }
-
-    private void setAdapter(List<Material> list, Boolean Pesquisa) {
-        materialSearchAdapter = new MaterialSearchAdapter(getActivity(), list);
-        if (Pesquisa) {
-            materialSearchAdapter.setfListSearch(getListPesquisa(listSelecionado));
-        }
-        materialSearchAdapter.setfListSelecionado(listMovimentoItem);
-        materialSearchAdapter.setItemClickListener(new ItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Material material = null;
-                Material materialexclusao = null;
-                float valorQtdTotal = 0;
-                float valorQtdReduzida = 0;
-                float valorRemovido = 0;
-                switch (view.getId()) {
-                    case R.id.img_excluir:
-
-                        try {
-                            material = Misc.cloneMaterial(listMaterial.get(position));
-                            materialexclusao = Misc.cloneMaterial(listMaterial.get(position));
-
-                        } catch (CloneNotSupportedException e) {
-                            e.printStackTrace();
-                        }
-
-                        listMaterial.get(position).quantidade = listMaterial.get(position).quantidade - 1;
-
-                        if (listMaterial.get(position).quantidade >= 1){
-                            materialexclusao.quantidade = listMaterial.get(position).quantidade;
-
-                            valorQtdTotal = calculaTotalExclusao(material);
-                            valorQtdReduzida = calculaTotalExclusao(materialexclusao);
-                            valorRemovido = valorQtdTotal - valorQtdReduzida;
-                        }else{
-                            valorRemovido = listMaterial.get(position).totalliquido;
-                        }
-
-                        if (listMaterial.get(position).quantidade == 0){
-                            removeMovimentoItem(listMaterial.get(position).codigomaterial);
-                        }
-
-                        setTotal(-valorRemovido);
-
-                        break;
-                    default:
-
-                        try {
-                            material = Misc.cloneMaterial(listMaterial.get(position));
-                            materialexclusao = Misc.cloneMaterial(listMaterial.get(position));
-
-                        } catch (CloneNotSupportedException e) {
-                            e.printStackTrace();
-                        }
-
-                        listMaterial.get(position).quantidade = listMaterial.get(position).quantidade + 1;
-
-                        if (listMaterial.get(position).quantidade > 1){
-                            Constants.MOVIMENTO.movimento.totalliquido = Constants.MOVIMENTO.movimento.totalliquido - calculaTotalExclusao(materialexclusao);
-                            material = calculaTotalLiquido(listMaterial.get(position));
-                        }
-
-                        setTotal(material.totalliquido);
-
-                        break;
+        for (int i = 0; i < listMaterialFiltro.size(); i++) {
+            for (int j = 0; j < Constants.DTO.listMaterialPreco.size(); j++) {
+                if (listMaterialFiltro.get(i).codigomaterial.equals(Constants.DTO.listMaterialPreco.get(j).codigomaterial)){
+                    listFiltro.add(Constants.DTO.listMaterialPreco.get(j));
+                    break;
                 }
-
-                addListSelecionado(listMaterial.get(position));
-                materialSearchAdapter.notifyItemChanged(position);
             }
-        });
-        recyclerView.setAdapter(materialSearchAdapter);
+
+        }
+
+        return listFiltro;
     }
 
     private void setTotal(float valor) {
@@ -308,39 +239,6 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed {
         return intent;
     }
 
-    private void addListSelecionado(Material material) {
-        boolean remover = false;
-
-        if (listIds == null) {
-            listIds = new ArrayList<>();
-        }
-
-        if (listSelecionado == null) {
-            listSelecionado = new ArrayList<>();
-        }
-
-        if (listIds.contains(material.id)) {
-
-            if (material.quantidade == 0) {
-                remover = true;
-            }
-
-            for (int i = 0; i < listSelecionado.size(); i++) {
-                if (material.id == listSelecionado.get(i).id) {
-                    if (remover) {
-                        listIds.remove(material.id);
-                        listSelecionado.remove(i);
-                    } else {
-                        listSelecionado.set(i, material);
-                    }
-                }
-            }
-        } else {
-            listIds.add(material.id);
-            listSelecionado.add(material);
-        }
-    }
-
     @Override
     public boolean onBackPressed() {
         searchView.clearFocus();
@@ -351,10 +249,15 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        categoriaFiltro = (Categoria) data.getExtras().getSerializable("Categoria");
-        listMovimentoItem = null;
-
-        tabLayout.getTabAt(0).select();
+        switch (requestCode){
+            case 0:
+                categoriaFiltro = (Categoria) data.getExtras().getSerializable("Categoria");
+                tabLayout.getTabAt(0).select();
+                break;
+            case 1:
+                AdicionarMaterialQuantidade(data);
+                break;
+        }
     }
 
     private Bundle getCategoriaFiltro() {
@@ -366,16 +269,18 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed {
 
     private Material calculaTotalLiquido(Material material){
         material.precovenda1 = (material.custo * material.quantidade);
-        CalculoClass.getTributos(getActivity(), material);
+        CalculoClass calculoClass = new CalculoClass(getActivity(), material);
+        calculoClass.setTributos();
 
         return material;
     }
 
     private float calculaTotalExclusao(Material m){
         m.precovenda1 = (m.custo * m.quantidade);
-        CalculoClass.getTributos(getActivity(), m);
+        CalculoClass calculoClass = new CalculoClass(getActivity(), m);
+        calculoClass.setTributos();
 
-        return m.totalliquido;
+        return calculoClass.getTotalLiquido();
     }
 
     private void removeMovimentoItem(String codigomaterial){
@@ -388,46 +293,146 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed {
         }
     }
 
-    private void addQuantidadeList(String codigomaterial, float quantidade){
-        for (int i = 0; i < listMaterial.size(); i++) {
-            if (listMaterial.get(i).codigomaterial.equals(codigomaterial)){
-                listMaterial.get(i).quantidade = quantidade;
+    private void onAddSelecionado(Material material) {
+        boolean remover = false;
+
+        if (listCodigoMaterial == null) {
+            listCodigoMaterial = new ArrayList<>();
+        }
+
+        if (listSelecionado == null) {
+            listSelecionado = new ArrayList<>();
+        }
+
+        if (listCodigoMaterial.contains(material.codigomaterial)) {
+
+            if (material.quantidade == 0) {
+                remover = true;
             }
 
+            for (int i = 0; i < listSelecionado.size(); i++) {
+                if (material.codigomaterial.equals(listSelecionado.get(i).codigomaterial)) {
+                    if (remover) {
+                        listCodigoMaterial.remove(material.codigomaterial);
+                        listSelecionado.remove(i);
+                    } else {
+                        listSelecionado.set(i, material);
+                    }
+                }
+            }
+        } else {
+            listCodigoMaterial.add(material.codigomaterial);
+            listSelecionado.add(material);
         }
     }
 
-    private void addListSelecionadoMovItem(MovimentoItem movimentoItem) {
+    @Override
+    public void onBotaoExcluirClick(int position) {
         Material material = null;
+        Material materialExclusao = null;
+        float valorRemovido = 0;
+        float valorQtdTotal = 0;
+        float valorQtdReduzida = 0;
+
         try {
-            material = Misc.cloneMaterial(MaterialDAO.getInstance(getActivity()).findByIdAuxiliar("codigomaterial", movimentoItem.codigomaterial));
+            material = Misc.cloneMaterial(listMaterial.get(position));
+            materialExclusao = Misc.cloneMaterial(listMaterial.get(position));
+
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
 
-        if (material.quantidade == 0) {
-            material.precovenda1 = CalculoClass.getPrecoVenda(getActivity(), material);
-            material.quantidade = 1;
-            CalculoClass.getTributos(getActivity(), material);
-            material.quantidade = movimentoItem.quantidade;
+        listMaterial.get(position).quantidade = listMaterial.get(position).quantidade - 1;
+
+        if (listMaterial.get(position).quantidade >= 1){
+            materialExclusao.quantidade = listMaterial.get(position).quantidade;
+
+            valorQtdTotal = calculaTotalExclusao(material);
+            valorQtdReduzida = calculaTotalExclusao(materialExclusao);
+            valorRemovido = valorQtdTotal - valorQtdReduzida;
+        }else{
+            valorRemovido = listMaterial.get(position).totalliquido;
         }
 
-        addListSelecionado(material);
+        if (listMaterial.get(position).quantidade == 0){
+            removeMovimentoItem(listMaterial.get(position).codigomaterial);
+        }
+
+        setTotal(-valorRemovido);
+
+        materialSearchAdapter.notifyItemChanged(position);
+
+        try {
+            onAddSelecionado(Misc.cloneMaterial(listMaterial.get(position)));
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
     }
 
-    private List<Material> getListPesquisa(List<Material> materials){
-        List<Material> materialList = new ArrayList<>();
+    @Override
+    public void onMaterialClick(int position) {
+        Material material = null;
+        Material materialExclusao = null;
 
-        if (materials != null) {
-            for (Material m : materials) {
-                try {
-                    materialList.add(Misc.cloneMaterial(m));
-                } catch (CloneNotSupportedException e) {
-                    e.printStackTrace();
-                }
-            }
+        try {
+            material = Misc.cloneMaterial(listMaterial.get(position));
+            materialExclusao = Misc.cloneMaterial(listMaterial.get(position));
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
         }
 
-        return materialList;
+        listMaterial.get(position).quantidade = listMaterial.get(position).quantidade + 1;
+
+        if (listMaterial.get(position).quantidade > 1){
+            Constants.MOVIMENTO.movimento.totalliquido = Constants.MOVIMENTO.movimento.totalliquido - calculaTotalExclusao(materialExclusao);
+            material.quantidade = listMaterial.get(position).quantidade;
+            material = calculaTotalLiquido(material);
+        }
+
+        setTotal(material.totalliquido);
+
+        materialSearchAdapter.notifyItemChanged(position);
+
+        try {
+            onAddSelecionado(Misc.cloneMaterial(listMaterial.get(position)));
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onMaterialLongClick(int position) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
+        bundle.putSerializable("material", listMaterial.get(position));
+
+        DialogFragment fragmentModal = MaterialSearchModalFragment.newInstance();
+        fragmentModal.setTargetFragment(this, 1);
+        fragmentModal.setArguments(bundle);
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentModal.show(ft, "materialSearchModalFragment");
+    }
+
+    private void AdicionarMaterialQuantidade(Intent data){
+        int position = data.getExtras().getInt("position");
+        float qtdNova = data.getExtras().getFloat("quantidade");
+        float qtdAtual = listMaterial.get(position).quantidade;
+        float vezes = 0;
+        boolean excluir = false;
+
+        if (qtdNova > qtdAtual){
+            vezes = qtdNova - qtdAtual;
+        }else{
+            excluir = true;
+            vezes = qtdAtual - qtdNova;
+        }
+
+        for (int i = 0; i < vezes; i++) {
+            if (excluir){
+                onBotaoExcluirClick(position);
+            }else{
+                onMaterialClick(position);
+            }
+        }
     }
 }

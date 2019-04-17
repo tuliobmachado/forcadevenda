@@ -19,21 +19,20 @@ public class PagamentoSearchAdapter extends RecyclerView.Adapter<PagamentoSearch
     private List<FormaPagamento> fList;
     private LayoutInflater fLayoutInflater;
     private Context context;
-    private ItemClickListener itemClickListener;
+    private ItemClickListener fItemClickListener;
 
-    public PagamentoSearchAdapter(Context c, List<FormaPagamento> list){
+    public PagamentoSearchAdapter(Context c, List<FormaPagamento> list, ItemClickListener itemClickListener){
         this.fList = list;
         this.context = c;
         this.fLayoutInflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.fItemClickListener = itemClickListener;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = fLayoutInflater.inflate(R.layout.recycler_item_pagamento, viewGroup, false);
-        MyViewHolder mvh = new MyViewHolder(v);
-
-        return mvh;
+        return new MyViewHolder(v, fItemClickListener);
     }
 
     @Override
@@ -50,27 +49,23 @@ public class PagamentoSearchAdapter extends RecyclerView.Adapter<PagamentoSearch
         }
     }
 
-    public void setItemClickListener(ItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
-    }
-
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView txtDescricao;
+        public ItemClickListener fItemClickListener;
 
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull View itemView, ItemClickListener itemClickListener) {
             super(itemView);
 
             txtDescricao = itemView.findViewById(R.id.txt_descricao);
+            fItemClickListener = itemClickListener;
 
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            if (itemClickListener != null){
-                itemClickListener.onItemClick(v, getAdapterPosition());
-            }
+            fItemClickListener.onItemClick(getAdapterPosition());
         }
     }
 }

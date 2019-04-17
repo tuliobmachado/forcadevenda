@@ -14,12 +14,20 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.controller.fragments.MovimentoItemFragment;
 import br.com.informsistemas.forcadevenda.controller.fragments.MaterialSearchFragment;
+import br.com.informsistemas.forcadevenda.model.dao.MaterialDAO;
+import br.com.informsistemas.forcadevenda.model.dao.MaterialSaldoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoItemDAO;
+import br.com.informsistemas.forcadevenda.model.helper.CalculoClass;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
+import br.com.informsistemas.forcadevenda.model.helper.Misc;
+import br.com.informsistemas.forcadevenda.model.pojo.Material;
+import br.com.informsistemas.forcadevenda.model.pojo.MaterialSaldo;
 import br.com.informsistemas.forcadevenda.model.pojo.MovimentoItem;
 import br.com.informsistemas.forcadevenda.model.utils.IOnBackPressed;
 
@@ -60,6 +68,7 @@ public class MovimentoItemActivity extends AppCompatActivity {
             }
         });
 
+        montaListaMaterialPreco();
         onShowMovimentoItem();
 
         if (Constants.MOVIMENTO.movimento.id == null){
@@ -132,8 +141,25 @@ public class MovimentoItemActivity extends AppCompatActivity {
 
     private Bundle getListMovimentoItem(){
         Bundle bundle = new Bundle();
-        bundle.putSerializable("listMovimentoItem", (Serializable) movimentoItemFragment.getListMovimentoItem());
+        bundle.putSerializable("listMaterialSelecionados", (Serializable) movimentoItemFragment.getListMaterialSelecionados());
 
         return bundle;
+    }
+
+    private void montaListaMaterialPreco(){
+        Constants.DTO.listMaterialPreco = MaterialDAO.getInstance(this).getListMaterial();
+
+        for (int i = 0; i < Constants.DTO.listMaterialPreco.size(); i++) {
+
+            CalculoClass calculoClass = new CalculoClass(this, Constants.DTO.listMaterialPreco.get(i));
+            calculoClass.setTotal();
+
+            MaterialSaldo materialSaldo = MaterialSaldoDAO.getInstance(this).findByIdAuxiliar("codigomaterial",
+                    Constants.DTO.listMaterialPreco.get(i).codigomaterial);
+
+            Constants.DTO.listMaterialPreco.get(i).saldomaterial =
+                    (materialSaldo.saldo / Constants.DTO.listMaterialPreco.get(i).fator);
+
+        }
     }
 }

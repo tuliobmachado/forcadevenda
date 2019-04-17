@@ -264,7 +264,9 @@
                     android:hint="Observação"
                     android:inputType="textCapSentences|textMultiLine"
                     android:maxLength="2000"
-                    android:maxLines="10" />
+                    android:maxLines="10"
+                    android:textCursorDrawable="@null"
+                    app:backgroundTint="@android:color/black"/>
 
             </LinearLayout>
 
