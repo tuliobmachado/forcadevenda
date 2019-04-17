@@ -113,7 +113,7 @@ public class MovimentoFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Misc.setTabelasPadrao();
-        ;
+
         if (Misc.verificaConexao(getActivity())) {
             if (Constants.MOVIMENTO.enviarPedido) {
                 enviarPedido();
