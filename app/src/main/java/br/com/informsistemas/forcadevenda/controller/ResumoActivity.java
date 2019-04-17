@@ -38,6 +38,8 @@ public class ResumoActivity extends AppCompatActivity {
     private LinearLayout linearLayoutPagamento;
     private LinearLayout linearLayoutBottomEnviar;
     private EditText edtTxtObservacao;
+    private Button btnSalvarPedido;
+    private Button btnEnviarPedido;
     private float total_ipi;
     private float total_icmssubst;
     private float total_fecoepst;
@@ -56,6 +58,8 @@ public class ResumoActivity extends AppCompatActivity {
         linearLayoutMaterial = findViewById(R.id.layout_resumo_material);
         linearLayoutPagamento = findViewById(R.id.layout_resumo_pagamento);
         linearLayoutBottomEnviar = findViewById(R.id.layout_bottom_enviar);
+        btnEnviarPedido = findViewById(R.id.btn_enviar_pedido);
+        btnSalvarPedido = findViewById(R.id.btn_salvar_pedido);
         edtTxtObservacao = findViewById(R.id.edtObservacao);
 
         if (!Constants.MOVIMENTO.movimento.observacao.equals("")){
@@ -63,7 +67,12 @@ public class ResumoActivity extends AppCompatActivity {
         }
 
         if (Constants.MOVIMENTO.movimento.sincronizado.equals("T") || Constants.MOVIMENTO.movimento.sincronizado.equals("P")){
-            linearLayoutBottomEnviar.setVisibility(View.GONE);
+            if (Constants.MOVIMENTO.movimento.sincronizado.equals("T")){
+                linearLayoutBottomEnviar.setVisibility(View.GONE);
+            }else {
+                linearLayoutBottomEnviar.setVisibility(View.VISIBLE);
+                btnSalvarPedido.setVisibility(View.GONE);
+            }
             edtTxtObservacao.setEnabled(false);
         }
 
