@@ -61,7 +61,7 @@ public class RestManager {
 
     public PedidoService getPedidoService(){
         if (pedidoService == null){
-            Retrofit retrofit = getRetrofit(600, true);
+            Retrofit retrofit = getRetrofit(120, true);
 
             pedidoService = retrofit.create(PedidoService.class);
         }
