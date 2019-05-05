@@ -186,7 +186,7 @@ public class DadosTabelasTask extends AsyncTask<String, Void, String> {
             objMeta = new MetaFuncionario(Constants.DTO.registro.codigofuncionario, Constants.DTO.registro.nome, data, 30, 0, 0, 0);
         }else{
             objMeta = new MetaFuncionario(metaFuncionario.codigofuncionario, metaFuncionario.descricao, data, metaFuncionario.totaldiames,
-                    metaFuncionario.metamensal, metaFuncionario.metarealizada, metaFuncionario.metadiaria);
+                    metaFuncionario.metamensal, 0, metaFuncionario.metadiaria);
         }
 
         MetaFuncionarioDAO.getInstance(fragment.getActivity()).createOrUpdate(objMeta);
