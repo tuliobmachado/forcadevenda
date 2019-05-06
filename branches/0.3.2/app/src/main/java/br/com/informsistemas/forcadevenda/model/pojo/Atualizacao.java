@@ -32,6 +32,9 @@ public class Atualizacao implements IEntidade {
     @DatabaseField
     public Date datasincmarcado;
 
+    @DatabaseField
+    public Date dataultimasincronia;
+
     public Atualizacao(){}
     public Atualizacao(String codigoconfiguracao, String nometabela, Date datasincparcial, Date datasinctotal, String situacao, Date datasincmarcado) {
         this.codigoconfiguracao = codigoconfiguracao;
@@ -40,5 +43,6 @@ public class Atualizacao implements IEntidade {
         this.datasinctotal = datasinctotal;
         this.situacao = situacao;
         this.datasincmarcado = datasincmarcado;
+        this.dataultimasincronia = null;
     }
 }

@@ -22,7 +22,7 @@ public class Constants {
 
         public static final String BASE = "http://informnfe.com/NFeEmitir/ServicoApp.dll/api/";
 //        public static final String BASE = "http://192.168.0.190:8089/api/";
-//        public static final String BASE = "http://192.168.0.91:8089/api/";
+//        public static final String BASE = "http://192.168.0.83:8089/api/";
         public static final String LOGIN_REGISTRAR = "Login/Registrar";
         public static final String DEVICE_CONSULTAR = "Device/Consultar";
         public static final String SINCRONIA_CONSULTAR = "Sincronia/Consultar";
@@ -89,8 +89,6 @@ public class Constants {
         public static int TABELA_ATUAL = 0;
         public static List<String> listTabelaPreco;
         public static List<String> listEstados;
-        public static boolean SolicitaMetaFuncionario = false;
-        public static Date dataProximaSincronia = null;
     }
 
     public static class PERMISSION {
