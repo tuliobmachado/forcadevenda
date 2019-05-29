@@ -41,7 +41,7 @@ public class Constants {
     }
 
     public static final class APP {
-        public static final String VERSAO = "0.2.3";
+        public static final String VERSAO = "0.3.2";
     }
 
     public static final class REQUEST_LOGIN {
