@@ -119,7 +119,12 @@ public class MovimentoFragment extends Fragment {
                 enviarPedido();
                 Constants.MOVIMENTO.enviarPedido = false;
             } else {
-                getSincronia(Misc.compareDataSincroniaAutomatica());
+                if (AtualizacaoDAO.getInstance(getActivity()).VerificaSincronia()) {
+                    getSincronia(true);
+                }else{
+                    getSincronia(false);
+                }
+
             }
         } else {
             if (!Constants.MOVIMENTO.enviarPedido){
@@ -462,6 +467,7 @@ public class MovimentoFragment extends Fragment {
                 case TOTAL:
                     if (atualizacao.nometabela.equals("METAFUNCIONARIO") || atualizacao.nometabela.equals("MATERIALSALDO") || atualizacao.nometabela.equals("PARCEIROVENCIMENTO")){
                         att.datasinctotal = new Date();
+                        att.dataultimasincronia = new Date();
                     }else {
                         att.datasinctotal = atualizacao.datasinctotal;
                     }
@@ -476,6 +482,7 @@ public class MovimentoFragment extends Fragment {
         }else{
             if (atualizacao.nometabela.equals("METAFUNCIONARIO") || atualizacao.nometabela.equals("MATERIALSALDO") || atualizacao.nometabela.equals("PARCEIROVENCIMENTO")){
                 atualizacao.datasinctotal = new Date();
+                atualizacao.dataultimasincronia = new Date();
             }
 
             att = atualizacao;

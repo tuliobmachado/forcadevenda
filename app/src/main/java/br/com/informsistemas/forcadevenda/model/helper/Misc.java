@@ -121,6 +121,60 @@ public class Misc {
         return data;
     }
 
+    public static Boolean CompareDate(Date dataInicial, Date dataFinal){
+        Boolean value = false;
+        Date dtInicio, dtFinal;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        try {
+            dtInicio = simpleDateFormat.parse(simpleDateFormat.format(dataInicial));
+            dtFinal = simpleDateFormat.parse(simpleDateFormat.format(dataFinal));
+
+            if (dtInicio.compareTo(dtFinal) > 0){
+                return true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return value;
+    }
+
+    public static Boolean CompareTime(Date dataInicial, Date dataFinal){
+        Boolean value = false;
+        String dtInicio, dtFinal;
+        Integer hrInicio, minInicio, hrFinal, minFinal;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+
+        dtInicio = simpleDateFormat.format(dataInicial);
+        dtFinal = simpleDateFormat.format(dataFinal);
+
+        hrInicio = Integer.parseInt(dtInicio.substring(0, 2));
+        minInicio = Integer.parseInt(dtInicio.substring(3, 5));
+
+        hrFinal = Integer.parseInt(dtFinal.substring(0, 2));
+        minFinal = Integer.parseInt(dtFinal.substring(3, 5));
+
+        int difHoras = hrInicio - hrFinal;
+        int difMinutos = minInicio - minFinal;
+
+        while (difMinutos < 0) {
+            difMinutos += 60;
+            difHoras--;
+        }
+
+        while (difHoras < 0) {
+            difHoras += 24;
+        }
+
+        if (difHoras >= 1){
+            value = true;
+        }
+
+        return value;
+    }
+
+
     public static String gerarMD5(){
         String chave = Constants.DTO.registro.codigofuncionario + formatDate(new Date(), "yyyyMMddHHmmss");
         String value = DigestUtils.md5Hex(chave);
@@ -138,25 +192,6 @@ public class Misc {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMM");
 
         return simpleDateFormat.format(data);
-    }
-
-    public static boolean compareDataSincroniaAutomatica(){
-        Boolean value = false;
-        Date atual = new Date();
-        if (Constants.SINCRONIA.dataProximaSincronia == null){
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(atual);
-            cal.add(Calendar.MINUTE, 2);
-            Constants.SINCRONIA.dataProximaSincronia = cal.getTime();
-        }else{
-            if ((Constants.SINCRONIA.dataProximaSincronia.compareTo(atual) == 0) ||
-                (Constants.SINCRONIA.dataProximaSincronia.compareTo(atual) < 0)){
-                value = true;
-                Constants.SINCRONIA.dataProximaSincronia = atual;
-            }
-        }
-
-        return value;
     }
 
     public static Date getDataPadrao() {
