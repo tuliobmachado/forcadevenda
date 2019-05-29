@@ -140,21 +140,18 @@ public class SincroniaTask extends AsyncTask<String, Void, List<Atualizacao>> {
             item = new Atualizacao(Constants.DTO.registro.codigoconfiguracao, nometabela, Misc.getDataPadrao(), Misc.getDataPadrao(), "DISPONIVEL", Misc.getDataPadrao());
         } else {
             if (nometabela.equals("PARCEIROVENCIMENTO") || nometabela.equals("METAFUNCIONARIO") || nometabela.equals("MATERIALSALDO")) {
-                MetaFuncionario metaFuncionario = MetaFuncionarioDAO.getInstance(fragment.getActivity()).findByIdAuxiliar("dia", Misc.GetDateAtual());
 
                 if (nometabela.equals("PARCEIROVENCIMENTO")) {
-                    if (metaFuncionario == null || sincroniaSolicitada) {
+                    if (sincroniaSolicitada) {
                         item.datasinctotal = new Date();
                     }
                 } else if (nometabela.equals("MATERIALSALDO")) {
-                    if (metaFuncionario == null || sincroniaSolicitada) {
+                    if (sincroniaSolicitada) {
                         item.datasinctotal = new Date();
                     }
                 } else if (nometabela.equals("METAFUNCIONARIO")) {
                     if (sincroniaSolicitada) {
                         item.datasinctotal = new Date();
-                    } else if (metaFuncionario == null || Constants.SINCRONIA.SolicitaMetaFuncionario) {
-                        item.datasincparcial = new Date();
                     }
                 }
             }
