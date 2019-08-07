@@ -82,7 +82,7 @@ public class LoginFragment extends Fragment {
         cnpj = cnpj.replaceAll("[^0-9]", "");
 
         registro = new Registro(edtUsuario.getText().toString(), edtSenha.getText().toString(),
-                imei, cnpj, loginActivity.getToken(), "", "", "", "", "", "", "", "", "", "", "", false, false);
+                imei, cnpj, loginActivity.getToken(), "", "", "", "", "", "", "", "", "", "", "", "", false, false, false);
 
         getRegistro();
     }
@@ -166,7 +166,9 @@ public class LoginFragment extends Fragment {
                             restResponse.data.get(0).codigotabelapreco, restResponse.data.get(0).estado,
                             restResponse.data.get(0).codigoconfiguracao, restResponse.data.get(0).codigousuario,
                             restResponse.data.get(0).nome, restResponse.data.get(0).status,
-                            restResponse.data.get(0).utilizapauta, restResponse.data.get(0).utilizafatorpauta));
+                            restResponse.data.get(0).valoracrescimo,
+                            restResponse.data.get(0).utilizapauta, restResponse.data.get(0).utilizafatorpauta,
+                            restResponse.data.get(0).editaacrescimo));
                 }else{
                     onLoginFailed(restResponse.meta.message);
                 }
@@ -186,7 +188,8 @@ public class LoginFragment extends Fragment {
 
     public Intent getIntent(String codigoempresa, String codigofilialcontabil, String codigoalmoxarifado, String codigooperacao,
                             String codigofuncionario, String codigotabelapreco, String estado, String codigoconfiguracao,
-                            String codigousuario, String nome, String status, Boolean utilizapauta, Boolean utilizapautafiscal){
+                            String codigousuario, String nome, String status, String valoracrescimo, Boolean utilizapauta,
+                            Boolean utilizapautafiscal, Boolean editaacrescimo){
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         registro.codigofuncionario = codigofuncionario;
@@ -202,6 +205,8 @@ public class LoginFragment extends Fragment {
         registro.status = status;
         registro.utilizapauta = utilizapauta;
         registro.utilizafatorpauta = utilizapautafiscal;
+        registro.valoracrescimo = valoracrescimo;
+        registro.editaacrescimo = editaacrescimo;
 
         bundle.putSerializable("Registro", registro);
         intent.putExtras(bundle);

@@ -12,10 +12,12 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
 import br.com.informsistemas.forcadevenda.R;
+import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Material;
 
@@ -24,7 +26,13 @@ public class MaterialSearchModalFragment extends DialogFragment {
     private TextView txtDescricao;
     private TextView txtSaldo;
     private TextView txtPreco;
+    private TextView txtAcrescimoValor;
+    private TextView txtAcrescimoPorcentagem;
     private EditText edtQuantidade;
+    private EditText edtAcrescimoValor;
+    private EditText edtAcrescimoPorcentagem;
+    private LinearLayout layoutAcrescimo;
+
     private boolean possuiQuantidade;
     private int position;
 
@@ -45,7 +53,14 @@ public class MaterialSearchModalFragment extends DialogFragment {
         txtDescricao = view.findViewById(R.id.txt_descricao);
         txtSaldo = view.findViewById(R.id.txt_saldo);
         txtPreco = view.findViewById(R.id.txt_preco_venda);
+        txtAcrescimoValor = view.findViewById(R.id.txt_acrescimo_valor);
+        txtAcrescimoPorcentagem = view.findViewById(R.id.txt_acrescimo_porcentagem);
         edtQuantidade = view.findViewById(R.id.edt_quantidade);
+        edtAcrescimoValor = view.findViewById(R.id.edt_acrescimo_valor);
+        edtAcrescimoPorcentagem = view.findViewById(R.id.edt_acrescimo_porcentagem);
+        layoutAcrescimo = view.findViewById(R.id.layout_acrescimo);
+
+        onExibeAcrescimo();
 
         position = getArguments().getInt("position");
         final Material material = (Material) getArguments().getSerializable("material");
@@ -97,5 +112,26 @@ public class MaterialSearchModalFragment extends DialogFragment {
         intent.putExtras(bundle);
 
         return intent;
+    }
+
+    private void onExibeAcrescimo(){
+        if (Constants.DTO.registro.editaacrescimo){
+            layoutAcrescimo.setVisibility(View.VISIBLE);
+
+            if (Constants.DTO.registro.valoracrescimo.equals("V")){
+                txtAcrescimoValor.setVisibility(View.VISIBLE);
+                edtAcrescimoValor.setVisibility(View.VISIBLE);
+                txtAcrescimoPorcentagem.setVisibility(View.GONE);
+                edtAcrescimoPorcentagem.setVisibility(View.GONE);
+            }else if (Constants.DTO.registro.valoracrescimo.equals("P")){
+                txtAcrescimoPorcentagem.setVisibility(View.VISIBLE);
+                edtAcrescimoPorcentagem.setVisibility(View.VISIBLE);
+                txtAcrescimoValor.setVisibility(View.GONE);
+                edtAcrescimoValor.setVisibility(View.GONE);
+            }
+
+        }else{
+            layoutAcrescimo.setVisibility(View.GONE);
+        }
     }
 }
