@@ -65,10 +65,20 @@ public class Registro implements IEntidade {
     @DatabaseField
     public boolean utilizafatorpauta;
 
+    @DatabaseField
+    public boolean editaacrescimo;
+
+    @DatabaseField
+    public String valoracrescimo;
+
     public String codigoaplicacao = "0002";
 
     public Registro(){}
-    public Registro(String usuario, String senha, String imei, String cnpj, String token, String codigousuario, String nome, String status, String codigofilialcontabil, String codigofuncionario, String codigotabelapreco, String codigoempresa, String codigoalmoxarifado, String codigooperacao, String estado, String codigoconfiguracao, Boolean utilizapauta, Boolean utilizafatorpauta) {
+    public Registro(String usuario, String senha, String imei, String cnpj, String token, String codigousuario,
+                    String nome, String status, String codigofilialcontabil, String codigofuncionario,
+                    String codigotabelapreco, String codigoempresa, String codigoalmoxarifado,
+                    String codigooperacao, String estado, String codigoconfiguracao, String valoracrescimo,
+                    Boolean utilizapauta, Boolean utilizafatorpauta, Boolean editaacrescimo) {
         this.usuario = usuario;
         this.senha = senha;
         this.imei = imei;
@@ -85,7 +95,9 @@ public class Registro implements IEntidade {
         this.codigooperacao = codigooperacao;
         this.estado = estado;
         this.codigoconfiguracao = codigoconfiguracao;
+        this.valoracrescimo = valoracrescimo;
         this.utilizapauta = utilizapauta;
         this.utilizafatorpauta = utilizafatorpauta;
+        this.editaacrescimo = editaacrescimo;
     }
 }
