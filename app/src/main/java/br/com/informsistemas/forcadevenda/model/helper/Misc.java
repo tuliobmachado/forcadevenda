@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import br.com.informsistemas.forcadevenda.model.dao.AtualizacaoDAO;
 import br.com.informsistemas.forcadevenda.model.pojo.Atualizacao;
@@ -62,6 +63,42 @@ public class Misc {
         Constants.MOVIMENTO.codigooperacao = Constants.DTO.registro.codigooperacao;
         Constants.MOVIMENTO.estadoParceiro = "";
 
+    }
+
+    public static Locale getLocale(){
+        return new Locale("pt", "BR");
+    }
+
+    public static float parseStringToFloat(String value){
+        if (value.equals("")){
+            return 0;
+        }
+
+        String replaceable = String.format("[%s.\\s]", NumberFormat.getCurrencyInstance(Misc.getLocale()).getCurrency().getSymbol());
+        String cleanString = value.replaceAll(replaceable, "");
+        cleanString = cleanString.replaceAll(",", ".");
+
+        return Float.parseFloat(cleanString);
+    }
+
+    public static BigDecimal parseToBigDecimalCurrency(String value, Locale locale) {
+        String replaceable = String.format("[%s,.\\s]", NumberFormat.getCurrencyInstance(locale).getCurrency().getSymbol());
+
+        String cleanString = value.replaceAll(replaceable, "");
+
+        return new BigDecimal(cleanString).setScale(
+                2, BigDecimal.ROUND_FLOOR).divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR
+        );
+    }
+
+    public static BigDecimal paseToBigDecimalPercent(String value, Locale locale){
+        String replaceable = String.format("[%s,.\\s]", NumberFormat.getPercentInstance(locale).getCurrency().getSymbol());
+
+        String cleanString = value.replaceAll(replaceable, "");
+
+        return new BigDecimal(cleanString).setScale(
+                2, BigDecimal.ROUND_FLOOR).divide(new BigDecimal(1000), BigDecimal.ROUND_FLOOR
+        );
     }
 
     public static <T> String getJsonString(T object, Boolean excludeExpose) {

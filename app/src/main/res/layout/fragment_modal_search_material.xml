@@ -71,7 +71,7 @@
         app:backgroundTint="@android:color/black" />
 
     <LinearLayout
-        android:id="@+id/layout_acrescimo"
+        android:id="@+id/layout_acrescimo" 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
