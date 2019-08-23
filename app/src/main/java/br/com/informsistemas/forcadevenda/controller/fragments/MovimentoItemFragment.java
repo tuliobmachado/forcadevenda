@@ -122,7 +122,7 @@ public class MovimentoItemFragment extends Fragment {
                     if (movimentoItem == null) {
                         movimentoItem = new MovimentoItem(Constants.MOVIMENTO.movimento, Constants.MOVIMENTO.codigotabelapreco,
                                 material.codigomaterial, material.unidadesaida, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0);
                     }
 
                     CalculaMovimentoItem(movimentoItem, material);
@@ -185,6 +185,8 @@ public class MovimentoItemFragment extends Fragment {
                                 Constants.DTO.listMaterialPreco.get(j).quantidade = listMovimentoItem.get(i).quantidade;
                                 Constants.DTO.listMaterialPreco.get(j).valoracrescimo = listMovimentoItem.get(i).valoracrescimoitem;
                                 Constants.DTO.listMaterialPreco.get(j).percacrescimo = listMovimentoItem.get(i).percacrescimoitem;
+                                Constants.DTO.listMaterialPreco.get(j).valordesconto = listMovimentoItem.get(i).valordescontoitem;
+                                Constants.DTO.listMaterialPreco.get(j).percdesconto = listMovimentoItem.get(i).percdescontoitem;
                                 try {
                                     listMaterialSelecionados.add(Misc.cloneMaterial(Constants.DTO.listMaterialPreco.get(j)));
                                 } catch (CloneNotSupportedException e) {
