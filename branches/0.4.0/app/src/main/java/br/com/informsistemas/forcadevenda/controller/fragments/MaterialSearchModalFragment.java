@@ -39,10 +39,15 @@ public class MaterialSearchModalFragment extends DialogFragment {
     private TextView txtPreco;
     private TextView txtAcrescimoValor;
     private TextView txtAcrescimoPorcentagem;
+    private TextView txtDescontoValor;
+    private TextView txtDescontoPorcentagem;
     private EditText edtQuantidade;
     private EditText edtAcrescimoValor;
     private EditText edtAcrescimoPorcentagem;
+    private EditText edtDescontoValor;
+    private EditText edtDescontoPorcentagem;
     private LinearLayout layoutAcrescimo;
+    private LinearLayout layoutDesconto;
     private Material material;
 
     private boolean possuiQuantidade;
@@ -70,14 +75,20 @@ public class MaterialSearchModalFragment extends DialogFragment {
         txtPreco = view.findViewById(R.id.txt_preco_venda);
         txtAcrescimoValor = view.findViewById(R.id.txt_acrescimo_valor);
         txtAcrescimoPorcentagem = view.findViewById(R.id.txt_acrescimo_porcentagem);
+        txtDescontoValor = view.findViewById(R.id.txt_desconto_valor);
+        txtDescontoPorcentagem = view.findViewById(R.id.txt_acrescimo_porcentagem);
         edtQuantidade = view.findViewById(R.id.edt_quantidade);
         edtAcrescimoValor = view.findViewById(R.id.edt_acrescimo_valor);
         edtAcrescimoValor.addTextChangedListener(textWatcherAcrescimo());
         edtAcrescimoPorcentagem = view.findViewById(R.id.edt_acrescimo_porcentagem);
         edtAcrescimoPorcentagem.addTextChangedListener(textWatcherPorcentagem());
+        edtDescontoValor = view.findViewById(R.id.edt_desconto_valor);
+        edtDescontoPorcentagem = view.findViewById(R.id.edt_desconto_porcentagem);
         layoutAcrescimo = view.findViewById(R.id.layout_acrescimo);
+        layoutDesconto = view.findViewById(R.id.layout_desconto);
 
         onExibeAcrescimo();
+        onExibeDesconto();
 
         txtDescricao.setText(material.descricao);
         if (material.quantidade == 0) {
@@ -132,6 +143,8 @@ public class MaterialSearchModalFragment extends DialogFragment {
         bundle.putFloat("quantidade", Float.valueOf(edtQuantidade.getText().toString()));
         bundle.putFloat("valoracrescimo", Misc.parseStringToFloat(edtAcrescimoValor.getText().toString()));
         bundle.putFloat("percacrescimo", Misc.parseStringToFloat(edtAcrescimoPorcentagem.getText().toString()));
+        bundle.putFloat("valordesconto", Misc.parseStringToFloat(edtDescontoValor.getText().toString()));
+        bundle.putFloat("percdesconto", Misc.parseStringToFloat(edtDescontoPorcentagem.getText().toString()));
         intent.putExtras(bundle);
 
         return intent;
@@ -155,6 +168,27 @@ public class MaterialSearchModalFragment extends DialogFragment {
 
         }else{
             layoutAcrescimo.setVisibility(View.GONE);
+        }
+    }
+
+    private void onExibeDesconto(){
+        if (Constants.DTO.registro.editadesconto){
+            layoutDesconto.setVisibility(View.VISIBLE);
+
+            if (Constants.DTO.registro.valordesconto.equals("V")){
+                txtDescontoValor.setVisibility(View.VISIBLE);
+                edtDescontoValor.setVisibility(View.VISIBLE);
+                txtDescontoPorcentagem.setVisibility(View.GONE);
+                edtDescontoPorcentagem.setVisibility(View.GONE);
+            }else if (Constants.DTO.registro.valordesconto.equals("P")){
+                txtDescontoPorcentagem.setVisibility(View.VISIBLE);
+                edtDescontoPorcentagem.setVisibility(View.VISIBLE);
+                txtDescontoValor.setVisibility(View.GONE);
+                edtDescontoValor.setVisibility(View.GONE);
+            }
+
+        }else{
+            layoutDesconto.setVisibility(View.GONE);
         }
     }
 

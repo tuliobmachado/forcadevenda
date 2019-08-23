@@ -148,7 +148,7 @@ public class CalculoClass {
         material.totalliquido = material.precovenda1 + material.valoricmsfecoepst + material.valoricmssubst + material.valoripi;
 
         if (!Constants.DTO.registro.alteracusto){
-            material.totalliquido = material.totalliquido + material.valoracrescimo;
+            material.totalliquido = material.totalliquido + material.valoracrescimo - material.valordesconto;
         }
     }
 
@@ -171,7 +171,7 @@ public class CalculoClass {
         material.custo = precovenda1;
 
         if (Constants.DTO.registro.alteracusto){
-            material.custo = material.custo + material.valoracrescimo;
+            material.custo = material.custo + material.valoracrescimo - material.valordesconto;
         }
 
         CalculaDesconto(tabelaPrecoItem);
