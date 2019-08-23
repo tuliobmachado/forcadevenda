@@ -101,12 +101,20 @@ public class MovimentoItem implements IEntidade {
     @Expose
     public float totalliquido;
 
+    @DatabaseField
+    @Expose
+    public float valoracrescimoitem;
+
+    @DatabaseField
+    @Expose
+    public float percacrescimoitem;
+
     public MovimentoItem(){}
     public MovimentoItem(Movimento movimento, String codigotabelapreco, String codigomaterial,
                          String unidade, float quantidade, float custo, float totalitem, float icms, float baseicms,
                          float valoricms, float icmssubst, float baseicmssubst, float valoricmssubst, float ipi, float valoripi,
                          float margemsubstituicao, float pautafiscal, float icmsfecoep, float valoricmsfecoep, float icmsfecoepst,
-                         float valoricmsfecoepst, float totalliquido) {
+                         float valoricmsfecoepst, float totalliquido, float valoracrescimoitem, float percacrescimoitem) {
         this.movimento = movimento;
         this.codigotabelapreco = codigotabelapreco;
         this.codigomaterial = codigomaterial;
@@ -129,5 +137,7 @@ public class MovimentoItem implements IEntidade {
         this.icmsfecoepst = icmsfecoepst;
         this.valoricmsfecoepst = valoricmsfecoepst;
         this.totalliquido = totalliquido;
+        this.valoracrescimoitem = valoracrescimoitem;
+        this.percacrescimoitem = percacrescimoitem;
     }
 }

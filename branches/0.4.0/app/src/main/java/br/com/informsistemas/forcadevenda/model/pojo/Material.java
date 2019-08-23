@@ -104,12 +104,16 @@ public class Material implements IEntidade, Cloneable  {
 
     public float saldomaterial;
 
+    public float valoracrescimo;
+
+    public float percacrescimo;
+
     public Material(){}
     public Material(String codigomaterial, String codigotabelaprecoitem, String descricao, String unidadesaida, float precovenda1,
-                    String codigoauxiliar, String tipotributacao, Float percaliquota, String saldo,
-                    Date atualizacao, String editacomplemento, Float fator, String codigograde,
-                    Float quantmaximavenda, String origemmercadoria, String cst_csosn,
-                    Float percreducaobase, float percipi) {
+                    String codigoauxiliar, String tipotributacao, float percaliquota, String saldo,
+                    Date atualizacao, String editacomplemento, float fator, String codigograde,
+                    float quantmaximavenda, String origemmercadoria, String cst_csosn,
+                    float percreducaobase, float percipi) {
         this.codigomaterial = codigomaterial;
         this.codigotabelaprecoitem = codigotabelaprecoitem;
         this.descricao = descricao;

@@ -122,7 +122,7 @@ public class MovimentoItemFragment extends Fragment {
                     if (movimentoItem == null) {
                         movimentoItem = new MovimentoItem(Constants.MOVIMENTO.movimento, Constants.MOVIMENTO.codigotabelapreco,
                                 material.codigomaterial, material.unidadesaida, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0, 0, 0, 0, 0);
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
                     }
 
                     CalculaMovimentoItem(movimentoItem, material);
@@ -155,6 +155,8 @@ public class MovimentoItemFragment extends Fragment {
         movItem.valoricmsfecoep = material.valoricmsfecoep;
         movItem.icmsfecoepst = material.icmsfecoepst;
         movItem.valoricmsfecoepst = material.valoricmsfecoepst;
+        movItem.valoracrescimoitem = material.valoracrescimo;
+        movItem.percacrescimoitem = material.percacrescimo;
         movItem.totalliquido = (material.precovenda1 + material.valoricmsfecoepst + material.valoripi + material.valoricmssubst);
     }
 
@@ -181,6 +183,8 @@ public class MovimentoItemFragment extends Fragment {
                         for (int j = 0; j < Constants.DTO.listMaterialPreco.size(); j++) {
                             if (listMovimentoItem.get(i).codigomaterial.equals(Constants.DTO.listMaterialPreco.get(j).codigomaterial)) {
                                 Constants.DTO.listMaterialPreco.get(j).quantidade = listMovimentoItem.get(i).quantidade;
+                                Constants.DTO.listMaterialPreco.get(j).valoracrescimo = listMovimentoItem.get(i).valoracrescimoitem;
+                                Constants.DTO.listMaterialPreco.get(j).percacrescimo = listMovimentoItem.get(i).percacrescimoitem;
                                 try {
                                     listMaterialSelecionados.add(Misc.cloneMaterial(Constants.DTO.listMaterialPreco.get(j)));
                                 } catch (CloneNotSupportedException e) {

@@ -146,6 +146,10 @@ public class CalculoClass {
 
     private void CalculaTotalLiquido(){
         material.totalliquido = material.precovenda1 + material.valoricmsfecoepst + material.valoricmssubst + material.valoripi;
+
+        if (!Constants.DTO.registro.alteracusto){
+            material.totalliquido = material.totalliquido + material.valoracrescimo;
+        }
     }
 
     private void CalculaPrecoVenda() {
@@ -165,6 +169,11 @@ public class CalculoClass {
         }
 
         material.custo = precovenda1;
+
+        if (Constants.DTO.registro.alteracusto){
+            material.custo = material.custo + material.valoracrescimo;
+        }
+
         CalculaDesconto(tabelaPrecoItem);
     }
 

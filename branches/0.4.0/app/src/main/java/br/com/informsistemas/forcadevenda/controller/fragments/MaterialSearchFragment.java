@@ -416,9 +416,15 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
     private void AdicionarMaterialQuantidade(Intent data){
         int position = data.getExtras().getInt("position");
         float qtdNova = data.getExtras().getFloat("quantidade");
+        float valoracrescimo = data.getExtras().getFloat("valoracrescimo");
+        float percacrescimo = data.getExtras().getFloat("percacrescimo");
         float qtdAtual = listMaterial.get(position).quantidade;
         float vezes = 0;
         boolean excluir = false;
+
+        listMaterial.get(position).valoracrescimo = valoracrescimo;
+        listMaterial.get(position).percacrescimo = percacrescimo;
+
 
         if (qtdNova > qtdAtual){
             vezes = qtdNova - qtdAtual;
