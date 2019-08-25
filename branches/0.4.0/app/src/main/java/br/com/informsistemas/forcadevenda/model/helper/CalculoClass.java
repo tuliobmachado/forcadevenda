@@ -24,10 +24,6 @@ public class CalculoClass {
         this.material = m;
     }
 
-    public void setPrecoVenda() {
-        CalculaPrecoVenda();
-    }
-
     public void setTributos() {
         CalculaTributos();
     }
@@ -35,10 +31,6 @@ public class CalculoClass {
     public void setTotal() {
         CalculaPrecoVenda();
         CalculaTributos();
-    }
-
-    public float getPrecoVenda() {
-        return material.precovenda1;
     }
 
     public float getTotalLiquido(){
@@ -60,7 +52,7 @@ public class CalculoClass {
         material.ipi = material.percipi;
 
         if (material.ipi > 0) {
-            material.valoripi = Misc.fRound(true, material.precovenda1 * (material.percipi / 100), 2);
+            material.valoripi = Misc.fRound(true, material.precocalculado * (material.percipi / 100), 2);
         }
 
         if (material.valoripi < 0) {
@@ -104,14 +96,14 @@ public class CalculoClass {
         }
 
         if (material.icms > 0) {
-            material.valoricms = Misc.fRound(true,material.precovenda1 * (material.icms / 100), 2);
+            material.valoricms = Misc.fRound(true,material.precocalculado * (material.icms / 100), 2);
         }
 
         if (material.valoricms < 0){
             material.valoricms = 0;
         }
 
-        material.baseicms = (material.precovenda1);
+        material.baseicms = (material.precocalculado);
 
         if ((Constants.DTO.registro.utilizapauta) && (material.pautafiscal > 0)) {
 
@@ -145,11 +137,7 @@ public class CalculoClass {
     }
 
     private void CalculaTotalLiquido(){
-        material.totalliquido = material.precovenda1 + material.valoricmsfecoepst + material.valoricmssubst + material.valoripi;
-
-        if (!Constants.DTO.registro.alteracusto){
-            material.totalliquido = material.totalliquido + material.valoracrescimo - material.valordesconto;
-        }
+        material.totalliquido = material.precocalculado + material.valoricmsfecoepst + material.valoricmssubst + material.valoripi;
     }
 
     private void CalculaPrecoVenda() {
@@ -172,6 +160,9 @@ public class CalculoClass {
 
         if (Constants.DTO.registro.alteracusto){
             material.custo = material.custo + material.valoracrescimo - material.valordesconto;
+            material.precocalculado = material.custo;
+        }else{
+            material.precocalculado = material.custo;
         }
 
         CalculaDesconto(tabelaPrecoItem);
@@ -192,10 +183,10 @@ public class CalculoClass {
             percdesconto = Constants.MOVIMENTO.percdescontopadrao;
         }
 
-        valorDesconto = (material.precovenda1 * (percdesconto / 100));
-        value = material.precovenda1 - valorDesconto;
+        valorDesconto = (material.precocalculado * (percdesconto / 100));
+        value = material.precocalculado - valorDesconto;
 
-        material.precovenda1 = value;
+        material.precocalculado = value;
     }
 
     public void recalcularMovimento(Movimento mov, List<MovimentoItem> listMovItem) {
@@ -203,16 +194,26 @@ public class CalculoClass {
         float total_ipi = 0;
         float total_icmssubst = 0;
         float total_material = 0;
+        float total_acrescimo = 0;
+        float total_desconto = 0;
 
         for (int i = 0; i < listMovItem.size(); i++) {
             total_fecoepst = total_fecoepst + listMovItem.get(i).valoricmsfecoepst;
             total_ipi = total_ipi + listMovItem.get(i).valoripi;
             total_icmssubst = total_icmssubst + listMovItem.get(i).valoricmssubst;
+            total_acrescimo = total_acrescimo + listMovItem.get(i).valoracrescimoitem;
+            total_desconto = total_desconto + listMovItem.get(i).valordescontoitem;
 
             total_material = total_material + (listMovItem.get(i).custo * listMovItem.get(i).quantidade);
         }
 
         mov.totalliquido = (total_material + total_fecoepst + total_ipi + total_icmssubst);
+
+        if (!Constants.DTO.registro.alteracusto){
+            mov.totalliquido = mov.totalliquido + total_acrescimo - total_desconto;
+        }
+
+
 
         MovimentoDAO.getInstance(context).createOrUpdate(mov);
     }
