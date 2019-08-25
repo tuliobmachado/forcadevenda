@@ -18,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import org.w3c.dom.Text;
+
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -67,7 +69,6 @@ public class MaterialSearchModalFragment extends DialogFragment {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View view = inflater.inflate(R.layout.fragment_modal_search_material, null);
         position = getArguments().getInt("position");
-
         material = (Material) getArguments().getSerializable("material");
 
         txtDescricao = view.findViewById(R.id.txt_descricao);
@@ -76,13 +77,14 @@ public class MaterialSearchModalFragment extends DialogFragment {
         txtAcrescimoValor = view.findViewById(R.id.txt_acrescimo_valor);
         txtAcrescimoPorcentagem = view.findViewById(R.id.txt_acrescimo_porcentagem);
         txtDescontoValor = view.findViewById(R.id.txt_desconto_valor);
-        txtDescontoPorcentagem = view.findViewById(R.id.txt_acrescimo_porcentagem);
+        txtDescontoPorcentagem = view.findViewById(R.id.txt_desconto_porcentagem);
         edtQuantidade = view.findViewById(R.id.edt_quantidade);
         edtAcrescimoValor = view.findViewById(R.id.edt_acrescimo_valor);
         edtAcrescimoValor.addTextChangedListener(textWatcherAcrescimo());
         edtAcrescimoPorcentagem = view.findViewById(R.id.edt_acrescimo_porcentagem);
         edtAcrescimoPorcentagem.addTextChangedListener(textWatcherPorcentagem());
         edtDescontoValor = view.findViewById(R.id.edt_desconto_valor);
+        edtDescontoValor.addTextChangedListener(textWatcherDesconto());
         edtDescontoPorcentagem = view.findViewById(R.id.edt_desconto_porcentagem);
         layoutAcrescimo = view.findViewById(R.id.layout_acrescimo);
         layoutDesconto = view.findViewById(R.id.layout_desconto);
@@ -100,6 +102,8 @@ public class MaterialSearchModalFragment extends DialogFragment {
         }
         txtSaldo.setText(String.format("%.2f", material.saldomaterial) + " | " + material.unidadesaida);
         txtPreco.setText("R$ "+ Misc.formatMoeda(material.totalliquido));
+        edtAcrescimoValor.setText(String.valueOf(material.valoracrescimo*10));
+        edtDescontoValor.setText(String.valueOf(material.valordesconto*10));
 
         builder.setView(view);
         builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -117,7 +121,9 @@ public class MaterialSearchModalFragment extends DialogFragment {
                 }
 
                 if ((!possuiQuantidade && Float.parseFloat(edtQuantidade.getText().toString()) == 0) ||
-                    (material.quantidade == Float.parseFloat(edtQuantidade.getText().toString()))){
+                    (material.quantidade == Float.parseFloat(edtQuantidade.getText().toString()) &&
+                     material.valoracrescimo == Misc.parseStringToFloat(edtAcrescimoValor.getText().toString()) &&
+                     material.valordesconto == Misc.parseStringToFloat(edtDescontoValor.getText().toString()))){
                     dialog.dismiss();
                 }else {
                     getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getQuantidade());
@@ -169,6 +175,9 @@ public class MaterialSearchModalFragment extends DialogFragment {
         }else{
             layoutAcrescimo.setVisibility(View.GONE);
         }
+
+        txtAcrescimoPorcentagem.setVisibility(View.GONE);
+        edtAcrescimoPorcentagem.setVisibility(View.GONE);
     }
 
     private void onExibeDesconto(){
@@ -190,6 +199,39 @@ public class MaterialSearchModalFragment extends DialogFragment {
         }else{
             layoutDesconto.setVisibility(View.GONE);
         }
+
+        txtDescontoPorcentagem.setVisibility(View.GONE);
+        edtDescontoPorcentagem.setVisibility(View.GONE);
+    }
+
+    private TextWatcher textWatcherDesconto(){
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Locale locale = new Locale("pt", "BR");
+
+                float totalProduto = material.totalliquido * getQuantidadeEdit();
+
+                edtDescontoValor.removeTextChangedListener(this);
+                BigDecimal parsed = Misc.parseToBigDecimalCurrency(s.toString(), locale);
+                float percentual = Misc.fRound (false, (parsed.floatValue() * 100) / (totalProduto), 3);
+                String formatted = NumberFormat.getCurrencyInstance(locale).format(parsed);
+                formatted = formatted.replace("R$", "");
+                edtDescontoValor.setText(formatted);
+                edtDescontoValor.setSelection(formatted.length());
+                edtDescontoValor.addTextChangedListener(this);
+            }
+        };
     }
 
     private TextWatcher textWatcherAcrescimo(){

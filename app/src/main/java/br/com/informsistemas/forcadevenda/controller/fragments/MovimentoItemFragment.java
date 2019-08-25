@@ -133,7 +133,7 @@ public class MovimentoItemFragment extends Fragment {
     }
 
     private void CalculaMovimentoItem(MovimentoItem movItem, Material material) {
-        material.precovenda1 = (material.custo * material.quantidade);
+        material.precocalculado = (material.custo * material.quantidade);
         CalculoClass calculoClass = new CalculoClass(getActivity(), material);
         calculoClass.setTributos();
 
@@ -157,7 +157,13 @@ public class MovimentoItemFragment extends Fragment {
         movItem.valoricmsfecoepst = material.valoricmsfecoepst;
         movItem.valoracrescimoitem = material.valoracrescimo;
         movItem.percacrescimoitem = material.percacrescimo;
-        movItem.totalliquido = (material.precovenda1 + material.valoricmsfecoepst + material.valoripi + material.valoricmssubst);
+        movItem.valordescontoitem = material.valordesconto;
+        movItem.percdescontoitem = material.percdesconto;
+        movItem.totalliquido = material.totalliquido;
+
+        if (!Constants.DTO.registro.alteracusto){
+            movItem.totalliquido = movItem.totalliquido + material.valoracrescimo - material.valordesconto;
+        }
     }
 
     private MovimentoItem checaMaterialMovimento(String codigomaterial) {
@@ -182,11 +188,18 @@ public class MovimentoItemFragment extends Fragment {
                     for (int i = 0; i < listMovimentoItem.size(); i++) {
                         for (int j = 0; j < Constants.DTO.listMaterialPreco.size(); j++) {
                             if (listMovimentoItem.get(i).codigomaterial.equals(Constants.DTO.listMaterialPreco.get(j).codigomaterial)) {
-                                Constants.DTO.listMaterialPreco.get(j).quantidade = listMovimentoItem.get(i).quantidade;
+
                                 Constants.DTO.listMaterialPreco.get(j).valoracrescimo = listMovimentoItem.get(i).valoracrescimoitem;
                                 Constants.DTO.listMaterialPreco.get(j).percacrescimo = listMovimentoItem.get(i).percacrescimoitem;
                                 Constants.DTO.listMaterialPreco.get(j).valordesconto = listMovimentoItem.get(i).valordescontoitem;
                                 Constants.DTO.listMaterialPreco.get(j).percdesconto = listMovimentoItem.get(i).percdescontoitem;
+                                Constants.DTO.listMaterialPreco.get(j).valoracrescimoant = listMovimentoItem.get(i).valoracrescimoitem;
+                                Constants.DTO.listMaterialPreco.get(j).valordescontoant = listMovimentoItem.get(i).valordescontoitem;
+
+                                CalculoClass calculoClass = new CalculoClass(getActivity(), Constants.DTO.listMaterialPreco.get(j));
+                                calculoClass.setTotal();
+
+                                Constants.DTO.listMaterialPreco.get(j).quantidade = listMovimentoItem.get(i).quantidade;
                                 try {
                                     listMaterialSelecionados.add(Misc.cloneMaterial(Constants.DTO.listMaterialPreco.get(j)));
                                 } catch (CloneNotSupportedException e) {

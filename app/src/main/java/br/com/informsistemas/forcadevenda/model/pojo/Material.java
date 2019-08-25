@@ -112,6 +112,12 @@ public class Material implements IEntidade, Cloneable  {
 
     public float percdesconto;
 
+    public float valoracrescimoant;
+
+    public float valordescontoant;
+
+    public float precocalculado;
+
     public Material(){}
     public Material(String codigomaterial, String codigotabelaprecoitem, String descricao, String unidadesaida, float precovenda1,
                     String codigoauxiliar, String tipotributacao, float percaliquota, String saldo,
