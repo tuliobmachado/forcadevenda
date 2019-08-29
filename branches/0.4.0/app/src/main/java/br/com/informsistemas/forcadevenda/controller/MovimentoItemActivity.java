@@ -68,7 +68,6 @@ public class MovimentoItemActivity extends AppCompatActivity {
             }
         });
 
-        montaListaMaterialPreco();
         onShowMovimentoItem();
 
         if (Constants.MOVIMENTO.movimento.id == null){
@@ -144,22 +143,5 @@ public class MovimentoItemActivity extends AppCompatActivity {
         bundle.putSerializable("listMaterialSelecionados", (Serializable) movimentoItemFragment.getListMaterialSelecionados());
 
         return bundle;
-    }
-
-    private void montaListaMaterialPreco(){
-        Constants.DTO.listMaterialPreco = MaterialDAO.getInstance(this).getListMaterial();
-
-        for (int i = 0; i < Constants.DTO.listMaterialPreco.size(); i++) {
-
-            CalculoClass calculoClass = new CalculoClass(this, Constants.DTO.listMaterialPreco.get(i));
-            calculoClass.setTotal();
-
-            MaterialSaldo materialSaldo = MaterialSaldoDAO.getInstance(this).findByIdAuxiliar("codigomaterial",
-                    Constants.DTO.listMaterialPreco.get(i).codigomaterial);
-
-            Constants.DTO.listMaterialPreco.get(i).saldomaterial =
-                    (materialSaldo.saldo / Constants.DTO.listMaterialPreco.get(i).fator);
-
-        }
     }
 }

@@ -17,6 +17,7 @@ import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.controller.fragments.ParceiroFragment;
 import br.com.informsistemas.forcadevenda.controller.fragments.ParceiroSearchFragment;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
+import br.com.informsistemas.forcadevenda.model.tasks.MontagemPrecoTask;
 import br.com.informsistemas.forcadevenda.model.utils.IOnBackPressed;
 
 public class ParceiroActivity extends AppCompatActivity {
@@ -39,8 +40,8 @@ public class ParceiroActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (Constants.MOVIMENTO.movimento.codigoparceiro != null) {
-                    Intent intent = new Intent(ParceiroActivity.this, MovimentoItemActivity.class);
-                    startActivity(intent);
+                    MontagemPrecoTask montagemPrecoTask = new MontagemPrecoTask(ParceiroActivity.this);
+                    montagemPrecoTask.execute();
                 }else{
                     Toast.makeText(ParceiroActivity.this, "Necessário informar um parceiro", Toast.LENGTH_LONG).show();
                 }
@@ -116,5 +117,10 @@ public class ParceiroActivity extends AppCompatActivity {
             getSupportFragmentManager().popBackStack();
 
         }
+    }
+
+    public void onExibeMovimentoItem(){
+        Intent intent = new Intent(ParceiroActivity.this, MovimentoItemActivity.class);
+        startActivity(intent);
     }
 }
