@@ -53,7 +53,7 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
     @Override
     protected List<ResponsePedido> doInBackground(String... strings) {
         RequestPedido reqPedido = new RequestPedido(Constants.APP.VERSAO, Constants.DTO.registro.cnpj,
-                Constants.DTO.registro.codigoconfiguracao, Constants.DTO.registro.codigofuncionario,
+                Constants.DTO.registro.codigoconfiguracao, Constants.DTO.registro.codigousuario, Constants.DTO.registro.codigofuncionario,
                 Constants.DTO.registro.codigoalmoxarifado, new Date(), Constants.PEDIDO.movimento, Constants.PEDIDO.movimentoItems,
                 Constants.PEDIDO.movimentoParcelas);
 
@@ -84,14 +84,14 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
             }
         } catch (IOException ex) {
             showToast(ex.getMessage());
-            Log.i("Sincronia", ex.getMessage());
+//            Log.i("Sincronia", ex.getMessage());
             Constants.PEDIDO.PEDIDOATUAL = 0;
             Constants.PEDIDO.listPedidos = null;
             Constants.PEDIDO.listPedidos = new ArrayList<>();
             Constants.MOVIMENTO.enviarPedido = false;
             Movimento mov = getMovimentoAtual(reqPedido.movimento.id);
             atualizaStatusMovimento(mov, "P");
-            dialog.dismiss();
+            DialogClass.dialogDismiss(dialog);
         }
 
         return null;
@@ -103,28 +103,34 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
             fragment.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Movimento mov = getMovimentoAtual(requestPedido.get(0).id);
-                    String status = "";
 
-                    if (requestPedido.get(0).status.equals("G")) {
-                        status = "T";
-                    }else{
-                        status = "P";
-                    }
+                    try {
+                        Movimento mov = getMovimentoAtual(requestPedido.get(0).id);
+                        String status = "";
 
-                    atualizaStatusMovimento(mov, status);
+                        if (requestPedido.get(0).status.equals("G")) {
+                            status = "T";
+                        } else {
+                            status = "P";
+                        }
 
-                    if (requestPedido.get(0).materialsaldo != null) {
-                        atualizaSaldo(requestPedido.get(0).materialsaldo);
-                    }
+                        atualizaStatusMovimento(mov, status);
 
-                    DialogClass.dialogDismiss(dialog);
+                        if (requestPedido.get(0).materialsaldo != null) {
+                            atualizaSaldo(requestPedido.get(0).materialsaldo);
+                        }
 
-                    if (Constants.PEDIDO.PEDIDOATUAL > Constants.PEDIDO.listPedidos.size()) {
-                        ((MovimentoFragment) fragment).getSincronia(false);
-                        ((MovimentoFragment) fragment).atualizaLista();
-                    } else {
-                        ((MovimentoFragment) fragment).verificaPedido(Constants.PEDIDO.PEDIDOATUAL);
+                        DialogClass.dialogDismiss(dialog);
+
+                        if (Constants.PEDIDO.PEDIDOATUAL > Constants.PEDIDO.listPedidos.size()) {
+                            ((MovimentoFragment) fragment).getSincronia(false);
+                            ((MovimentoFragment) fragment).atualizaLista();
+                        } else {
+                            ((MovimentoFragment) fragment).verificaPedido(Constants.PEDIDO.PEDIDOATUAL);
+                        }
+                    }catch (Exception ex) {
+                        showToast(ex.getMessage());
+                        DialogClass.dialogDismiss(dialog);
                     }
                 }
             });
