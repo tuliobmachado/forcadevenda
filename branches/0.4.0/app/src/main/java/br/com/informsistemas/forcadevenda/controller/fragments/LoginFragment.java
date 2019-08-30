@@ -82,7 +82,7 @@ public class LoginFragment extends Fragment {
         cnpj = cnpj.replaceAll("[^0-9]", "");
 
         registro = new Registro(edtUsuario.getText().toString(), edtSenha.getText().toString(),
-                imei, cnpj, loginActivity.getToken(), "", "", "", "", "", "", "", "", "", "", "", "", "", false, false, false, false, false);
+                imei, cnpj, loginActivity.getToken(), "", "", "", "", "", "", "", "", "", "", "", "", "", 0, false, false, false, false, false, false);
 
         getRegistro();
     }
@@ -167,9 +167,10 @@ public class LoginFragment extends Fragment {
                             restResponse.data.get(0).codigoconfiguracao, restResponse.data.get(0).codigousuario,
                             restResponse.data.get(0).nome, restResponse.data.get(0).status,
                             restResponse.data.get(0).valoracrescimo, restResponse.data.get(0).valordesconto,
+                            restResponse.data.get(0).maximodesconto,
                             restResponse.data.get(0).utilizapauta, restResponse.data.get(0).utilizafatorpauta,
                             restResponse.data.get(0).editaacrescimo, restResponse.data.get(0).editadesconto,
-                            restResponse.data.get(0).alteracusto));
+                            restResponse.data.get(0).alteracusto, restResponse.data.get(0).alterapreco));
                 }else{
                     onLoginFailed(restResponse.meta.message);
                 }
@@ -190,8 +191,8 @@ public class LoginFragment extends Fragment {
     public Intent getIntent(String codigoempresa, String codigofilialcontabil, String codigoalmoxarifado, String codigooperacao,
                             String codigofuncionario, String codigotabelapreco, String estado, String codigoconfiguracao,
                             String codigousuario, String nome, String status, String valoracrescimo, String valordesconto,
-                            Boolean utilizapauta, Boolean utilizapautafiscal, Boolean editaacrescimo, Boolean editadesconto,
-                            Boolean alteracusto){
+                            float maximodesconto, Boolean utilizapauta, Boolean utilizapautafiscal, Boolean editaacrescimo,
+                            Boolean editadesconto, Boolean alteracusto, Boolean alterapreco){
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         registro.codigofuncionario = codigofuncionario;
@@ -212,6 +213,8 @@ public class LoginFragment extends Fragment {
         registro.valordesconto = valordesconto;
         registro.editadesconto = editadesconto;
         registro.alteracusto = alteracusto;
+        registro.maximodesconto = maximodesconto;
+        registro.alterapreco = alterapreco;
 
         bundle.putSerializable("Registro", registro);
         intent.putExtras(bundle);
