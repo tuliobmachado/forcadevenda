@@ -83,14 +83,22 @@ public class Misc {
 
     public static String parseFloatToWatcher(float value){
         float result = 0;
+        float valor = 0;
+        String reverseValue = new StringBuilder(String.valueOf(value)).reverse().toString();
+        int posicao = reverseValue.indexOf(".");
 
-        if ((value - Math.round(value)) == 0){
+
+        if (((value - Math.round(value)) == 0)){
             result = value * 10;
         }else{
             if ((String.valueOf(value).length() <= 3) && (value > 0)){
                 result = value * 10;
             }else {
-                result = value;
+                if (posicao == 1){
+                    result = value * 10;
+                }else {
+                    result = value;
+                }
             }
         }
 

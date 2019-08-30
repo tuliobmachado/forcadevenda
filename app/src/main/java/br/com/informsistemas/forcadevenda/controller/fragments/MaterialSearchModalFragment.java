@@ -242,7 +242,8 @@ public class MaterialSearchModalFragment extends DialogFragment {
                             if (Constants.DTO.registro.alteracusto) {
                                 if (custo < material.custooriginal) {
                                     desconto = (material.custooriginal - custo) * 1;
-                                    edtDescontoValor.setText(String.valueOf(desconto * 10));
+                                    desconto = Misc.fRound(false, desconto, 2);
+                                    edtDescontoValor.setText(Misc.parseFloatToWatcher(desconto));
                                     percdesconto = (desconto * 100) / material.custooriginal;
                                     percdesconto = Misc.fRound(false, percdesconto, 2);
                                     edtDescontoPorcentagem.setText(Misc.parseFloatToWatcher(percdesconto));
@@ -251,7 +252,8 @@ public class MaterialSearchModalFragment extends DialogFragment {
                                     edtAcrescimoPorcentagem.setText(String.valueOf(0));
                                 } else if (custo > material.custooriginal) {
                                     acrescimo = (custo - material.custooriginal) * 1;
-                                    edtAcrescimoValor.setText(String.valueOf(acrescimo * 10));
+                                    acrescimo = Misc.fRound(false, acrescimo, 2);
+                                    edtAcrescimoValor.setText(Misc.parseFloatToWatcher(acrescimo));
                                     percacrescimo = (acrescimo * 100) / material.custooriginal;
                                     percacrescimo = Misc.fRound(false, percacrescimo, 2);
                                     edtAcrescimoPorcentagem.setText(Misc.parseFloatToWatcher(percacrescimo));
