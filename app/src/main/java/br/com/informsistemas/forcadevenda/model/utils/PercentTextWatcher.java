@@ -40,19 +40,20 @@ public class PercentTextWatcher implements TextWatcher {
         editText.removeTextChangedListener(this);
 
         BigDecimal parsed = parseToBigDecimal(editable.toString(), locale);
-        String formatted = NumberFormat.getPercentInstance(locale).format(parsed);
-        formatted = formatted.replace("%", "");
+        String formatted = NumberFormat.getCurrencyInstance(locale).format(parsed);
+        formatted = formatted.replaceAll("[%s.R$\\s]", "");
         editText.setText(formatted);
         editText.setSelection(formatted.length());
         editText.addTextChangedListener(this);
     }
 
     private BigDecimal parseToBigDecimal(String value, Locale locale) {
-        String replaceable = String.format("[%s,.\\s]", NumberFormat.getPercentInstance(locale).getCurrency().getSymbol());
+        String replaceable = String.format("[%s,.\\s]", NumberFormat.getCurrencyInstance(locale).getCurrency().getSymbol());
 
         String cleanString = value.replaceAll(replaceable, "");
 
         return new BigDecimal(cleanString).setScale(
-                2, BigDecimal.ROUND_FLOOR);
+                2, BigDecimal.ROUND_FLOOR).divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR
+        );
     }
 }

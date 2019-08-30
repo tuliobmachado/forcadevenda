@@ -44,6 +44,8 @@ public class ResumoActivity extends AppCompatActivity {
     private float total_icmssubst;
     private float total_fecoepst;
     private float total_material;
+    private float total_acrescimo;
+    private float total_desconto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,6 +165,8 @@ public class ResumoActivity extends AppCompatActivity {
             total_fecoepst = total_fecoepst + Constants.PEDIDO.movimentoItems.get(i).valoricmsfecoepst;
             total_ipi = total_ipi + Constants.PEDIDO.movimentoItems.get(i).valoripi;
             total_icmssubst = total_icmssubst + Constants.PEDIDO.movimentoItems.get(i).valoricmssubst;
+            total_acrescimo = total_acrescimo + Constants.PEDIDO.movimentoItems.get(i).valoracrescimoitem;
+            total_desconto = total_desconto + Constants.PEDIDO.movimentoItems.get(i).valordescontoitem;
 
             total_material = total_material + (Constants.PEDIDO.movimentoItems.get(i).custo * Constants.PEDIDO.movimentoItems.get(i).quantidade);
         }
@@ -181,10 +185,13 @@ public class ResumoActivity extends AppCompatActivity {
         TextView txttitleTotalIPI = findViewById(R.id.txt_resumo_title_total_ipi);
         TextView txtTitleTotalICMSSubst = findViewById(R.id.txt_resumo_title_total_icmssubst);
         TextView txtTitleTotalFecoepST = findViewById(R.id.txt_resumo_title_total_fecoepst);
+        TextView txtTitleTotalDesconto = findViewById(R.id.txt_resumo_title_total_desconto);
+        TextView txtTitleTotalAcrescimo = findViewById(R.id.txt_resumo_title_total_acrescimo);
 
         txtTitleDescricao.setText("Total Material");
         txtTitleTotal.setText("R$ " + Misc.formatMoeda(total_material));
-
+        txtTitleTotalDesconto.setText("R$ " + Misc.formatMoeda(total_desconto));
+        txtTitleTotalAcrescimo.setText("R$ " + Misc.formatMoeda(total_acrescimo));
         txttitleTotalIPI.setText("R$ " + Misc.formatMoeda(total_ipi));
         txtTitleTotalICMSSubst.setText("R$ " + Misc.formatMoeda(total_icmssubst));
         txtTitleTotalFecoepST.setText("R$ " + Misc.formatMoeda(total_fecoepst));

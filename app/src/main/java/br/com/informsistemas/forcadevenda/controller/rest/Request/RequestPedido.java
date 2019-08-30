@@ -22,6 +22,9 @@ public class RequestPedido implements Serializable {
     public String codigoconfiguracao;
 
     @Expose
+    public String codigousuario;
+
+    @Expose
     public String codigofuncionario;
 
     @Expose
@@ -39,9 +42,10 @@ public class RequestPedido implements Serializable {
     @Expose
     public List<MovimentoParcela> movimentoparcela;
 
-    public RequestPedido(String versao, String cnpj, String codigoconfiguracao, String codigofuncionario, String codigoalmoxarifado, Date materialatualizacao, Movimento movimento, List<MovimentoItem> movimentoitem, List<MovimentoParcela> movimentoparcela) {
+    public RequestPedido(String versao, String cnpj, String codigoconfiguracao, String codigousuario, String codigofuncionario, String codigoalmoxarifado, Date materialatualizacao, Movimento movimento, List<MovimentoItem> movimentoitem, List<MovimentoParcela> movimentoparcela) {
         this.versao = versao;
         this.cnpj = cnpj;
+        this.codigousuario = codigousuario;
         this.codigoconfiguracao = codigoconfiguracao;
         this.codigofuncionario = codigofuncionario;
         this.codigoalmoxarifado = codigoalmoxarifado;

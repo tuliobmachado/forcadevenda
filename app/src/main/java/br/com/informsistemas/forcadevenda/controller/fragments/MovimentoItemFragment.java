@@ -122,7 +122,7 @@ public class MovimentoItemFragment extends Fragment {
                     if (movimentoItem == null) {
                         movimentoItem = new MovimentoItem(Constants.MOVIMENTO.movimento, Constants.MOVIMENTO.codigotabelapreco,
                                 material.codigomaterial, material.unidadesaida, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0);
+                                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0, 0);
                     }
 
                     CalculaMovimentoItem(movimentoItem, material);
@@ -133,7 +133,7 @@ public class MovimentoItemFragment extends Fragment {
     }
 
     private void CalculaMovimentoItem(MovimentoItem movItem, Material material) {
-        material.precocalculado = (material.custo * material.quantidade);
+        material.precocalculado = (material.precocalculado * material.quantidade);
         CalculoClass calculoClass = new CalculoClass(getActivity(), material);
         calculoClass.setTributos();
 
@@ -155,15 +155,12 @@ public class MovimentoItemFragment extends Fragment {
         movItem.valoricmsfecoep = material.valoricmsfecoep;
         movItem.icmsfecoepst = material.icmsfecoepst;
         movItem.valoricmsfecoepst = material.valoricmsfecoepst;
-        movItem.valoracrescimoitem = material.valoracrescimo;
+        movItem.valoracrescimoitem = (material.valoracrescimo * material.quantidade);
         movItem.percacrescimoitem = material.percacrescimo;
-        movItem.valordescontoitem = material.valordesconto;
+        movItem.valordescontoitem = (material.valordesconto * material.quantidade);
         movItem.percdescontoitem = material.percdesconto;
         movItem.totalliquido = material.totalliquido;
-
-        if (!Constants.DTO.registro.alteracusto){
-            movItem.totalliquido = movItem.totalliquido + material.valoracrescimo - material.valordesconto;
-        }
+        movItem.custooriginal = material.custooriginal;
     }
 
     private MovimentoItem checaMaterialMovimento(String codigomaterial) {
@@ -189,12 +186,25 @@ public class MovimentoItemFragment extends Fragment {
                         for (int j = 0; j < Constants.DTO.listMaterialPreco.size(); j++) {
                             if (listMovimentoItem.get(i).codigomaterial.equals(Constants.DTO.listMaterialPreco.get(j).codigomaterial)) {
 
-                                Constants.DTO.listMaterialPreco.get(j).valoracrescimo = listMovimentoItem.get(i).valoracrescimoitem;
                                 Constants.DTO.listMaterialPreco.get(j).percacrescimo = listMovimentoItem.get(i).percacrescimoitem;
-                                Constants.DTO.listMaterialPreco.get(j).valordesconto = listMovimentoItem.get(i).valordescontoitem;
                                 Constants.DTO.listMaterialPreco.get(j).percdesconto = listMovimentoItem.get(i).percdescontoitem;
+
+                                if (listMovimentoItem.get(i).valoracrescimoitem > 0){
+                                    Constants.DTO.listMaterialPreco.get(j).valoracrescimo = (listMovimentoItem.get(i).valoracrescimoitem/ listMovimentoItem.get(i).quantidade);
+                                }
+
+                                if (listMovimentoItem.get(i).valordescontoitem > 0){
+                                    Constants.DTO.listMaterialPreco.get(j).valordesconto = (listMovimentoItem.get(i).valordescontoitem / listMovimentoItem.get(i).quantidade);
+                                }
+
                                 Constants.DTO.listMaterialPreco.get(j).valoracrescimoant = listMovimentoItem.get(i).valoracrescimoitem;
+                                Constants.DTO.listMaterialPreco.get(j).percacrescimoant = listMovimentoItem.get(i).percacrescimoitem;
                                 Constants.DTO.listMaterialPreco.get(j).valordescontoant = listMovimentoItem.get(i).valordescontoitem;
+                                Constants.DTO.listMaterialPreco.get(j).percdescontoant = listMovimentoItem.get(i).percdescontoitem;
+
+                                if (listMovimentoItem.get(i).custo != Constants.DTO.listMaterialPreco.get(j).custooriginal){
+                                    Constants.DTO.listMaterialPreco.get(j).custo = listMovimentoItem.get(i).custo;
+                                }
 
                                 CalculoClass calculoClass = new CalculoClass(getActivity(), Constants.DTO.listMaterialPreco.get(j));
                                 calculoClass.setTotal();
@@ -288,8 +298,7 @@ public class MovimentoItemFragment extends Fragment {
     }
 
     private void deleteItem(int position) {
-        Constants.MOVIMENTO.movimento.totalliquido = Constants.MOVIMENTO.movimento.totalliquido - (listMovimentoItem.get(position).totalitem +
-                listMovimentoItem.get(position).valoripi + listMovimentoItem.get(position).valoricmsfecoepst + listMovimentoItem.get(position).valoricmssubst);
+        Constants.MOVIMENTO.movimento.totalliquido = Constants.MOVIMENTO.movimento.totalliquido - (listMovimentoItem.get(position).totalliquido);
         txtTotalItem.setText("R$ " + Misc.formatMoeda(Constants.MOVIMENTO.movimento.totalliquido));
         removeQuantidadeLista(listMovimentoItem.get(position));
         MovimentoItemDAO.getInstance(getActivity()).delete(listMovimentoItem.get(position));

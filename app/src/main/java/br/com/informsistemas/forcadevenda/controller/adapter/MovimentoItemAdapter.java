@@ -47,12 +47,21 @@ public class MovimentoItemAdapter extends RecyclerView.Adapter<MovimentoItemAdap
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int position) {
         Boolean selecionado = false;
         float acrescimo = 0;
+        float desconto = 0;
 
-        acrescimo = fList.get(position).valoricmsfecoepst + fList.get(position).valoripi + fList.get(position).valoricmssubst;
+        desconto = fList.get(position).valordescontoitem;
+        acrescimo = fList.get(position).valoricmsfecoepst + fList.get(position).valoripi + fList.get(position).valoricmssubst + fList.get(position).valoracrescimoitem;
+
+        if (desconto > 0){
+            myViewHolder.txtValorDesconto.setText(Misc.formatMoeda(desconto));
+            myViewHolder.txtTotalDesconto.setText(Misc.formatMoeda(fList.get(position).totalitem - desconto));
+        }else{
+            myViewHolder.layoutDesconto.setVisibility(View.GONE);
+        }
 
         if (acrescimo > 0){
             myViewHolder.txtTotalAcrescimo.setText(Misc.formatMoeda(acrescimo));
-            myViewHolder.txtTotalLiquido.setText(Misc.formatMoeda(fList.get(position).totalitem + acrescimo));
+            myViewHolder.txtTotalLiquido.setText(Misc.formatMoeda(fList.get(position).totalitem + acrescimo - desconto));
         }else{
             myViewHolder.layoutAcrescimo.setVisibility(View.GONE);
         }
@@ -98,8 +107,11 @@ public class MovimentoItemAdapter extends RecyclerView.Adapter<MovimentoItemAdap
         public TextView txtTotalItem;
         public TextView txtTotalAcrescimo;
         public TextView txtTotalLiquido;
+        public TextView txtTotalDesconto;
+        public TextView txtValorDesconto;
         public CardView cardView;
         public LinearLayout layoutAcrescimo;
+        public LinearLayout layoutDesconto;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -110,8 +122,11 @@ public class MovimentoItemAdapter extends RecyclerView.Adapter<MovimentoItemAdap
             txtTotalItem = itemView.findViewById(R.id.txt_total_item);
             txtTotalAcrescimo = itemView.findViewById(R.id.txt_total_acrescimo);
             txtTotalLiquido = itemView.findViewById(R.id.txt_total_liquido);
+            txtTotalDesconto = itemView.findViewById(R.id.txt_total_desconto);
+            txtValorDesconto = itemView.findViewById(R.id.txt_valor_desconto);
             cardView = itemView.findViewById(R.id.card_movimento_item);
             layoutAcrescimo = itemView.findViewById(R.id.layout_acrescimo);
+            layoutDesconto = itemView.findViewById(R.id.layout_desconto);
         }
     }
 }

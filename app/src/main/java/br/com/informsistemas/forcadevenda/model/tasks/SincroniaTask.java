@@ -80,7 +80,7 @@ public class SincroniaTask extends AsyncTask<String, Void, List<Atualizacao>> {
             }
         } catch (IOException ex) {
             showToast(ex.getMessage());
-            Log.i("Sincronia", ex.getMessage());
+//            Log.i("Sincronia", ex.getMessage());
             erro = true;
         }
 

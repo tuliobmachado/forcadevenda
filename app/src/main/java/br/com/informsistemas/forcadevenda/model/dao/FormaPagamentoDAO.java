@@ -50,7 +50,7 @@ public class FormaPagamentoDAO extends BaseDAO<FormaPagamento> {
             pagamentoQB.where().in("codigoforma", codigosFormaPagamento);
 
             String str = pagamentoQB.prepareStatementString();
-            Log.i("FormaPagamentoDAO", str);
+//            Log.i("FormaPagamentoDAO", str);
             items = pagamentoQB.query();
         } catch (SQLException e){
             e.printStackTrace();

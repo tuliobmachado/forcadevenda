@@ -156,7 +156,7 @@ public class RequestSincroniaTask <T> extends AsyncTask<String, Void, List<T>> {
             }
         }catch (IOException ex){
             DialogClass.showToastFragment(fragment, ex.getMessage());
-            Log.i("Sincronia", ex.getMessage());
+//            Log.i("Sincronia", ex.getMessage());
             DialogClass.dialogDismiss(dialog);
             erro = true;
         }
@@ -187,7 +187,7 @@ public class RequestSincroniaTask <T> extends AsyncTask<String, Void, List<T>> {
             }
         }catch (IOException ex){
             DialogClass.showToastFragment(fragment, ex.getMessage());
-            Log.i("Sincronia", ex.getMessage());
+//            Log.i("Sincronia", ex.getMessage());
             DialogClass.dialogDismiss(dialog);
             erro = true;
         }
@@ -217,7 +217,7 @@ public class RequestSincroniaTask <T> extends AsyncTask<String, Void, List<T>> {
             }
         }catch (IOException ex){
             DialogClass.showToastFragment(fragment, ex.getMessage());
-            Log.i("Sincronia", ex.getMessage());
+//            Log.i("Sincronia", ex.getMessage());
             DialogClass.dialogDismiss(dialog);
             erro = true;
         }
@@ -247,7 +247,7 @@ public class RequestSincroniaTask <T> extends AsyncTask<String, Void, List<T>> {
             }
         }catch (IOException ex){
             DialogClass.showToastFragment(fragment, ex.getMessage());
-            Log.i("Sincronia", ex.getMessage());
+//            Log.i("Sincronia", ex.getMessage());
             DialogClass.dialogDismiss(dialog);
             erro = true;
         }
@@ -277,7 +277,7 @@ public class RequestSincroniaTask <T> extends AsyncTask<String, Void, List<T>> {
             }
         }catch (IOException ex){
             DialogClass.showToastFragment(fragment, ex.getMessage());
-            Log.i("Sincronia", ex.getMessage());
+//            Log.i("Sincronia", ex.getMessage());
             DialogClass.dialogDismiss(dialog);
             erro = true;
         }
@@ -307,7 +307,7 @@ public class RequestSincroniaTask <T> extends AsyncTask<String, Void, List<T>> {
             }
         }catch (IOException ex){
             DialogClass.showToastFragment(fragment, ex.getMessage());
-            Log.i("Sincronia", ex.getMessage());
+//            Log.i("Sincronia", ex.getMessage());
             DialogClass.dialogDismiss(dialog);
             erro = true;
         }
@@ -337,7 +337,7 @@ public class RequestSincroniaTask <T> extends AsyncTask<String, Void, List<T>> {
             }
         }catch (IOException ex){
             DialogClass.showToastFragment(fragment, ex.getMessage());
-            Log.i("Sincronia", ex.getMessage());
+//            Log.i("Sincronia", ex.getMessage());
             DialogClass.dialogDismiss(dialog);
             erro = true;
         }
@@ -367,7 +367,7 @@ public class RequestSincroniaTask <T> extends AsyncTask<String, Void, List<T>> {
             }
         }catch (IOException ex){
             DialogClass.showToastFragment(fragment, ex.getMessage());
-            Log.i("Sincronia", ex.getMessage());
+//            Log.i("Sincronia", ex.getMessage());
             DialogClass.dialogDismiss(dialog);
             erro = true;
         }
@@ -398,7 +398,7 @@ public class RequestSincroniaTask <T> extends AsyncTask<String, Void, List<T>> {
             }
         }catch (IOException ex){
             DialogClass.showToastFragment(fragment, ex.getMessage());
-            Log.i("Sincronia", ex.getMessage());
+//            Log.i("Sincronia", ex.getMessage());
             DialogClass.dialogDismiss(dialog);
             erro = true;
         }
@@ -429,7 +429,7 @@ public class RequestSincroniaTask <T> extends AsyncTask<String, Void, List<T>> {
             }
         }catch (IOException ex){
             DialogClass.showToastFragment(fragment, ex.getMessage());
-            Log.i("Sincronia", ex.getMessage());
+//            Log.i("Sincronia", ex.getMessage());
             DialogClass.dialogDismiss(dialog);
             erro = true;
         }

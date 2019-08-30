@@ -221,20 +221,6 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
 
         valorAtual = valorAtual + valor;
 
-        if (!Constants.DTO.registro.alteracusto && listMaterial.get(position).valoracrescimoant != listMaterial.get(position).valoracrescimo){
-            valorAtual = valorAtual - listMaterial.get(position).valoracrescimoant;
-            valorAtual = valorAtual + listMaterial.get(position).valoracrescimo;
-
-            listMaterial.get(position).valoracrescimoant = listMaterial.get(position).valoracrescimo;
-        }
-
-        if (!Constants.DTO.registro.alteracusto && listMaterial.get(position).valordescontoant != listMaterial.get(position).valordesconto){
-            valorAtual = valorAtual + listMaterial.get(position).valordescontoant;
-            valorAtual = valorAtual - listMaterial.get(position).valordesconto;
-
-            listMaterial.get(position).valordescontoant = listMaterial.get(position).valordesconto;
-        }
-
         if (valorAtual < 0){
             valorAtual = 0;
         }
@@ -282,7 +268,7 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
     }
 
     private Material calculaTotalLiquido(Material material){
-        material.precocalculado = (material.custo * material.quantidade);
+        material.precocalculado = (material.precocalculado * material.quantidade);
         CalculoClass calculoClass = new CalculoClass(getActivity(), material);
         calculoClass.setTributos();
 
@@ -290,7 +276,7 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
     }
 
     private float calculaTotalExclusao(Material m){
-        m.precocalculado = (m.custo * m.quantidade);
+        m.precocalculado = (m.precocalculado * m.quantidade);
         CalculoClass calculoClass = new CalculoClass(getActivity(), m);
         calculoClass.setTributos();
 
@@ -370,13 +356,16 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
 
         if (listMaterial.get(position).quantidade == 0){
             removeMovimentoItem(listMaterial.get(position).codigomaterial);
-
-            if (!Constants.DTO.registro.alteracusto){
-                listMaterial.get(position).valoracrescimoant = listMaterial.get(position).valoracrescimo;
-                listMaterial.get(position).valordescontoant = listMaterial.get(position).valordesconto;
-                listMaterial.get(position).valoracrescimo = 0;
-                listMaterial.get(position).valordesconto = 0;
-            }
+            listMaterial.get(position).valordesconto = 0;
+            listMaterial.get(position).valoracrescimo = 0;
+            listMaterial.get(position).percdesconto = 0;
+            listMaterial.get(position).percacrescimo = 0;
+            listMaterial.get(position).valordescontoant = 0;
+            listMaterial.get(position).valoracrescimoant = 0;
+            listMaterial.get(position).percdescontoant = 0;
+            listMaterial.get(position).percacrescimoant = 0;
+            listMaterial.get(position).custo = listMaterial.get(position).custooriginal;
+            listMaterial.get(position).totalliquido = listMaterial.get(position).totalliquidooriginal;
         }
 
         setTotal(-valorRemovido, position);
@@ -441,39 +430,39 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
         float percacrescimo = data.getExtras().getFloat("percacrescimo");
         float valordesconto = data.getExtras().getFloat("valordesconto");
         float percdesconto = data.getExtras().getFloat("percdesconto");
+        float custo = data.getExtras().getFloat("custo");
         float qtdAtual = listMaterial.get(position).quantidade;
         float vezes = 0;
         boolean excluir = false;
 
-
         listMaterial.get(position).valoracrescimoant = listMaterial.get(position).valoracrescimo;
         listMaterial.get(position).valordescontoant = listMaterial.get(position).valordesconto;
-//        listMaterial.get(position).percacrescimo = percacrescimo;
-//        listMaterial.get(position).percdesconto = percdesconto;
+        listMaterial.get(position).percacrescimoant = listMaterial.get(position).percacrescimo;
+        listMaterial.get(position).percdescontoant = listMaterial.get(position).percdesconto;
 
-        if ((qtdNova >= 1 && Constants.DTO.registro.alteracusto) &&
-            (valoracrescimo != listMaterial.get(position).valoracrescimoant) ||
-            (valordesconto != listMaterial.get(position).valordescontoant)){
+        if ((qtdNova >= 1) &&
+            ((valoracrescimo != listMaterial.get(position).valoracrescimoant) ||
+            (valordesconto != listMaterial.get(position).valordescontoant) ||
+            (percacrescimo != listMaterial.get(position).percacrescimoant) ||
+            (percdesconto != listMaterial.get(position).percdescontoant) ||
+            (custo != listMaterial.get(position).custooriginal))) {
 
             for (int i = 0; i < qtdAtual; i++) {
                 onBotaoExcluirClick(position);
             }
 
+            listMaterial.get(position).percacrescimo = percacrescimo;
+            listMaterial.get(position).percdesconto = percdesconto;
             listMaterial.get(position).valoracrescimo = valoracrescimo;
             listMaterial.get(position).valordesconto = valordesconto;
+            listMaterial.get(position).custo = custo;
 
             CalculoClass calculoClass = new CalculoClass(getActivity(), listMaterial.get(position));
             calculoClass.setTotal();
 
             qtdAtual = 0;
-        }else{
-            listMaterial.get(position).valoracrescimo = valoracrescimo;
-            listMaterial.get(position).valordesconto = valordesconto;
-
-            if ((!Constants.DTO.registro.alteracusto) && ((listMaterial.get(position).valoracrescimo > 0) || (listMaterial.get(position).valordesconto > 0))){
-                setTotal(0, position);
-            }
         }
+
 
         if (qtdNova > qtdAtual){
             vezes = qtdNova - qtdAtual;
