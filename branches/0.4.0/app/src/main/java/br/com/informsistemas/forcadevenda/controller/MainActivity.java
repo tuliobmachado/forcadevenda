@@ -178,9 +178,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void onShowPrincipal() {
-        if (Constants.DTO.registro.status.equals("P")) {
+        if (Constants.DTO.registro.status.equals("P") || Constants.DTO.registro.status.equals("B")) {
             Intent intent = new Intent(this, LoginActivity.class);
-            intent.putExtra("Status", "P");
+            intent.putExtra("Status", Constants.DTO.registro.status);
             startActivityForResult(intent, Constants.REQUEST_LOGIN.ACESSO_PENDENTE);
         } else {
             onShowFragment("movimentoFragment");
