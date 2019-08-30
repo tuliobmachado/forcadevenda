@@ -32,7 +32,7 @@ public class AcessoFragment extends Fragment {
 
     private final String TAG = getClass().getSimpleName();
     private LoginActivity loginActivity;
-    private int delay = 30000;
+    private int delay = 20000;
     private Handler handler = new Handler();
     private Runnable runnable = new Runnable() {
 
@@ -80,15 +80,6 @@ public class AcessoFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        final int delay = 30000;
-//        final Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                getAcesso();
-//                handler.postDelayed(this, delay);
-//            }
-//        }, delay);
     }
 
     public void onAcessoSuccess(Intent data) {
