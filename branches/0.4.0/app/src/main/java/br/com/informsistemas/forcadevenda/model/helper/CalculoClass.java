@@ -3,6 +3,7 @@ package br.com.informsistemas.forcadevenda.model.helper;
 import android.content.Context;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.model.dao.MaterialEstadoDAO;
@@ -38,7 +39,14 @@ public class CalculoClass {
     }
 
     private void CalculaTributos() {
-        MaterialEstado materialEstado = MaterialEstadoDAO.getInstance(context).getTributacoes(Constants.MOVIMENTO.estadoParceiro, material.codigomaterial);
+        MaterialEstado materialEstado = null;
+        materialEstado = MaterialEstadoDAO.getInstance(context).getTributacoes(Constants.MOVIMENTO.estadoParceiro, material.codigomaterial);
+
+        if (materialEstado == null){
+            materialEstado = new MaterialEstado(material.codigomaterial, Constants.MOVIMENTO.estadoParceiro, new Date(), 0, 0, 0, 0, 0);
+            materialEstado.mva = 0;
+            materialEstado.pautafiscal = 0;
+        }
 
         material.margemsubstituicao = materialEstado.mva;
         material.pautafiscal = materialEstado.pautafiscal;
@@ -138,6 +146,12 @@ public class CalculoClass {
 
     private void CalculaTotalLiquido(){
         material.totalliquido = material.precocalculado + material.valoricmsfecoepst + material.valoricmssubst + material.valoripi;
+
+        material.totalliquido = Misc.fRound(false, material.totalliquido, 2);
+
+        if (material.totalliquidooriginal == 0){
+            material.totalliquidooriginal = material.totalliquido;
+        }
     }
 
     private void CalculaPrecoVenda() {
@@ -156,14 +170,15 @@ public class CalculoClass {
             precovenda1 = material.precovenda1;
         }
 
-        material.custo = precovenda1;
-
-        if (Constants.DTO.registro.alteracusto){
-            material.custo = material.custo + material.valoracrescimo - material.valordesconto;
-            material.precocalculado = material.custo;
-        }else{
-            material.precocalculado = material.custo;
+        if (material.custo == material.custooriginal) {
+            material.custo = precovenda1;
         }
+
+        if (material.custooriginal == 0){
+            material.custooriginal = material.custo;
+        }
+
+        material.precocalculado = material.custo + material.valoracrescimo - material.valordesconto;
 
         CalculaDesconto(tabelaPrecoItem);
     }
@@ -207,14 +222,7 @@ public class CalculoClass {
             total_material = total_material + (listMovItem.get(i).custo * listMovItem.get(i).quantidade);
         }
 
-        mov.totalliquido = (total_material + total_fecoepst + total_ipi + total_icmssubst);
-
-        if (!Constants.DTO.registro.alteracusto){
-            mov.totalliquido = mov.totalliquido + total_acrescimo - total_desconto;
-        }
-
-
-
+        mov.totalliquido = (total_material + total_fecoepst + total_ipi + total_icmssubst + total_acrescimo - total_desconto);
         MovimentoDAO.getInstance(context).createOrUpdate(mov);
     }
 }

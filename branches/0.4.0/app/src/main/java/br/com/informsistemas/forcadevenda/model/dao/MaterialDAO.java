@@ -40,23 +40,9 @@ public class MaterialDAO extends BaseDAO<Material> {
         List<Material> materialList = new ArrayList<>();
 
         for (Material m : listPesquisa){
-//                Constants.DTO.listMaterialPreco){
             if (m.descricao.toUpperCase().contains(s.toUpperCase())) {
                 materialList.add(m);
             }
-//            if (listFiltro != null) {
-//                for (int i = 0; i < listFiltro.size(); i++) {
-//                    if (listFiltro.get(i).codigomaterial.equals(m.codigomaterial)) {
-//                        if (m.descricao.toUpperCase().contains(s.toUpperCase())) {
-//                            materialList.add(m);
-//                        }
-//                    }
-//                }
-//            }else{
-//                if (m.descricao.toUpperCase().contains(s.toUpperCase())) {
-//                    materialList.add(m);
-//                }
-//            }
         }
 
         return materialList;

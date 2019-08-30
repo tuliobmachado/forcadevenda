@@ -111,7 +111,7 @@ public class BaseDAO<T extends IEntidade> {
 
         try {
             queryBuilder.where().notIn(campo, codigoPrincipal);
-            Log.i("FindByNotIn", queryBuilder.prepareStatementString());
+//            Log.i("FindByNotIn", queryBuilder.prepareStatementString());
             items = queryBuilder.query();
         } catch (SQLException e) {
             e.printStackTrace();

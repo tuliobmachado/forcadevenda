@@ -81,24 +81,20 @@ public class Misc {
         return Float.parseFloat(cleanString);
     }
 
-    public static BigDecimal parseToBigDecimalCurrency(String value, Locale locale) {
-        String replaceable = String.format("[%s,.\\s]", NumberFormat.getCurrencyInstance(locale).getCurrency().getSymbol());
+    public static String parseFloatToWatcher(float value){
+        float result = 0;
 
-        String cleanString = value.replaceAll(replaceable, "");
+        if ((value - Math.round(value)) == 0){
+            result = value * 10;
+        }else{
+            if ((String.valueOf(value).length() <= 3) && (value > 0)){
+                result = value * 10;
+            }else {
+                result = value;
+            }
+        }
 
-        return new BigDecimal(cleanString).setScale(
-                2, BigDecimal.ROUND_FLOOR).divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR
-        );
-    }
-
-    public static BigDecimal paseToBigDecimalPercent(String value, Locale locale){
-        String replaceable = String.format("[%s,.\\s]", NumberFormat.getPercentInstance(locale).getCurrency().getSymbol());
-
-        String cleanString = value.replaceAll(replaceable, "");
-
-        return new BigDecimal(cleanString).setScale(
-                2, BigDecimal.ROUND_FLOOR).divide(new BigDecimal(1000), BigDecimal.ROUND_FLOOR
-        );
+        return String.valueOf(result);
     }
 
     public static <T> String getJsonString(T object, Boolean excludeExpose) {

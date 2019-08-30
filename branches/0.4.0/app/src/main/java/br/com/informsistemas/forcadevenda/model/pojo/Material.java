@@ -70,6 +70,8 @@ public class Material implements IEntidade, Cloneable  {
 
     public float custo;
 
+    public float custooriginal;
+
     public float quantidade;
 
     public float baseicms;
@@ -102,6 +104,8 @@ public class Material implements IEntidade, Cloneable  {
 
     public float totalliquido;
 
+    public float totalliquidooriginal;
+
     public float saldomaterial;
 
     public float valoracrescimo;
@@ -115,6 +119,10 @@ public class Material implements IEntidade, Cloneable  {
     public float valoracrescimoant;
 
     public float valordescontoant;
+
+    public float percacrescimoant;
+
+    public float percdescontoant;
 
     public float precocalculado;
 
