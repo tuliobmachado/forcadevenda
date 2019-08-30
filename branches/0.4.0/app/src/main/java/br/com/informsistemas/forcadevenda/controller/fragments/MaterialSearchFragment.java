@@ -366,6 +366,9 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
             listMaterial.get(position).percacrescimoant = 0;
             listMaterial.get(position).custo = listMaterial.get(position).custooriginal;
             listMaterial.get(position).totalliquido = listMaterial.get(position).totalliquidooriginal;
+
+            CalculoClass calculoClass = new CalculoClass(getActivity(), listMaterial.get(position));
+            calculoClass.setTotal();
         }
 
         setTotal(-valorRemovido, position);
