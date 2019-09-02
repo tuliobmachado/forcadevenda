@@ -95,7 +95,7 @@ public class DadosTabelasTask extends AsyncTask<String, Void, String> {
 
     private void resgataMaterial(){
         try{
-            Constants.DTO.listPesquisaMaterial = MaterialDAO.getInstance(fragment.getActivity()).findAll();
+            Constants.DTO.listPesquisaMaterial = MaterialDAO.getInstance(fragment.getActivity()).findAllOrderDescricao();
         }catch (Exception e){
             DialogClass.showToastFragment(fragment, e.getMessage());
         }
@@ -119,7 +119,7 @@ public class DadosTabelasTask extends AsyncTask<String, Void, String> {
 
     private void resgataPesquisaCategoria(){
         try{
-            Constants.DTO.listPesquisaCategoria = CategoriaDAO.getInstance(fragment.getActivity()).findAll();
+            Constants.DTO.listPesquisaCategoria = CategoriaDAO.getInstance(fragment.getActivity()).findAllOrderDescricao();
         }catch (Exception e){
             DialogClass.showToastFragment(fragment, e.getMessage());
         }
