@@ -79,4 +79,19 @@ public class MaterialDAO extends BaseDAO<Material> {
 
         return listMaterial;
     }
+
+    public List<Material> findAllOrderDescricao(){
+        List<Material> items = new ArrayList<>();
+
+        QueryBuilder<Material, Object> queryBuilder = getHelper().getDAO(Material.class).queryBuilder();
+        try {
+            queryBuilder.orderBy("descricao", true);
+
+            items = queryBuilder.query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return items;
+    }
 }

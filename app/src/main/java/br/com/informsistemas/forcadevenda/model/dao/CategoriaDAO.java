@@ -52,4 +52,19 @@ public class CategoriaDAO extends BaseDAO<Categoria> {
 
         return parceiroList;
     }
+
+    public List<Categoria> findAllOrderDescricao(){
+        List<Categoria> items = new ArrayList<>();
+
+        QueryBuilder<Categoria, Object> queryBuilder = getHelper().getDAO(Categoria.class).queryBuilder();
+        try {
+            queryBuilder.orderBy("descricao", true);
+
+            items = queryBuilder.query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return items;
+    }
 }

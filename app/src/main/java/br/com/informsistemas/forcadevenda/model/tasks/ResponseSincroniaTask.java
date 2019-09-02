@@ -254,7 +254,7 @@ public class ResponseSincroniaTask<T> extends AsyncTask<String, Void, String> {
             categoria = CategoriaDAO.getInstance(fragment.getActivity()).findFirst();
 
             if (categoria == null){
-                CategoriaDAO.getInstance(fragment.getActivity()).createOrUpdate(new Categoria("000", "TODAS", null));
+                CategoriaDAO.getInstance(fragment.getActivity()).createOrUpdate(new Categoria("000", " TODAS", null));
             }
         }
     }
