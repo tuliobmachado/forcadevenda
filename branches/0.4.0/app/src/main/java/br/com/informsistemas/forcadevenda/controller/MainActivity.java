@@ -21,6 +21,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.math.BigDecimal;
+
 import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.controller.fragments.MaterialSaldoFragment;
 import br.com.informsistemas.forcadevenda.controller.fragments.MovimentoFragment;
@@ -315,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Constants.MOVIMENTO.movimento = new Movimento(Constants.MOVIMENTO.codigoempresa,
                 Constants.MOVIMENTO.codigofilialcontabil, Constants.MOVIMENTO.codigoalmoxarifado,
                 Constants.MOVIMENTO.codigooperacao, Constants.MOVIMENTO.codigotabelapreco,
-                null, "", 0, "", Misc.GetDateAtual(), null, null, null, "", "", Misc.gerarMD5());
+                null, "", new BigDecimal("0"), "", Misc.GetDateAtual(), null, null, null, "", "", Misc.gerarMD5());
         Intent intent = new Intent(MainActivity.this, ParceiroActivity.class);
         startActivityForResult(intent, 0);
     }

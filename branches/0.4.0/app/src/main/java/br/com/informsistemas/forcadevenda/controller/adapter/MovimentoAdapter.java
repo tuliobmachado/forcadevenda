@@ -59,7 +59,7 @@ public class MovimentoAdapter extends RecyclerView.Adapter<MovimentoAdapter.MyVi
 
         myViewHolder.txtCodigoParceiro.setText(p.codigoparceiro);
         myViewHolder.txtDescricao.setText(p.descricao);
-        myViewHolder.txtTotalLiquido.setText(Misc.formatMoeda(fList.get(position).totalliquido));
+        myViewHolder.txtTotalLiquido.setText(Misc.formatMoeda(fList.get(position).totalliquido.floatValue()));
 
         for (int i : selectedIds){
             if (fList.get(position).id == i){

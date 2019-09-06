@@ -23,6 +23,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
         tabLayout.addOnTabSelectedListener(getOnTabSelectedListener());
 
         txtTotalItem = getActivity().findViewById(R.id.txt_total_item);
-        txtTotalItem.setText("R$ " + Misc.formatMoeda(Constants.MOVIMENTO.movimento.totalliquido));
+        txtTotalItem.setText("R$ " + Misc.formatMoeda(Constants.MOVIMENTO.movimento.totalliquido.floatValue()));
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -216,16 +217,16 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
         return listFiltro;
     }
 
-    private void setTotal(float valor, int position) {
-        float valorAtual = Constants.MOVIMENTO.movimento.totalliquido;
+    private void setTotal(BigDecimal valor, int position) {
+        BigDecimal valorAtual = Constants.MOVIMENTO.movimento.totalliquido;
 
-        valorAtual = valorAtual + valor;
+        valorAtual = valorAtual.add(valor);
 
-        if (valorAtual < 0){
-            valorAtual = 0;
+        if (valorAtual.floatValue() < 0){
+            valorAtual = new BigDecimal("0");
         }
 
-        txtTotalItem.setText("R$ " + Misc.formatMoeda(valorAtual));
+        txtTotalItem.setText("R$ " + Misc.formatMoeda(valorAtual.floatValue()));
 
         Constants.MOVIMENTO.movimento.totalliquido = valorAtual;
     }
@@ -268,15 +269,15 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
     }
 
     private Material calculaTotalLiquido(Material material){
-        material.precocalculado = (material.precocalculado * material.quantidade);
+        material.precocalculado = material.precocalculado.multiply(material.quantidade);
         CalculoClass calculoClass = new CalculoClass(getActivity(), material);
         calculoClass.setTributos();
 
         return material;
     }
 
-    private float calculaTotalExclusao(Material m){
-        m.precocalculado = (m.precocalculado * m.quantidade);
+    private BigDecimal calculaTotalExclusao(Material m){
+        m.precocalculado = m.precocalculado.multiply(m.quantidade);
         CalculoClass calculoClass = new CalculoClass(getActivity(), m);
         calculoClass.setTributos();
 
@@ -306,7 +307,7 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
 
         if (listCodigoMaterial.contains(material.codigomaterial)) {
 
-            if (material.quantidade == 0) {
+            if (material.quantidade.floatValue() == 0) {
                 remover = true;
             }
 
@@ -330,9 +331,9 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
     public void onBotaoExcluirClick(int position) {
         Material material = null;
         Material materialExclusao = null;
-        float valorRemovido = 0;
-        float valorQtdTotal = 0;
-        float valorQtdReduzida = 0;
+        BigDecimal valorRemovido;
+        BigDecimal valorQtdTotal;
+        BigDecimal valorQtdReduzida;
 
         try {
             material = Misc.cloneMaterial(listMaterial.get(position));
@@ -342,28 +343,28 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
             e.printStackTrace();
         }
 
-        listMaterial.get(position).quantidade = listMaterial.get(position).quantidade - 1;
+        listMaterial.get(position).quantidade = listMaterial.get(position).quantidade.subtract(new BigDecimal("1"));
 
-        if (listMaterial.get(position).quantidade >= 1){
+        if (listMaterial.get(position).quantidade.floatValue() >= 1){
             materialExclusao.quantidade = listMaterial.get(position).quantidade;
 
-            valorQtdTotal = calculaTotalExclusao(material);
-            valorQtdReduzida = calculaTotalExclusao(materialExclusao);
-            valorRemovido = valorQtdTotal - valorQtdReduzida;
+            valorQtdTotal = new BigDecimal(String.valueOf(calculaTotalExclusao(material)));
+            valorQtdReduzida = new BigDecimal(String.valueOf(calculaTotalExclusao(materialExclusao)));
+            valorRemovido = valorQtdTotal.subtract(valorQtdReduzida);
         }else{
             valorRemovido = listMaterial.get(position).totalliquido;
         }
 
-        if (listMaterial.get(position).quantidade == 0){
+        if (listMaterial.get(position).quantidade.floatValue() == 0){
             removeMovimentoItem(listMaterial.get(position).codigomaterial);
-            listMaterial.get(position).valordesconto = 0;
-            listMaterial.get(position).valoracrescimo = 0;
-            listMaterial.get(position).percdesconto = 0;
-            listMaterial.get(position).percacrescimo = 0;
-            listMaterial.get(position).valordescontoant = 0;
-            listMaterial.get(position).valoracrescimoant = 0;
-            listMaterial.get(position).percdescontoant = 0;
-            listMaterial.get(position).percacrescimoant = 0;
+            listMaterial.get(position).valordesconto = new BigDecimal("0");
+            listMaterial.get(position).valoracrescimo = new BigDecimal("0");
+            listMaterial.get(position).percdesconto = new BigDecimal("0");
+            listMaterial.get(position).percacrescimo = new BigDecimal("0");
+            listMaterial.get(position).valordescontoant = new BigDecimal("0");
+            listMaterial.get(position).valoracrescimoant = new BigDecimal("0");
+            listMaterial.get(position).percdescontoant = new BigDecimal("0");
+            listMaterial.get(position).percacrescimoant = new BigDecimal("0");
             listMaterial.get(position).custo = listMaterial.get(position).custooriginal;
             listMaterial.get(position).totalliquido = listMaterial.get(position).totalliquidooriginal;
 
@@ -371,14 +372,19 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
             calculoClass.setTotal();
         }
 
-        setTotal(-valorRemovido, position);
+        if ((listMaterial.get(position).quantidade.floatValue() > 0) || (listMaterial.get(position).quantidade.floatValue() == 0)) {
 
-        materialSearchAdapter.notifyItemChanged(position);
+            setTotal(valorRemovido.negate(), position);
 
-        try {
-            onAddSelecionado(Misc.cloneMaterial(listMaterial.get(position)));
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            materialSearchAdapter.notifyItemChanged(position);
+
+            try {
+                onAddSelecionado(Misc.cloneMaterial(listMaterial.get(position)));
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+        }else{
+            listMaterial.get(position).quantidade = new BigDecimal("0");
         }
     }
 
@@ -394,10 +400,10 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
             e.printStackTrace();
         }
 
-        listMaterial.get(position).quantidade = listMaterial.get(position).quantidade + 1;
+        listMaterial.get(position).quantidade = listMaterial.get(position).quantidade.add(new BigDecimal("1"));
 
-        if (listMaterial.get(position).quantidade > 1){
-            Constants.MOVIMENTO.movimento.totalliquido = Constants.MOVIMENTO.movimento.totalliquido - calculaTotalExclusao(materialExclusao);
+        if (listMaterial.get(position).quantidade.floatValue() > 1){
+            Constants.MOVIMENTO.movimento.totalliquido = Constants.MOVIMENTO.movimento.totalliquido.subtract(calculaTotalExclusao(materialExclusao));
             material.quantidade = listMaterial.get(position).quantidade;
             material = calculaTotalLiquido(material);
         }
@@ -428,14 +434,14 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
 
     private void AdicionarMaterialQuantidade(Intent data){
         int position = data.getExtras().getInt("position");
-        float qtdNova = data.getExtras().getFloat("quantidade");
-        float valoracrescimo = data.getExtras().getFloat("valoracrescimo");
-        float percacrescimo = data.getExtras().getFloat("percacrescimo");
-        float valordesconto = data.getExtras().getFloat("valordesconto");
-        float percdesconto = data.getExtras().getFloat("percdesconto");
-        float custo = data.getExtras().getFloat("custo");
-        float qtdAtual = listMaterial.get(position).quantidade;
-        float vezes = 0;
+        BigDecimal qtdNova = new BigDecimal(String.valueOf(data.getExtras().getFloat("quantidade")));
+        BigDecimal valoracrescimo = new BigDecimal(String.valueOf(data.getExtras().getFloat("valoracrescimo")));
+        BigDecimal percacrescimo = new BigDecimal(String.valueOf(data.getExtras().getFloat("percacrescimo")));
+        BigDecimal valordesconto = new BigDecimal(String.valueOf(data.getExtras().getFloat("valordesconto")));
+        BigDecimal percdesconto = new BigDecimal(String.valueOf(data.getExtras().getFloat("percdesconto")));
+        BigDecimal custo = new BigDecimal(String.valueOf(data.getExtras().getFloat("custo")));
+        BigDecimal qtdAtual = listMaterial.get(position).quantidade;
+        BigDecimal vezes;
         boolean excluir = false;
 
         listMaterial.get(position).valoracrescimoant = listMaterial.get(position).valoracrescimo;
@@ -443,14 +449,14 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
         listMaterial.get(position).percacrescimoant = listMaterial.get(position).percacrescimo;
         listMaterial.get(position).percdescontoant = listMaterial.get(position).percdesconto;
 
-        if ((qtdNova >= 1) &&
-            ((valoracrescimo != listMaterial.get(position).valoracrescimoant) ||
-            (valordesconto != listMaterial.get(position).valordescontoant) ||
-            (percacrescimo != listMaterial.get(position).percacrescimoant) ||
-            (percdesconto != listMaterial.get(position).percdescontoant) ||
-            (custo != listMaterial.get(position).custooriginal))) {
+        if ((qtdNova.floatValue() >= 1) &&
+            ((valoracrescimo.floatValue() != listMaterial.get(position).valoracrescimoant.floatValue()) ||
+            (valordesconto.floatValue() != listMaterial.get(position).valordescontoant.floatValue()) ||
+            (percacrescimo.floatValue() != listMaterial.get(position).percacrescimoant.floatValue()) ||
+            (percdesconto.floatValue() != listMaterial.get(position).percdescontoant.floatValue()) ||
+            (custo.floatValue() != listMaterial.get(position).custooriginal.floatValue()))) {
 
-            for (int i = 0; i < qtdAtual; i++) {
+            for (int i = 0; i < qtdAtual.floatValue(); i++) {
                 onBotaoExcluirClick(position);
             }
 
@@ -463,18 +469,18 @@ public class MaterialSearchFragment extends Fragment implements IOnBackPressed, 
             CalculoClass calculoClass = new CalculoClass(getActivity(), listMaterial.get(position));
             calculoClass.setTotal();
 
-            qtdAtual = 0;
+            qtdAtual = new BigDecimal("0");
         }
 
 
-        if (qtdNova > qtdAtual){
-            vezes = qtdNova - qtdAtual;
+        if (qtdNova.floatValue() > qtdAtual.floatValue()){
+            vezes = qtdNova.subtract(qtdAtual);
         }else{
             excluir = true;
-            vezes = qtdAtual - qtdNova;
+            vezes = qtdAtual.subtract(qtdNova);
         }
 
-        for (int i = 0; i < vezes; i++) {
+        for (int i = 0; i < vezes.floatValue(); i++) {
             if (excluir){
                 onBotaoExcluirClick(position);
             }else{

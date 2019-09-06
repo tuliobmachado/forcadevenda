@@ -3,6 +3,7 @@ package br.com.informsistemas.forcadevenda.model.pojo;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.informsistemas.forcadevenda.model.utils.IEntidade;
@@ -59,13 +60,13 @@ public class Parceiro implements IEntidade {
     public Date datanascimento;
 
     @DatabaseField
-    public Float limitecredito;
+    public BigDecimal limitecredito;
 
     @DatabaseField
-    public Float valoremaberto;
+    public BigDecimal valoremaberto;
 
     @DatabaseField
-    public Float taxa;
+    public BigDecimal taxa;
 
     @DatabaseField
     public String obs;
@@ -107,7 +108,7 @@ public class Parceiro implements IEntidade {
     public String codigotabelapreco;
 
     @DatabaseField
-    public float percdescontopadrao;
+    public BigDecimal percdescontopadrao;
 
     @DatabaseField
     public String codigoformapagamento;
@@ -116,7 +117,12 @@ public class Parceiro implements IEntidade {
     public String formaspermitidas;
 
     public Parceiro(){}
-    public Parceiro(String codigoparceiro, String descricao, String cpfcgc, String diavencimento, String status, String telefone, String telefone2, String endereco, String bairro, String cidade, String estado, String pontoreferencia, Date datacadastro, Date dataultimopedido, Date datanascimento, Float limitecredito, Float valoremaberto, Float taxa, String obs, String tipo, String numerologradouro, String cep, String codigomunicipio, String nomefantasia, String email, Date atualizacao, String alterado, String emailnfe, String campolivrea3, String campolivrea4, String codigotabelapreco, float percdescontopadrao, String codigoformapagamento, String formaspermitidas) {
+    public Parceiro(String codigoparceiro, String descricao, String cpfcgc, String diavencimento, String status, String telefone, String telefone2,
+                    String endereco, String bairro, String cidade, String estado, String pontoreferencia, Date datacadastro, Date dataultimopedido,
+                    Date datanascimento, BigDecimal limitecredito, BigDecimal valoremaberto, BigDecimal taxa, String obs, String tipo,
+                    String numerologradouro, String cep, String codigomunicipio, String nomefantasia, String email, Date atualizacao, String alterado,
+                    String emailnfe, String campolivrea3, String campolivrea4, String codigotabelapreco, BigDecimal percdescontopadrao,
+                    String codigoformapagamento, String formaspermitidas) {
         this.codigoparceiro = codigoparceiro;
         this.descricao = descricao;
         this.cpfcgc = cpfcgc;

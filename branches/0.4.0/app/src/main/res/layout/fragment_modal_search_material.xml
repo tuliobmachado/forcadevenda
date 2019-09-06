@@ -94,31 +94,71 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/txt_custo"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="20dp"
-                    android:text="Custo"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/edt_custo"
-                    android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/txt_custo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_weight="1"
+                        android:text="Custo"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txt_preco_final"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_weight="1"
+                        android:text="Preço Final"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_weight="1"
-                    android:digits="0123456789"
-                    android:ems="3"
-                    android:inputType="number"
-                    android:textCursorDrawable="@null"
-                    app:backgroundTint="@android:color/black" />
+                    android:orientation="horizontal">
+                <EditText
+
+                        android:id="@+id/edt_custo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_weight="1"
+                        android:digits="0123456789"
+                        android:ems="3"
+                        android:inputType="number"
+                        android:textCursorDrawable="@null"
+                        app:backgroundTint="@android:color/black" />
+
+                    <EditText
+                        android:id="@+id/edt_preco_final"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_weight="1"
+                        android:digits="0123456789"
+                        android:ems="3"
+                        android:inputType="number"
+                        android:textCursorDrawable="@null"
+                        app:backgroundTint="@android:color/black" />
+                </LinearLayout>
 
             </LinearLayout>
 

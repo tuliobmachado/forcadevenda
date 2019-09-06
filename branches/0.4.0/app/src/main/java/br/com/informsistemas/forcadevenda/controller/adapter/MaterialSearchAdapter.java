@@ -60,20 +60,20 @@ public class MaterialSearchAdapter extends RecyclerView.Adapter<MaterialSearchAd
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, int position) {
 
-        if ((Constants.DTO.registro.exibematerialsemsaldo) || ((!Constants.DTO.registro.exibematerialsemsaldo) && (fList.get(position).saldomaterial > 0))) {
+        if ((Constants.DTO.registro.exibematerialsemsaldo) || ((!Constants.DTO.registro.exibematerialsemsaldo) && (fList.get(position).saldomaterial.floatValue() > 0))) {
             myViewHolder.txtDescricao.setText(fList.get(position).descricao);
-            myViewHolder.txtCusto.setText("R$ " + Misc.formatMoeda(fList.get(position).totalliquido));
+            myViewHolder.txtCusto.setText("R$ " + Misc.formatMoeda(fList.get(position).totalliquido.floatValue()));
             myViewHolder.txtSaldo.setText("Saldo: " + String.format("%.2f", fList.get(position).saldomaterial) + " | " + fList.get(position).unidadesaida);
 
-            if (fList.get(position).quantidade >= 1) {
+            if (fList.get(position).quantidade.floatValue() >= 1) {
                 myViewHolder.imgExcluir.setImageResource(R.drawable.ic_remove_red_24dp);
                 myViewHolder.imgExcluir.setVisibility(View.VISIBLE);
 
-                if (fList.get(position).quantidade == 1) {
+                if (fList.get(position).quantidade.floatValue() == 1) {
                     myViewHolder.imgExcluir.setVisibility(View.VISIBLE);
                 }
 
-                if (fList.get(position).quantidade >= 2) {
+                if (fList.get(position).quantidade.floatValue() >= 2) {
                     myViewHolder.txtQuantidade.setText(String.format("%.0f", fList.get(position).quantidade));
                 } else {
                     myViewHolder.txtQuantidade.setText("");
@@ -88,7 +88,8 @@ public class MaterialSearchAdapter extends RecyclerView.Adapter<MaterialSearchAd
 
             myViewHolder.imgSelecionado.startAnimation(getRotateAnimation(excluindo));
         }else{
-            myViewHolder.viewItemLista.setVisibility(View.GONE);
+            myViewHolder.itemView.setVisibility(View.GONE);
+            myViewHolder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
         }
     }
 

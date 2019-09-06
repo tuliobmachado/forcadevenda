@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.informsistemas.forcadevenda.model.utils.IEntidade;
@@ -24,7 +25,7 @@ public class Material implements IEntidade, Cloneable  {
     public String unidadesaida;
 
     @DatabaseField
-    public float precovenda1;
+    public BigDecimal precovenda1;
 
     @DatabaseField
     public String codigoauxiliar;
@@ -33,7 +34,7 @@ public class Material implements IEntidade, Cloneable  {
     public String tipotributacao;
 
     @DatabaseField
-    public Float percaliquota;
+    public BigDecimal percaliquota;
 
     @DatabaseField
     public String saldo;
@@ -45,13 +46,13 @@ public class Material implements IEntidade, Cloneable  {
     public String editacomplemento;
 
     @DatabaseField
-    public Float fator;
+    public BigDecimal fator;
 
     @DatabaseField
     public String codigograde;
 
     @DatabaseField
-    public Float quantmaximavenda;
+    public BigDecimal quantmaximavenda;
 
     @DatabaseField
     public String origemmercadoria;
@@ -60,78 +61,80 @@ public class Material implements IEntidade, Cloneable  {
     public String cst_csosn;
 
     @DatabaseField
-    public Float percreducaobase;
+    public BigDecimal percreducaobase;
 
     @DatabaseField
-    public float percipi;
+    public BigDecimal percipi;
 
     @DatabaseField
     public String codigotabelaprecoitem;
 
-    public float custo;
+    public BigDecimal custo;
 
-    public float custooriginal;
+    public BigDecimal custooriginal;
 
-    public float quantidade;
+    public BigDecimal quantidade;
 
-    public float baseicms;
+    public BigDecimal baseicms;
 
-    public float icms;
+    public BigDecimal icms;
 
-    public float valoricms;
+    public BigDecimal valoricms;
 
-    public float baseicmssubst;
+    public BigDecimal baseicmssubst;
 
-    public float icmssubst;
+    public BigDecimal icmssubst;
 
-    public float valoricmssubst;
+    public BigDecimal valoricmssubst;
 
-    public float ipi;
+    public BigDecimal ipi;
 
-    public float valoripi;
+    public BigDecimal valoripi;
 
-    public float margemsubstituicao;
+    public BigDecimal margemsubstituicao;
 
-    public float pautafiscal;
+    public BigDecimal pautafiscal;
 
-    public float icmsfecoep;
+    public BigDecimal icmsfecoep;
 
-    public float valoricmsfecoep;
+    public BigDecimal valoricmsfecoep;
 
-    public float icmsfecoepst;
+    public BigDecimal icmsfecoepst;
 
-    public float valoricmsfecoepst;
+    public BigDecimal valoricmsfecoepst;
 
-    public float totalliquido;
+    public BigDecimal totalliquido;
 
-    public float totalliquidooriginal;
+    public BigDecimal totalliquidooriginal;
 
-    public float saldomaterial;
+    public BigDecimal saldomaterial;
 
-    public float valoracrescimo;
+    public BigDecimal valoracrescimo;
 
-    public float percacrescimo;
+    public BigDecimal percacrescimo;
 
-    public float valordesconto;
+    public BigDecimal valordesconto;
 
-    public float percdesconto;
+    public BigDecimal percdesconto;
 
-    public float valoracrescimoant;
+    public BigDecimal valoracrescimoant;
 
-    public float valordescontoant;
+    public BigDecimal valordescontoant;
 
-    public float percacrescimoant;
+    public BigDecimal percacrescimoant;
 
-    public float percdescontoant;
+    public BigDecimal percdescontoant;
 
-    public float precocalculado;
+    public BigDecimal precocalculado;
+
+    public BigDecimal precovendafinal;
 
     public Material(){}
-    public Material(String codigomaterial, String codigotabelaprecoitem, String descricao, String unidadesaida, float precovenda1,
-                    String codigoauxiliar, String tipotributacao, float percaliquota, String saldo,
-                    Date atualizacao, String editacomplemento, float fator, String codigograde,
-                    float quantmaximavenda, String origemmercadoria, String cst_csosn,
-                    float percreducaobase, float percipi) {
+    public Material(String codigomaterial, String codigotabelaprecoitem, String descricao, String unidadesaida, BigDecimal precovenda1,
+                    String codigoauxiliar, String tipotributacao, BigDecimal percaliquota, String saldo,
+                    Date atualizacao, String editacomplemento, BigDecimal fator, String codigograde,
+                    BigDecimal quantmaximavenda, String origemmercadoria, String cst_csosn,
+                    BigDecimal percreducaobase, BigDecimal percipi) {
         this.codigomaterial = codigomaterial;
         this.codigotabelaprecoitem = codigotabelaprecoitem;
         this.descricao = descricao;

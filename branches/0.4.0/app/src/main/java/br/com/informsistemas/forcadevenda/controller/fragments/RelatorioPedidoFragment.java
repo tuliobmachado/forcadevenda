@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -152,13 +153,13 @@ public class RelatorioPedidoFragment extends Fragment implements ItemClickListen
 
     private void setTotal(List<Movimento> list) {
 
-        float value = 0;
+        BigDecimal value = new BigDecimal("0");
 
         for (int i = 0; i < list.size(); i++) {
-            value = value + list.get(i).totalliquido;
+            value.add(list.get(i).totalliquido);
         }
 
-        edtTotalPedido.setText("R$ " + Misc.formatMoeda(value));
+        edtTotalPedido.setText("R$ " + Misc.formatMoeda(value.floatValue()));
     }
 
     @Override
