@@ -25,6 +25,7 @@ import br.com.informsistemas.forcadevenda.model.dao.FormaPagamentoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.pojo.FormaPagamento;
+import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
 
 public class FormaPagamentoSearchFragment extends Fragment implements ItemClickListener {
@@ -56,8 +57,13 @@ public class FormaPagamentoSearchFragment extends Fragment implements ItemClickL
 
         recyclerView.setLayoutManager(llm);
 
-        listPagamento =
-                FormaPagamentoDAO.getInstance(getActivity()).findByFormasPermitidas(ParceiroDAO.getInstance(getActivity()).findByIdAuxiliar("codigoparceiro", Constants.MOVIMENTO.movimento.codigoparceiro).formaspermitidas);
+        Parceiro parceiro = ParceiroDAO.getInstance(getActivity()).findByIdAuxiliar("codigoparceiro", Constants.MOVIMENTO.movimento.codigoparceiro);
+
+        if (parceiro.formaspermitidas.equals("")) {
+            listPagamento = FormaPagamentoDAO.getInstance(getActivity()).findAll();
+        }else{
+            listPagamento = FormaPagamentoDAO.getInstance(getActivity()).findByFormasPermitidas(parceiro.formaspermitidas);
+        }
 
         setAdapter(listPagamento);
 
