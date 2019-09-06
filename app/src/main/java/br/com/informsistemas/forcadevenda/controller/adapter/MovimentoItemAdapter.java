@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,22 +47,26 @@ public class MovimentoItemAdapter extends RecyclerView.Adapter<MovimentoItemAdap
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int position) {
         Boolean selecionado = false;
-        float acrescimo = 0;
-        float desconto = 0;
+        BigDecimal acrescimo;
+        BigDecimal desconto;
+        BigDecimal totalDesconto;
+        BigDecimal totalLiquido;
 
         desconto = fList.get(position).valordescontoitem;
-        acrescimo = fList.get(position).valoricmsfecoepst + fList.get(position).valoripi + fList.get(position).valoricmssubst + fList.get(position).valoracrescimoitem;
+        acrescimo = fList.get(position).valoricmsfecoepst.add(fList.get(position).valoripi).add(fList.get(position).valoricmssubst).add(fList.get(position).valoracrescimoitem);
 
-        if (desconto > 0){
-            myViewHolder.txtValorDesconto.setText(Misc.formatMoeda(desconto));
-            myViewHolder.txtTotalDesconto.setText(Misc.formatMoeda(fList.get(position).totalitem - desconto));
+        if (desconto.floatValue() > 0){
+            totalDesconto = fList.get(position).totalitem.subtract(desconto);
+            myViewHolder.txtValorDesconto.setText(Misc.formatMoeda(desconto.floatValue()));
+            myViewHolder.txtTotalDesconto.setText(Misc.formatMoeda(totalDesconto.floatValue()));
         }else{
             myViewHolder.layoutDesconto.setVisibility(View.GONE);
         }
 
-        if (acrescimo > 0){
-            myViewHolder.txtTotalAcrescimo.setText(Misc.formatMoeda(acrescimo));
-            myViewHolder.txtTotalLiquido.setText(Misc.formatMoeda(fList.get(position).totalitem + acrescimo - desconto));
+        if (acrescimo.floatValue() > 0){
+            totalLiquido = fList.get(position).totalitem.add(acrescimo).subtract(desconto);
+            myViewHolder.txtTotalAcrescimo.setText(Misc.formatMoeda(acrescimo.floatValue()));
+            myViewHolder.txtTotalLiquido.setText(Misc.formatMoeda(totalLiquido.floatValue()));
         }else{
             myViewHolder.layoutAcrescimo.setVisibility(View.GONE);
         }
@@ -70,8 +75,8 @@ public class MovimentoItemAdapter extends RecyclerView.Adapter<MovimentoItemAdap
 
         myViewHolder.txtDescricao.setText(m.descricao);
         myViewHolder.txtUnidade.setText(m.unidadesaida);
-        myViewHolder.txtQuantidadeCusto.setText(String.format("%.2f", fList.get(position).quantidade) + " X " + Misc.formatMoeda((fList.get(position).custo)));
-        myViewHolder.txtTotalItem.setText(Misc.formatMoeda((fList.get(position).totalitem)));
+        myViewHolder.txtQuantidadeCusto.setText(String.format("%.2f", fList.get(position).quantidade) + " X " + Misc.formatMoeda((fList.get(position).custo.floatValue())));
+        myViewHolder.txtTotalItem.setText(Misc.formatMoeda((fList.get(position).totalitem.floatValue())));
 
         for (int i : selectedIds){
             if (fList.get(position).id == i){

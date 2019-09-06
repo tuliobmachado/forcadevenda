@@ -13,15 +13,24 @@ public class MoneyTextWatcher implements TextWatcher {
 
     private final WeakReference<EditText> editTextWeakReference;
     private final Locale locale;
+    private int casasDecimais;
+    private Double divisao;
+    private boolean percentual;
 
-    public MoneyTextWatcher(EditText editText, Locale locale) {
+    public MoneyTextWatcher(EditText editText, Locale locale, int casasDecimais, boolean percentual) {
         this.editTextWeakReference = new WeakReference<EditText>(editText);
         this.locale = locale != null ? locale : Locale.getDefault();
+        this.casasDecimais = casasDecimais;
+        this.divisao = getValorDivisao(casasDecimais);
+        this.percentual = percentual;
     }
 
-    public MoneyTextWatcher(EditText editText) {
+    public MoneyTextWatcher(EditText editText, int casasDecimais, boolean percentual) {
         this.editTextWeakReference = new WeakReference<EditText>(editText);
         this.locale = Locale.getDefault();
+        this.casasDecimais = casasDecimais;
+        this.divisao = getValorDivisao(casasDecimais);
+        this.percentual = percentual;
     }
 
     @Override
@@ -41,20 +50,33 @@ public class MoneyTextWatcher implements TextWatcher {
         editText.removeTextChangedListener(this);
 
         BigDecimal parsed = parseToBigDecimal(editable.toString(), locale);
-        String formatted = NumberFormat.getCurrencyInstance(locale).format(parsed);
-        formatted = formatted.replace("R$", "");
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(locale);
+        formatter.setMinimumFractionDigits(casasDecimais);
+        String formatted = formatter.format(parsed);
+
+        if (!percentual) {
+            formatted = formatted.replace("R$", "");
+        }else{
+            formatted = formatted.replaceAll("[%s.R$\\s]", "");
+        }
+
         editText.setText(formatted);
         editText.setSelection(formatted.length());
         editText.addTextChangedListener(this);
+    }
+
+    private Double getValorDivisao(int casasDecimais){
+        String value = "1";
+        for (int i = 0; i < casasDecimais; i++) {
+            value = value + "0";
+        }
+        return Double.parseDouble(value);
     }
 
     private BigDecimal parseToBigDecimal(String value, Locale locale) {
         String replaceable = String.format("[%s,.\\s]", NumberFormat.getCurrencyInstance(locale).getCurrency().getSymbol());
 
         String cleanString = value.replaceAll(replaceable, "");
-
-        return new BigDecimal(cleanString).setScale(
-                2, BigDecimal.ROUND_FLOOR).divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR
-        );
+        return new BigDecimal(cleanString).divide(BigDecimal.valueOf(divisao), 8, BigDecimal.ROUND_HALF_EVEN);
     }
 }

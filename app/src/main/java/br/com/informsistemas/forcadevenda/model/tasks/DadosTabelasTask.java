@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -163,7 +164,7 @@ public class DadosTabelasTask extends AsyncTask<String, Void, String> {
             List<Material> listMaterialAuxiliar = MaterialDAO.getInstance(fragment.getActivity()).findByNotIn("codigomaterial", codigoMaterialSaldo);
 
             for (int i = 0; i < listMaterialAuxiliar.size(); i++) {
-                MaterialSaldo materialSaldo = new MaterialSaldo(listMaterialAuxiliar.get(i).codigomaterial, null, null, 0, 0);
+                MaterialSaldo materialSaldo = new MaterialSaldo(listMaterialAuxiliar.get(i).codigomaterial, null, null, new BigDecimal("0"), new BigDecimal("0"));
 
                 MaterialSaldoDAO.getInstance(fragment.getActivity()).createOrUpdate(materialSaldo);
             }

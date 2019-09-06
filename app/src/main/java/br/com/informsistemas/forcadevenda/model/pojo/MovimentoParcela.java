@@ -4,6 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.math.BigDecimal;
+
 import br.com.informsistemas.forcadevenda.model.utils.IEntidade;
 
 @DatabaseTable(tableName = "movimentoparcela")
@@ -23,10 +25,10 @@ public class MovimentoParcela implements IEntidade {
 
     @DatabaseField
     @Expose
-    public float valor;
+    public BigDecimal valor;
 
     public MovimentoParcela(){}
-    public MovimentoParcela(Movimento movimento, String codigoforma, float valor) {
+    public MovimentoParcela(Movimento movimento, String codigoforma, BigDecimal valor) {
         this.movimento = movimento;
         this.codigoforma = codigoforma;
         this.valor = valor;

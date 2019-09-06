@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.informsistemas.forcadevenda.model.utils.IEntidade;
@@ -45,7 +46,7 @@ public class Movimento implements IEntidade {
 
     @DatabaseField
     @Expose
-    public float totalliquido;
+    public BigDecimal totalliquido;
 
     @DatabaseField
     @Expose
@@ -81,7 +82,7 @@ public class Movimento implements IEntidade {
 
     public Movimento(){}
     public Movimento(String codigoempresa, String codigofilialcontabil, String codigoalmoxarifado, String codigooperacao,
-                     String codigotabelapreco, String codigoparceiro, String observacao, float totalliquido, String sincronizado,
+                     String codigotabelapreco, String codigoparceiro, String observacao, BigDecimal totalliquido, String sincronizado,
                      Date data, Date datainicio, Date datafim, Date dataalteracao, String longitude, String latitude, String MD5) {
         this.codigoempresa = codigoempresa;
         this.codigofilialcontabil = codigofilialcontabil;

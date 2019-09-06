@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
@@ -42,8 +43,8 @@ public class MaterialSaldoAdapter extends RecyclerView.Adapter<MaterialSaldoAdap
         Material m = MaterialDAO.getInstance(context).findByIdAuxiliar("codigomaterial", fList.get(position).codigomaterial);
 
         myViewHolder.txtDescricao.setText(m.descricao);
-        myViewHolder.txtSaldo.setText(String.format("%.2f", (fList.get(position).saldo / m.fator)) + " | " + m.unidadesaida);
-        myViewHolder.txtPreco.setText(Misc.formatMoeda(m.precovenda1));
+        myViewHolder.txtSaldo.setText(String.format("%.2f", (fList.get(position).saldo.divide(m.fator, 4, BigDecimal.ROUND_HALF_EVEN))) + " | " + m.unidadesaida);
+        myViewHolder.txtPreco.setText(Misc.formatMoeda(m.precovenda1.floatValue()));
     }
 
     @Override

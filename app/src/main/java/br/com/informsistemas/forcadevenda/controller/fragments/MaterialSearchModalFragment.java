@@ -9,32 +9,22 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-
-import org.w3c.dom.Text;
-
-import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Locale;
 
 import br.com.informsistemas.forcadevenda.R;
+import br.com.informsistemas.forcadevenda.model.helper.CalculoClass;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Material;
 import br.com.informsistemas.forcadevenda.model.utils.MoneyTextWatcher;
-import br.com.informsistemas.forcadevenda.model.utils.PercentTextWatcher;
 
-public class MaterialSearchModalFragment extends DialogFragment {
+public class MaterialSearchModalFragment extends DialogFragment implements View.OnFocusChangeListener{
 
     private TextView txtDescricao;
     private TextView txtSaldo;
@@ -49,6 +39,7 @@ public class MaterialSearchModalFragment extends DialogFragment {
     private EditText edtDescontoValor;
     private EditText edtDescontoPorcentagem;
     private EditText edtCusto;
+    private EditText edtPrecoFinal;
     private LinearLayout layoutAcrescimo;
     private LinearLayout layoutDesconto;
     private LinearLayout layoutCusto;
@@ -81,49 +72,51 @@ public class MaterialSearchModalFragment extends DialogFragment {
         txtDescontoValor = view.findViewById(R.id.txt_desconto_valor);
         txtDescontoPorcentagem = view.findViewById(R.id.txt_desconto_porcentagem);
         edtQuantidade = view.findViewById(R.id.edt_quantidade);
+        edtQuantidade.addTextChangedListener(new MoneyTextWatcher(edtQuantidade, Constants.DTO.registro.casasquantidade, false));
         edtAcrescimoValor = view.findViewById(R.id.edt_acrescimo_valor);
-        edtAcrescimoValor.addTextChangedListener(new MoneyTextWatcher(edtAcrescimoValor));
+        edtAcrescimoValor.addTextChangedListener(new MoneyTextWatcher(edtAcrescimoValor, Constants.DTO.registro.casasvalor, false));
         edtAcrescimoPorcentagem = view.findViewById(R.id.edt_acrescimo_porcentagem);
-        edtAcrescimoPorcentagem.addTextChangedListener(new PercentTextWatcher(edtAcrescimoPorcentagem));
+        edtAcrescimoPorcentagem.addTextChangedListener(new MoneyTextWatcher(edtAcrescimoPorcentagem, Constants.DTO.registro.casaspercentual, true));
         edtDescontoValor = view.findViewById(R.id.edt_desconto_valor);
-        edtDescontoValor.addTextChangedListener(new MoneyTextWatcher(edtDescontoValor));
+        edtDescontoValor.addTextChangedListener(new MoneyTextWatcher(edtDescontoValor, Constants.DTO.registro.casasvalor, false));
         edtDescontoPorcentagem = view.findViewById(R.id.edt_desconto_porcentagem);
-        edtDescontoPorcentagem.addTextChangedListener(new PercentTextWatcher(edtDescontoPorcentagem));
+        edtDescontoPorcentagem.addTextChangedListener(new MoneyTextWatcher(edtDescontoPorcentagem, Constants.DTO.registro.casaspercentual, true));
         edtCusto = view.findViewById(R.id.edt_custo);
-        edtCusto.addTextChangedListener(new MoneyTextWatcher(edtCusto));
+        edtCusto.addTextChangedListener(new MoneyTextWatcher(edtCusto, Constants.DTO.registro.casaspreco, false));
+        edtPrecoFinal = view.findViewById(R.id.edt_preco_final);
+        edtPrecoFinal.addTextChangedListener(new MoneyTextWatcher(edtPrecoFinal, Constants.DTO.registro.casasvalor, false));
         layoutAcrescimo = view.findViewById(R.id.layout_acrescimo);
         layoutDesconto = view.findViewById(R.id.layout_desconto);
         layoutCusto = view.findViewById(R.id.layout_custo);
 
-        edtCusto.setOnFocusChangeListener(onExitEditText());
-        edtDescontoPorcentagem.setOnFocusChangeListener(onExitEditText());
-        edtDescontoValor.setOnFocusChangeListener(onExitEditText());
-        edtAcrescimoPorcentagem.setOnFocusChangeListener(onExitEditText());
-        edtAcrescimoValor.setOnFocusChangeListener(onExitEditText());
+        txtSaldo.setText(String.format("%.2f", material.saldomaterial) + " | " + material.unidadesaida);
+        txtPreco.setText("R$ " + Misc.formatMoeda(material.totalliquido.floatValue()));
+        edtAcrescimoValor.setText(Misc.parseFloatToWatcher(material.valoracrescimo, Constants.DTO.registro.casasvalor));
+        edtAcrescimoPorcentagem.setText(Misc.parseFloatToWatcher(material.percacrescimo, Constants.DTO.registro.casaspercentual));
+        edtDescontoValor.setText(Misc.parseFloatToWatcher(material.valordesconto, Constants.DTO.registro.casasvalor));
+        edtDescontoPorcentagem.setText(Misc.parseFloatToWatcher(material.percdesconto, Constants.DTO.registro.casaspercentual));
+        edtCusto.setText(Misc.parseFloatToWatcher(material.custo, Constants.DTO.registro.casaspreco));
+        edtPrecoFinal.setText(Misc.parseFloatToWatcher(material.totalliquido, Constants.DTO.registro.casasvalor));
+
+        edtCusto.setOnFocusChangeListener(this);
+        edtPrecoFinal.setOnFocusChangeListener(this);
+        edtDescontoPorcentagem.setOnFocusChangeListener(this);
+        edtDescontoValor.setOnFocusChangeListener(this);
+        edtAcrescimoPorcentagem.setOnFocusChangeListener(this);
+        edtAcrescimoValor.setOnFocusChangeListener(this);
+        edtQuantidade.setOnFocusChangeListener(this);
 
         onExibeAcrescimo();
         onExibeDesconto();
         onExibeCusto();
 
         txtDescricao.setText(material.descricao);
-        if (material.quantidade == 0) {
+        if (material.quantidade.floatValue() == 0) {
             possuiQuantidade = false;
-            edtQuantidade.setText("1");
+            edtQuantidade.setText(Misc.parseFloatToWatcher(new BigDecimal("1"), Constants.DTO.registro.casasquantidade));
         } else {
             possuiQuantidade = true;
-            edtQuantidade.setText(Float.toString(material.quantidade));
-        }
-        txtSaldo.setText(String.format("%.2f", material.saldomaterial) + " | " + material.unidadesaida);
-        txtPreco.setText("R$ " + Misc.formatMoeda(material.totalliquido));
-        edtAcrescimoValor.setText(Misc.parseFloatToWatcher(material.valoracrescimo));
-        edtAcrescimoPorcentagem.setText(Misc.parseFloatToWatcher(material.percacrescimo));
-        edtDescontoValor.setText(Misc.parseFloatToWatcher(material.valordesconto));
-        edtDescontoPorcentagem.setText(Misc.parseFloatToWatcher(material.percdesconto));
-
-        if (material.custo == 0) {
-            edtCusto.setText(Misc.parseFloatToWatcher(material.totalliquido));
-        } else {
-            edtCusto.setText(Misc.parseFloatToWatcher(material.custo));
+            edtQuantidade.setText(Misc.parseFloatToWatcher(material.quantidade, Constants.DTO.registro.casasquantidade));
         }
 
         builder.setView(view);
@@ -143,14 +136,13 @@ public class MaterialSearchModalFragment extends DialogFragment {
 
                 onSetFocusEditText();
 
-                if ((!possuiQuantidade && Float.parseFloat(edtQuantidade.getText().toString()) == 0) ||
-                        (material.quantidade == Float.parseFloat(edtQuantidade.getText().toString()) &&
-                                material.valoracrescimo == Misc.parseStringToFloat(edtAcrescimoValor.getText().toString()) &&
-                                material.valordesconto == Misc.parseStringToFloat(edtDescontoValor.getText().toString()) &&
-                                material.percdesconto == Misc.parseStringToFloat(edtDescontoPorcentagem.getText().toString()) &&
-                                material.percacrescimo == Misc.parseStringToFloat(edtAcrescimoPorcentagem.getText().toString()) &&
-                                material.custo == Misc.parseStringToFloat(edtCusto.getText().toString()))) {
-//                     material.totalliquido == Misc.parseStringToFloat(edtCusto.getText().toString())){
+                if ((!possuiQuantidade && Misc.parseStringToFloat(edtQuantidade.getText().toString()) == 0) ||
+                        (material.quantidade.floatValue() == Misc.parseStringToFloat(edtQuantidade.getText().toString()) &&
+                                material.valoracrescimo.floatValue() == Misc.parseStringToFloat(edtAcrescimoValor.getText().toString()) &&
+                                material.valordesconto.floatValue() == Misc.parseStringToFloat(edtDescontoValor.getText().toString()) &&
+                                material.percdesconto.floatValue() == Misc.parseStringToFloat(edtDescontoPorcentagem.getText().toString()) &&
+                                material.percacrescimo.floatValue() == Misc.parseStringToFloat(edtAcrescimoPorcentagem.getText().toString()) &&
+                                material.custo.floatValue() == Misc.parseStringToFloat(edtCusto.getText().toString()))) {
                     dialog.dismiss();
                 } else {
                     getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getQuantidade());
@@ -165,7 +157,7 @@ public class MaterialSearchModalFragment extends DialogFragment {
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         bundle.putInt("position", position);
-        bundle.putFloat("quantidade", Float.valueOf(edtQuantidade.getText().toString()));
+        bundle.putFloat("quantidade", Misc.parseStringToFloat(edtQuantidade.getText().toString()));
         bundle.putFloat("valoracrescimo", Misc.parseStringToFloat(edtAcrescimoValor.getText().toString()));
         bundle.putFloat("percacrescimo", Misc.parseStringToFloat(edtAcrescimoPorcentagem.getText().toString()));
         bundle.putFloat("valordesconto", Misc.parseStringToFloat(edtDescontoValor.getText().toString()));
@@ -226,85 +218,97 @@ public class MaterialSearchModalFragment extends DialogFragment {
         }
     }
 
-    private View.OnFocusChangeListener onExitEditText() {
-        return new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    float custo = Misc.parseStringToFloat(edtCusto.getText().toString());
-                    float desconto = 0;
-                    float acrescimo = 0;
-                    float percdesconto = 0;
-                    float percacrescimo = 0;
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (!hasFocus) {
+            BigDecimal custo = new BigDecimal(String.valueOf(Misc.parseStringToFloat(edtCusto.getText().toString()))) ;
+            BigDecimal desconto = new BigDecimal("0");
+            BigDecimal acrescimo = new BigDecimal("0");
+            BigDecimal percdesconto = new BigDecimal("0");
+            BigDecimal percacrescimo = new BigDecimal("0");
 
-                    switch (v.getId()) {
-                        case R.id.edt_custo:
-                            if (Constants.DTO.registro.alteracusto) {
-                                if (custo < material.custooriginal) {
-                                    desconto = (material.custooriginal - custo) * 1;
-                                    desconto = Misc.fRound(false, desconto, 2);
-                                    edtDescontoValor.setText(Misc.parseFloatToWatcher(desconto));
-                                    percdesconto = (desconto * 100) / material.custooriginal;
-                                    percdesconto = Misc.fRound(false, percdesconto, 2);
-                                    edtDescontoPorcentagem.setText(Misc.parseFloatToWatcher(percdesconto));
+            switch (v.getId()) {
+                case R.id.edt_custo:
+                    if (Constants.DTO.registro.alteracusto) {
+                        if (custo.floatValue() < material.custooriginal.floatValue()) {
+                            desconto = material.custooriginal.subtract(custo).multiply(new BigDecimal("1"));
+                            desconto = new BigDecimal(String.valueOf(Misc.fRound(false, desconto, Constants.DTO.registro.casasvalor)));
+                            edtDescontoValor.setText(Misc.parseFloatToWatcher(desconto, Constants.DTO.registro.casasvalor));
+                            percdesconto = desconto.multiply(new BigDecimal("100")).divide(material.custooriginal, 8, BigDecimal.ROUND_HALF_EVEN);
+                            percdesconto = Misc.fRound(false, percdesconto, Constants.DTO.registro.casaspercentual);
+                            edtDescontoPorcentagem.setText(Misc.parseFloatToWatcher(percdesconto, Constants.DTO.registro.casaspercentual));
 
-                                    edtAcrescimoValor.setText(String.valueOf(0));
-                                    edtAcrescimoPorcentagem.setText(String.valueOf(0));
-                                } else if (custo > material.custooriginal) {
-                                    acrescimo = (custo - material.custooriginal) * 1;
-                                    acrescimo = Misc.fRound(false, acrescimo, 2);
-                                    edtAcrescimoValor.setText(Misc.parseFloatToWatcher(acrescimo));
-                                    percacrescimo = (acrescimo * 100) / material.custooriginal;
-                                    percacrescimo = Misc.fRound(false, percacrescimo, 2);
-                                    edtAcrescimoPorcentagem.setText(Misc.parseFloatToWatcher(percacrescimo));
+                            edtAcrescimoValor.setText(String.valueOf(0));
+                            edtAcrescimoPorcentagem.setText(String.valueOf(0));
+                        } else if (custo.floatValue() > material.custooriginal.floatValue()) {
+                            acrescimo = custo.subtract(material.custooriginal).multiply(new BigDecimal("1"));
+                            acrescimo = Misc.fRound(false, acrescimo, Constants.DTO.registro.casasvalor);
+                            edtAcrescimoValor.setText(Misc.parseFloatToWatcher(acrescimo, Constants.DTO.registro.casasvalor));
+                            percacrescimo = acrescimo.multiply(new BigDecimal("100")).divide(material.custooriginal, 8, BigDecimal.ROUND_HALF_EVEN);
+                            percacrescimo = Misc.fRound(false, percacrescimo, Constants.DTO.registro.casaspercentual);
+                            edtAcrescimoPorcentagem.setText(Misc.parseFloatToWatcher(percacrescimo, Constants.DTO.registro.casaspercentual));
 
-                                    edtDescontoValor.setText(String.valueOf(0));
-                                    edtDescontoPorcentagem.setText(String.valueOf(0));
-                                }
+                            edtDescontoValor.setText(String.valueOf(0));
+                            edtDescontoPorcentagem.setText(String.valueOf(0));
+                        }else{
+                            edtAcrescimoValor.setText(String.valueOf(0));
+                            edtAcrescimoPorcentagem.setText(String.valueOf(0));
+                            edtDescontoValor.setText(String.valueOf(0));
+                            edtDescontoPorcentagem.setText(String.valueOf(0));
+                        }
 
-                                edtCusto.setText(Misc.parseFloatToWatcher(material.custooriginal));
-                            }
-                            break;
-                        case R.id.edt_desconto_valor:
-
-                            desconto = Misc.parseStringToFloat(edtDescontoValor.getText().toString());
-
-                            percdesconto = (desconto * 100) / custo;
-                            percdesconto = Misc.fRound(false, percdesconto, 2);
-
-                            edtDescontoPorcentagem.setText(Misc.parseFloatToWatcher(percdesconto));
-                            break;
-                        case R.id.edt_desconto_porcentagem:
-
-                            percdesconto = Misc.parseStringToFloat(edtDescontoPorcentagem.getText().toString());
-
-                            desconto = (custo * percdesconto) / 100;
-                            desconto = Misc.fRound(false, desconto, 2);
-
-                            edtDescontoValor.setText(Misc.parseFloatToWatcher(desconto));
-                            break;
-                        case R.id.edt_acrescimo_valor:
-
-                            acrescimo = Misc.parseStringToFloat(edtAcrescimoValor.getText().toString());
-
-                            percacrescimo = (acrescimo * 100) / custo;
-                            percacrescimo = Misc.fRound(false, percacrescimo, 2);
-
-                            edtAcrescimoPorcentagem.setText(Misc.parseFloatToWatcher(percacrescimo));
-                            break;
-                        case R.id.edt_acrescimo_porcentagem:
-
-                            percacrescimo = Misc.parseStringToFloat(edtAcrescimoPorcentagem.getText().toString());
-
-                            acrescimo = (custo * percacrescimo) / 100;
-                            acrescimo = Misc.fRound(false, acrescimo, 2);
-
-                            edtAcrescimoValor.setText(Misc.parseFloatToWatcher(acrescimo));
-                            break;
+                        edtCusto.setText(Misc.parseFloatToWatcher(material.custooriginal, Constants.DTO.registro.casaspreco));
                     }
-                }
+                    break;
+                case R.id.edt_desconto_valor:
+
+                    desconto = new BigDecimal(String.valueOf(Misc.parseStringToFloat(edtDescontoValor.getText().toString())));
+
+                    percdesconto = desconto.multiply(new BigDecimal("100")).divide(custo, 8, BigDecimal.ROUND_HALF_EVEN);
+                    percdesconto = Misc.fRound(false, percdesconto, Constants.DTO.registro.casaspercentual);
+
+                    edtDescontoPorcentagem.setText(Misc.parseFloatToWatcher(percdesconto, Constants.DTO.registro.casaspercentual));
+                    break;
+                case R.id.edt_desconto_porcentagem:
+
+                    percdesconto = new BigDecimal(String.valueOf(Misc.parseStringToFloat(edtDescontoPorcentagem.getText().toString())));
+
+                    desconto = custo.multiply(percdesconto).divide(new BigDecimal("100"), 8, BigDecimal.ROUND_HALF_EVEN);
+                    desconto = Misc.fRound(false, desconto, Constants.DTO.registro.casasvalor);
+
+                    edtDescontoValor.setText(Misc.parseFloatToWatcher(desconto, Constants.DTO.registro.casasvalor));
+                    break;
+                case R.id.edt_acrescimo_valor:
+
+                    acrescimo = new BigDecimal(String.valueOf(Misc.parseStringToFloat(edtAcrescimoValor.getText().toString())));
+
+                    percacrescimo = acrescimo.multiply(new BigDecimal("100")).divide(custo, 8, BigDecimal.ROUND_HALF_EVEN);
+                    percacrescimo = Misc.fRound(false, percacrescimo, Constants.DTO.registro.casaspercentual);
+
+                    edtAcrescimoPorcentagem.setText(Misc.parseFloatToWatcher(percacrescimo, Constants.DTO.registro.casaspercentual));
+                    break;
+                case R.id.edt_acrescimo_porcentagem:
+
+                    percacrescimo = new BigDecimal(String.valueOf(Misc.parseStringToFloat(edtAcrescimoPorcentagem.getText().toString())));
+
+                    acrescimo = custo.multiply(percacrescimo).divide(new BigDecimal("100"), 8, BigDecimal.ROUND_HALF_EVEN);
+                    acrescimo = Misc.fRound(false, acrescimo, Constants.DTO.registro.casasvalor);
+
+                    edtAcrescimoValor.setText(Misc.parseFloatToWatcher(acrescimo, Constants.DTO.registro.casasvalor));
+                    break;
+                case R.id.edt_preco_final:
+                    BigDecimal custo_final = onGetCustoFinal();
+                    edtCusto.setText(Misc.parseFloatToWatcher(custo_final, Constants.DTO.registro.casaspreco));
+                    onFocusChange(edtCusto, false);
+                    break;
+                case R.id.edt_quantidade:
+                    if (Constants.DTO.registro.alteracusto) {
+                        onFocusChange(edtPrecoFinal, false);
+                    }
+                    break;
+
             }
-        };
+        }
     }
 
     private void onSetFocusEditText(){
@@ -327,5 +331,26 @@ public class MaterialSearchModalFragment extends DialogFragment {
         if (edtDescontoPorcentagem.hasFocus()){
             edtDescontoPorcentagem.setFocusable(false);
         }
+
+        if (edtPrecoFinal.hasFocus()){
+            edtPrecoFinal.setFocusable(false);
+        }
+    }
+
+    private BigDecimal onGetCustoFinal(){
+        BigDecimal precoFinal = new BigDecimal(String.valueOf(Misc.parseStringToFloat(edtPrecoFinal.getText().toString())));
+
+        if (precoFinal.floatValue() == 0){
+            edtPrecoFinal.setText(Misc.parseFloatToWatcher(material.totalliquidooriginal, Constants.DTO.registro.casasvalor));;
+            return material.custooriginal;
+        }
+
+        if (precoFinal.floatValue() != material.totalliquidooriginal.floatValue()) {
+
+            CalculoClass calculoClass = new CalculoClass(getActivity(), material);
+            return calculoClass.getPrecoFinal(precoFinal,
+                    new BigDecimal(String.valueOf(Misc.parseStringToFloat(edtQuantidade.getText().toString()))));
+        }
+        return material.custooriginal;
     }
 }

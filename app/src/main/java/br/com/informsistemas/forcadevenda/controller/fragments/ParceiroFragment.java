@@ -233,7 +233,7 @@ public class ParceiroFragment extends Fragment {
             }
         }
 
-        if (p.percdescontopadrao > 0){
+        if (p.percdescontopadrao.floatValue() > 0){
             Constants.MOVIMENTO.percdescontopadrao = p.percdescontopadrao;
         }
 

@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.informsistemas.forcadevenda.model.utils.IEntidade;
@@ -24,22 +25,23 @@ public class MaterialEstado implements IEntidade {
     public Date atualizacao;
 
     @DatabaseField
-    public float mva;
+    public BigDecimal mva;
 
     @DatabaseField
-    public float icms_interestadual;
+    public BigDecimal icms_interestadual;
 
     @DatabaseField
-    public float icms_interno;
+    public BigDecimal icms_interno;
 
     @DatabaseField
-    public float fecoep;
+    public BigDecimal fecoep;
 
     @DatabaseField
-    public float pautafiscal;
+    public BigDecimal pautafiscal;
 
     public MaterialEstado(){}
-    public MaterialEstado(String codigomaterial, String estado, Date atualizacao, float mva, float icms_interestadual, float icms_interno, float fecoep, float pautafiscal) {
+    public MaterialEstado(String codigomaterial, String estado, Date atualizacao, BigDecimal mva, BigDecimal icms_interestadual,
+                          BigDecimal icms_interno, BigDecimal fecoep, BigDecimal pautafiscal) {
         this.codigomaterial = codigomaterial;
         this.estado = estado;
         this.atualizacao = atualizacao;

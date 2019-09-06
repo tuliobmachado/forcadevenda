@@ -48,7 +48,7 @@ public class MovimentoParcelaAdapter extends RecyclerView.Adapter<MovimentoParce
         FormaPagamento p = FormaPagamentoDAO.getInstance(context).findByIdAuxiliar("codigoforma", fList.get(position).codigoforma);
 
         myViewHolder.txtDescricao.setText(p.descricao);
-        myViewHolder.txtValor.setText(Misc.formatMoeda(fList.get(position).valor));
+        myViewHolder.txtValor.setText(Misc.formatMoeda(fList.get(position).valor.floatValue()));
 
         for (int i : selectedIds){
             if (fList.get(position).id == i){

@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.informsistemas.forcadevenda.model.utils.IEntidade;
@@ -21,16 +22,16 @@ public class TabelaPrecoItem implements IEntidade {
     public String codigotabelaprecoitem;
 
     @DatabaseField
-    public float precovenda1;
+    public BigDecimal precovenda1;
 
     @DatabaseField
     public Date atualizacao;
 
     @DatabaseField
-    public float desconto;
+    public BigDecimal desconto;
 
     public TabelaPrecoItem(){}
-    public TabelaPrecoItem(String codigotabelapreco, String codigotabelaprecoitem, float precovenda1, Date atualizacao, float desconto) {
+    public TabelaPrecoItem(String codigotabelapreco, String codigotabelaprecoitem, BigDecimal precovenda1, Date atualizacao, BigDecimal desconto) {
         this.codigotabelapreco = codigotabelapreco;
         this.codigotabelaprecoitem = codigotabelaprecoitem;
         this.precovenda1 = precovenda1;

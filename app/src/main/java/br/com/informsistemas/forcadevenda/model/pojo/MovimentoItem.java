@@ -4,6 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.math.BigDecimal;
+
 import br.com.informsistemas.forcadevenda.model.utils.IEntidade;
 
 @DatabaseTable(tableName = "movimentoitem")
@@ -31,103 +33,103 @@ public class MovimentoItem implements IEntidade {
 
     @DatabaseField
     @Expose
-    public float quantidade;
+    public BigDecimal quantidade;
 
     @DatabaseField
     @Expose
-    public float custo;
+    public BigDecimal custo;
 
     @DatabaseField
     @Expose
-    public float totalitem;
+    public BigDecimal totalitem;
 
     @DatabaseField
     @Expose
-    public float icms;
+    public BigDecimal icms;
 
     @DatabaseField
     @Expose
-    public float baseicms;
+    public BigDecimal baseicms;
 
     @DatabaseField
     @Expose
-    public float valoricms;
+    public BigDecimal valoricms;
 
     @DatabaseField
     @Expose
-    public float baseicmssubst;
+    public BigDecimal baseicmssubst;
 
     @DatabaseField
     @Expose
-    public float icmssubst;
+    public BigDecimal icmssubst;
 
     @DatabaseField
     @Expose
-    public  float valoricmssubst;
+    public BigDecimal valoricmssubst;
 
     @DatabaseField
     @Expose
-    public float ipi;
+    public BigDecimal ipi;
 
     @DatabaseField
     @Expose
-    public float valoripi;
+    public BigDecimal valoripi;
 
     @DatabaseField
     @Expose
-    public float margemsubstituicao;
+    public BigDecimal margemsubstituicao;
 
     @DatabaseField
     @Expose
-    public float pautafiscal;
+    public BigDecimal pautafiscal;
 
     @DatabaseField
     @Expose
-    public float icmsfecoep;
+    public BigDecimal icmsfecoep;
 
     @DatabaseField
     @Expose
-    public float valoricmsfecoep;
+    public BigDecimal valoricmsfecoep;
 
     @DatabaseField
     @Expose
-    public float icmsfecoepst;
+    public BigDecimal icmsfecoepst;
 
     @DatabaseField
     @Expose
-    public float valoricmsfecoepst;
+    public BigDecimal valoricmsfecoepst;
 
     @DatabaseField
     @Expose
-    public float totalliquido;
+    public BigDecimal totalliquido;
 
     @DatabaseField
     @Expose
-    public float valoracrescimoitem;
+    public BigDecimal valoracrescimoitem;
 
     @DatabaseField
     @Expose
-    public float percacrescimoitem;
+    public BigDecimal percacrescimoitem;
 
     @DatabaseField
     @Expose
-    public float valordescontoitem;
+    public BigDecimal valordescontoitem;
 
     @DatabaseField
     @Expose
-    public float percdescontoitem;
+    public BigDecimal percdescontoitem;
 
     @DatabaseField
     @Expose
-    public float custooriginal;
+    public BigDecimal custooriginal;
 
     public MovimentoItem(){}
     public MovimentoItem(Movimento movimento, String codigotabelapreco, String codigomaterial,
-                         String unidade, float quantidade, float custo, float totalitem, float icms, float baseicms,
-                         float valoricms, float icmssubst, float baseicmssubst, float valoricmssubst, float ipi, float valoripi,
-                         float margemsubstituicao, float pautafiscal, float icmsfecoep, float valoricmsfecoep, float icmsfecoepst,
-                         float valoricmsfecoepst, float totalliquido, float valoracrescimoitem, float percacrescimoitem,
-                         float valordescontoitem, float percdescontoitem, float custooriginal) {
+                         String unidade, BigDecimal quantidade, BigDecimal custo, BigDecimal totalitem, BigDecimal icms, BigDecimal baseicms,
+                         BigDecimal valoricms, BigDecimal icmssubst, BigDecimal baseicmssubst, BigDecimal valoricmssubst, BigDecimal ipi, BigDecimal valoripi,
+                         BigDecimal margemsubstituicao, BigDecimal pautafiscal, BigDecimal icmsfecoep, BigDecimal valoricmsfecoep, BigDecimal icmsfecoepst,
+                         BigDecimal valoricmsfecoepst, BigDecimal totalliquido, BigDecimal valoracrescimoitem, BigDecimal percacrescimoitem,
+                         BigDecimal valordescontoitem, BigDecimal percdescontoitem, BigDecimal custooriginal) {
         this.movimento = movimento;
         this.codigotabelapreco = codigotabelapreco;
         this.codigomaterial = codigomaterial;

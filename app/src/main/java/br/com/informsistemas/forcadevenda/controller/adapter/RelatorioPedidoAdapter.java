@@ -60,7 +60,7 @@ public class RelatorioPedidoAdapter extends RecyclerView.Adapter<RelatorioPedido
         if (fList.get(position).datafim != null) {
             myViewHolder.txtHoraFim.setText(Misc.formatDate(fList.get(position).datafim, "HH:mm:ss"));
         }
-        myViewHolder.txtTotal.setText("R$ "+Misc.formatMoeda(fList.get(position).totalliquido));
+        myViewHolder.txtTotal.setText("R$ "+Misc.formatMoeda(fList.get(position).totalliquido.floatValue()));
     }
 
     @Override
