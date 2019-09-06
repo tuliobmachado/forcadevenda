@@ -15,6 +15,7 @@ import br.com.informsistemas.forcadevenda.model.pojo.FormaPagamento;
 public class FormaPagamentoDAO extends BaseDAO<FormaPagamento> {
 
     private static FormaPagamentoDAO dao;
+    private List<FormaPagamento> listPesquisa;
 
     public static FormaPagamentoDAO getInstance(Context context){
         if (dao == null){
@@ -29,10 +30,14 @@ public class FormaPagamentoDAO extends BaseDAO<FormaPagamento> {
         super.ctx = context;
     }
 
+    public void setListPesquisa(List<FormaPagamento> listFormaPagamento){
+        this.listPesquisa = listFormaPagamento;
+    }
+
     public List<FormaPagamento> pesquisaLista(String s){
         List<FormaPagamento> pagamentoList = new ArrayList<>();
 
-        for (FormaPagamento p : Constants.DTO.listPesquisaPagamento){
+        for (FormaPagamento p : listPesquisa){
             if (p.descricao.toUpperCase().contains(s.toUpperCase())){
                 pagamentoList.add(p);
             }
