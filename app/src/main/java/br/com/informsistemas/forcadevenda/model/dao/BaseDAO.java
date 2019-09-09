@@ -7,6 +7,7 @@ import android.util.Log;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
 import java.lang.reflect.ParameterizedType;
 import java.sql.SQLException;
@@ -63,6 +64,29 @@ public class BaseDAO<T extends IEntidade> {
                 return null;
             }
         } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public T findByTwoIdAuxiliar(String campo1, Object codigo1, String campo2, Object codigo2){
+        List<T> listItem = new ArrayList<>();
+
+        try{
+            QueryBuilder<T, Object> queryBuilder = getHelper().getDAO(getEntityClass()).queryBuilder();
+            Where where = queryBuilder.where();
+            where.eq(campo1, codigo1);
+            where.and();
+            where.eq(campo2, codigo2);
+
+            listItem = queryBuilder.query();
+
+            if (listItem.size() > 0){
+                return listItem.get(0);
+            }else{
+                return null;
+            }
+        } catch (SQLException e){
             e.printStackTrace();
             return null;
         }

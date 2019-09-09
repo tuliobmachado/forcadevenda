@@ -457,9 +457,7 @@ public class RequestSincroniaTask <T> extends AsyncTask<String, Void, List<T>> {
     private String getCodigoTabelaPreco(){
         String codigotabelapreco = "";
 
-        if (Constants.SINCRONIA.listTabelaPreco.size() == 0){
-            ParceiroDAO.getInstance(fragment.getActivity()).getTabelaPreco();
-        }
+        ParceiroDAO.getInstance(fragment.getActivity()).getTabelaPreco();
 
         for (int i = 0; i < Constants.SINCRONIA.listTabelaPreco.size(); i++) {
             if (codigotabelapreco.equals("")){

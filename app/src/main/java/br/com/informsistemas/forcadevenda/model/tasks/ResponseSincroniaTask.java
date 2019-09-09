@@ -161,7 +161,7 @@ public class ResponseSincroniaTask<T> extends AsyncTask<String, Void, String> {
         TabelaPrecoItem t = null;
 
         if  (!isSincroniaCompleta()) {
-            t = TabelaPrecoItemDAO.getInstance(fragment.getActivity()).findByIdAuxiliar("codigotabelaprecoitem", item.codigotabelaprecoitem);
+            t = TabelaPrecoItemDAO.getInstance(fragment.getActivity()).findByTwoIdAuxiliar("codigotabelapreco", item.codigotabelapreco,"codigotabelaprecoitem", item.codigotabelaprecoitem);
 
             if (t != null) {
                 TabelaPrecoItemDAO.getInstance(fragment.getActivity()).delete(t);
