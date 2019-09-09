@@ -61,6 +61,8 @@ public class MaterialSearchAdapter extends RecyclerView.Adapter<MaterialSearchAd
     public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, int position) {
 
         if ((Constants.DTO.registro.exibematerialsemsaldo) || ((!Constants.DTO.registro.exibematerialsemsaldo) && (fList.get(position).saldomaterial.floatValue() > 0))) {
+            myViewHolder.itemView.setVisibility(View.VISIBLE);
+            myViewHolder.itemView.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
             myViewHolder.txtDescricao.setText(fList.get(position).descricao);
             myViewHolder.txtCusto.setText("R$ " + Misc.formatMoeda(fList.get(position).totalliquido.floatValue()));
             myViewHolder.txtSaldo.setText("Saldo: " + String.format("%.2f", fList.get(position).saldomaterial) + " | " + fList.get(position).unidadesaida);
