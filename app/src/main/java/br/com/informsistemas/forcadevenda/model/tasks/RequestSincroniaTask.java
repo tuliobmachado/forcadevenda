@@ -2,8 +2,7 @@ package br.com.informsistemas.forcadevenda.model.tasks;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
-import android.util.Log;
+import androidx.fragment.app.Fragment;
 
 import com.google.gson.Gson;
 

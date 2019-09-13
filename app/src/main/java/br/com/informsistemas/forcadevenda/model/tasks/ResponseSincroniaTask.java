@@ -2,9 +2,8 @@ package br.com.informsistemas.forcadevenda.model.tasks;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
-import java.util.Date;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
@@ -21,7 +20,6 @@ import br.com.informsistemas.forcadevenda.model.dao.ParceiroVencimentoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.TabelaPrecoItemDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Enums;
-import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Atualizacao;
 import br.com.informsistemas.forcadevenda.model.pojo.Categoria;
 import br.com.informsistemas.forcadevenda.model.pojo.CategoriaMaterial;

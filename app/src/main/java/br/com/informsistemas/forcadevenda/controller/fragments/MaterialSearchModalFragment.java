@@ -6,9 +6,9 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -106,9 +106,9 @@ public class MaterialSearchModalFragment extends DialogFragment implements View.
         edtAcrescimoValor.setOnFocusChangeListener(this);
         edtQuantidade.setOnFocusChangeListener(this);
 
-        onExibeAcrescimo();
-        onExibeDesconto();
-        onExibeCusto();
+//        onExibeAcrescimo();
+//        onExibeDesconto();
+//        onExibeCusto();
 
         txtDescricao.setText(material.descricao);
         if (material.quantidade.floatValue() == 0) {
