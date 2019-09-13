@@ -1,39 +1,23 @@
 package br.com.informsistemas.forcadevenda.controller.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewDebug;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.model.dao.MaterialEstadoDAO;
-import br.com.informsistemas.forcadevenda.model.dao.MaterialSaldoDAO;
-import br.com.informsistemas.forcadevenda.model.dao.TabelaPrecoItemDAO;
-import br.com.informsistemas.forcadevenda.model.helper.CalculoClass;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Material;
-import br.com.informsistemas.forcadevenda.model.pojo.MaterialEstado;
-import br.com.informsistemas.forcadevenda.model.pojo.MaterialSaldo;
-import br.com.informsistemas.forcadevenda.model.pojo.MovimentoItem;
-import br.com.informsistemas.forcadevenda.model.pojo.TabelaPrecoItem;
-import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
-import br.com.informsistemas.forcadevenda.model.utils.RecyclerItemClickListener;
 
 public class MaterialSearchAdapter extends RecyclerView.Adapter<MaterialSearchAdapter.MyViewHolder>  {
 
