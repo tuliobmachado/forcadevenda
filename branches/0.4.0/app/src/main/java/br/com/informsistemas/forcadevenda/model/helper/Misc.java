@@ -3,9 +3,9 @@ package br.com.informsistemas.forcadevenda.model.helper;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -15,13 +15,10 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -218,7 +215,7 @@ public class Misc {
             difHoras += 24;
         }
 
-        if (difHoras >= 1){
+        if ((difHoras >= 1) || (difMinutos > 15)){
             value = true;
         }
 
