@@ -37,9 +37,11 @@ public class FormaPagamentoDAO extends BaseDAO<FormaPagamento> {
     public List<FormaPagamento> pesquisaLista(String s){
         List<FormaPagamento> pagamentoList = new ArrayList<>();
 
-        for (FormaPagamento p : listPesquisa){
-            if (p.descricao.toUpperCase().contains(s.toUpperCase())){
-                pagamentoList.add(p);
+        if (listPesquisa != null) {
+            for (FormaPagamento p : listPesquisa) {
+                if (p.descricao.toUpperCase().contains(s.toUpperCase())) {
+                    pagamentoList.add(p);
+                }
             }
         }
 
