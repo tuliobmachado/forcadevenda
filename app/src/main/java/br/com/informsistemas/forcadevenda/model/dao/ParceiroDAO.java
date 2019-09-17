@@ -2,9 +2,6 @@ package br.com.informsistemas.forcadevenda.model.dao;
 
 import android.content.Context;
 
-import com.j256.ormlite.stmt.DeleteBuilder;
-import com.j256.ormlite.stmt.QueryBuilder;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
