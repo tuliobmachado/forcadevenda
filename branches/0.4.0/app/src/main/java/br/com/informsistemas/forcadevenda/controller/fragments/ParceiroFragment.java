@@ -106,6 +106,7 @@ public class ParceiroFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Parceiro p = (Parceiro) data.getExtras().getSerializable("Parceiro");
         Constants.MOVIMENTO.movimento.codigoparceiro = p.codigoparceiro;
+        Constants.MOVIMENTO.movimento.descricaoparceiro = p.descricao;
 
         getTabelas(p);
 
@@ -202,6 +203,7 @@ public class ParceiroFragment extends Fragment {
         parceiroAdapter.notifyItemRemoved(position);
         parceiroAdapter.notifyItemRangeChanged(position, parceiroAdapter.getItemCount());
         Constants.MOVIMENTO.movimento.codigoparceiro = null;
+        Constants.MOVIMENTO.movimento.descricaoparceiro = "";
         Misc.setTabelasPadrao();
         getActivity().invalidateOptionsMenu();
     }

@@ -1,8 +1,10 @@
 package br.com.informsistemas.forcadevenda.controller.adapter;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,25 +43,31 @@ public class RelatorioPedidoAdapter extends RecyclerView.Adapter<RelatorioPedido
 
     @Override
     public void onBindViewHolder(@NonNull RelatorioPedidoAdapter.MyViewHolder myViewHolder, int position) {
-
         Parceiro p = ParceiroDAO.getInstance(context).findByIdAuxiliar("codigoparceiro", fList.get(position).codigoparceiro);
 
         if (fList.get(position).sincronizado.equals("T")) {
             myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movSincronizado));
-        } else if (fList.get(position).sincronizado.equals("P")){
+        } else if (fList.get(position).sincronizado.equals("P")) {
             myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.parceiroAVencer));
-        }else{
+        } else {
             myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movNaoSincronizado));
         }
 
-        myViewHolder.txtCodigoParceiro.setText(p.codigoparceiro);
+        if (p != null) {
+            myViewHolder.txtCodigoParceiro.setText(p.codigoparceiro);
+            myViewHolder.txtDescricao.setText(p.descricao);
+        }else{
+            myViewHolder.txtCodigoParceiro.setText(fList.get(position).codigoparceiro);
+            myViewHolder.txtDescricao.setText(fList.get(position).descricaoparceiro);
+        }
+
         myViewHolder.txtData.setText(Misc.formatDate(fList.get(position).data, "dd/MM/yyyy"));
-        myViewHolder.txtDescricao.setText(p.descricao);
         myViewHolder.txtHoraInicio.setText(Misc.formatDate(fList.get(position).datainicio, "HH:mm:ss"));
         if (fList.get(position).datafim != null) {
             myViewHolder.txtHoraFim.setText(Misc.formatDate(fList.get(position).datafim, "HH:mm:ss"));
         }
-        myViewHolder.txtTotal.setText("R$ "+Misc.formatMoeda(fList.get(position).totalliquido.floatValue()));
+        myViewHolder.txtTotal.setText("R$ " + Misc.formatMoeda(fList.get(position).totalliquido.floatValue()));
+
     }
 
     @Override
