@@ -116,6 +116,8 @@ public class Parceiro implements IEntidade {
     @DatabaseField
     public String formaspermitidas;
 
+    public String statusvencimento;
+
     public Parceiro(){}
     public Parceiro(String codigoparceiro, String descricao, String cpfcgc, String diavencimento, String status, String telefone, String telefone2,
                     String endereco, String bairro, String cidade, String estado, String pontoreferencia, Date datacadastro, Date dataultimopedido,

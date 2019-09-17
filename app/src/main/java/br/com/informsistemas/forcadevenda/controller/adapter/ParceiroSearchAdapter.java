@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -45,12 +46,15 @@ public class ParceiroSearchAdapter extends RecyclerView.Adapter<ParceiroSearchAd
 
         if (parceiroVencimentoList.size() == 0){
             myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movSincronizado));
+            fList.get(position).statusvencimento = "";
         }else{
             if (parceiroVencimentoList.get(0).status.equals("Vencido")){
                 myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movNaoSincronizado));
             }else{
                 myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.parceiroAVencer));
             }
+
+            fList.get(position).statusvencimento = parceiroVencimentoList.get(0).status;
         }
 
         myViewHolder.txtCodigo.setText(fList.get(position).codigoparceiro);

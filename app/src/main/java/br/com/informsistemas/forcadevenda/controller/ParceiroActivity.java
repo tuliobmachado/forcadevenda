@@ -16,7 +16,9 @@ import android.widget.Toast;
 import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.controller.fragments.ParceiroFragment;
 import br.com.informsistemas.forcadevenda.controller.fragments.ParceiroSearchFragment;
+import br.com.informsistemas.forcadevenda.controller.fragments.ParceiroVencimentoFragment;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
+import br.com.informsistemas.forcadevenda.model.pojo.ParceiroVencimento;
 import br.com.informsistemas.forcadevenda.model.tasks.MontagemPrecoTask;
 import br.com.informsistemas.forcadevenda.model.utils.IOnBackPressed;
 
@@ -58,7 +60,7 @@ public class ParceiroActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_lista, menu);
+        getMenuInflater().inflate(R.menu.menu_parceiro, menu);
         return true;
     }
 
@@ -69,9 +71,13 @@ public class ParceiroActivity extends AppCompatActivity {
             //Back button
             case R.id.action_search_list:
                 onShowSearchParceiro();
-            default:
-                return super.onOptionsItemSelected(item);
+                break;
+            case R.id.action_titulos:
+                onShowTitulosParceiro();
+                break;
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void onShowParceiro(){
@@ -95,6 +101,23 @@ public class ParceiroActivity extends AppCompatActivity {
             parceiroSearchFragment.setTargetFragment(parceiroFragment, 0);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_container, parceiroSearchFragment, "parceiroSearchFragment");
+            ft.addToBackStack(null);
+            ft.commit();
+        }
+    }
+
+    private void onShowTitulosParceiro(){
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("Parceiro", parceiroFragment.onGetParceiroSelecionado());
+        ParceiroVencimentoFragment parceiroVencimentoFragment = (ParceiroVencimentoFragment) getSupportFragmentManager().findFragmentByTag("parceiroVencimentoFragment");
+
+        if (parceiroVencimentoFragment == null){
+            parceiroVencimentoFragment = new ParceiroVencimentoFragment();
+
+            parceiroVencimentoFragment.setArguments(bundle);
+            parceiroFragment.btnSelecionarProduto.setVisibility(View.GONE);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.fragment_container, parceiroVencimentoFragment, "parceiroVencimentoFragment");
             ft.addToBackStack(null);
             ft.commit();
         }
