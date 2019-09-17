@@ -106,9 +106,9 @@ public class MaterialSearchModalFragment extends DialogFragment implements View.
         edtAcrescimoValor.setOnFocusChangeListener(this);
         edtQuantidade.setOnFocusChangeListener(this);
 
-//        onExibeAcrescimo();
-//        onExibeDesconto();
-//        onExibeCusto();
+        onExibeAcrescimo();
+        onExibeDesconto();
+        onExibeCusto();
 
         txtDescricao.setText(material.descricao);
         if (material.quantidade.floatValue() == 0) {
