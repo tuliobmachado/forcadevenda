@@ -48,10 +48,13 @@ public class ParceiroVencimentoFragment extends Fragment {
 
         getActivity().setTitle("Consulta Parceiro");
         tabLayout = getActivity().findViewById(R.id.tab_layout_parceiro);
-        tabLayout.setVisibility(View.VISIBLE);
 
-        ((MainActivity) getActivity()).onSetIndexMenu(1, 1);
-        ((MainActivity) getActivity()).onSetItemMenu();
+        if (tabLayout != null) {
+            tabLayout.setVisibility(View.VISIBLE);
+
+            ((MainActivity) getActivity()).onSetIndexMenu(1, 1);
+            ((MainActivity) getActivity()).onSetItemMenu();
+        }
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);

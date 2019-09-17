@@ -30,6 +30,7 @@ import br.com.informsistemas.forcadevenda.model.utils.RecyclerItemClickListener;
 
 public class ParceiroFragment extends Fragment {
 
+    public Button btnSelecionarProduto;
     private List<Parceiro> listParceiro;
     private RecyclerView recyclerView;
     private ParceiroAdapter parceiroAdapter;
@@ -50,8 +51,8 @@ public class ParceiroFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recycler, container, false);
 
-        Button btn = getActivity().findViewById(R.id.btn_selecionar_produto);
-        btn.setVisibility(View.VISIBLE);
+        btnSelecionarProduto = getActivity().findViewById(R.id.btn_selecionar_produto);
+        btnSelecionarProduto.setVisibility(View.VISIBLE);
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -71,8 +72,18 @@ public class ParceiroFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().setTitle("Parceiros");
+
         if (listParceiro.size() > 0) {
-            menu.clear();
+            if (listParceiro.get(0).statusvencimento.equals("")) {
+                menu.clear();
+            }else{
+                MenuItem menuItem = menu.findItem(R.id.action_search_list);
+                menuItem.setVisible(false);
+            }
+        }else{
+            MenuItem menuItem = menu.findItem(R.id.action_titulos);
+            menuItem.setVisible(false);
         }
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -234,5 +245,9 @@ public class ParceiroFragment extends Fragment {
         }
 
         Constants.MOVIMENTO.estadoParceiro = p.estado;
+    }
+
+    public Parceiro onGetParceiroSelecionado(){
+        return listParceiro.get(0);
     }
 }
