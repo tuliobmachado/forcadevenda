@@ -140,18 +140,37 @@ public class ResumoActivity extends AppCompatActivity {
 
     private void getDadosParceiro() {
         Parceiro p = ParceiroDAO.getInstance(this).findByIdAuxiliar("codigoparceiro", Constants.MOVIMENTO.movimento.codigoparceiro);
+        TextView txtCodigoParceiro = new TextView(this);
         TextView txtDescricao = new TextView(this);
         TextView txtCPFCGC = new TextView(this);
 
+        txtCodigoParceiro.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        if (p != null){
+            txtCodigoParceiro.setText(p.codigoparceiro);
+        }else{
+            txtCodigoParceiro.setText(Constants.MOVIMENTO.movimento.codigoparceiro);
+        }
+        txtCodigoParceiro.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+        txtCodigoParceiro.setTypeface(null, Typeface.BOLD);
+
         txtDescricao.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        txtDescricao.setText(p.descricao);
+        if (p != null) {
+            txtDescricao.setText(p.descricao);
+        }else{
+            txtDescricao.setText(Constants.MOVIMENTO.movimento.descricaoparceiro);
+        }
         txtDescricao.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
         txtDescricao.setTypeface(null, Typeface.BOLD);
 
         txtCPFCGC.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        txtCPFCGC.setText(CPFCNPJMask.getMask(p.cpfcgc));
+        if (p != null) {
+            txtCPFCGC.setText(CPFCNPJMask.getMask(p.cpfcgc));
+        }else{
+            txtCPFCGC.setText(CPFCNPJMask.getMask("00000000000000"));
+        }
         txtCPFCGC.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 
+        linearLayoutParceiro.addView(txtCodigoParceiro);
         linearLayoutParceiro.addView(txtDescricao);
         linearLayoutParceiro.addView(txtCPFCGC);
     }

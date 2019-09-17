@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Constants.MOVIMENTO.movimento = new Movimento(Constants.MOVIMENTO.codigoempresa,
                 Constants.MOVIMENTO.codigofilialcontabil, Constants.MOVIMENTO.codigoalmoxarifado,
                 Constants.MOVIMENTO.codigooperacao, Constants.MOVIMENTO.codigotabelapreco,
-                null, "", new BigDecimal("0"), "", Misc.GetDateAtual(), null, null, null, "", "", Misc.gerarMD5());
+                null, "", new BigDecimal("0"), "", Misc.GetDateAtual(), null, null, null, "", "", Misc.gerarMD5(), "");
         Intent intent = new Intent(MainActivity.this, ParceiroActivity.class);
         startActivityForResult(intent, 0);
     }
