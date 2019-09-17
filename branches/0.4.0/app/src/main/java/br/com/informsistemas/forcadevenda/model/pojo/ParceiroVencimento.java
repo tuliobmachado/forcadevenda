@@ -14,6 +14,9 @@ public class ParceiroVencimento implements IEntidade {
     public Integer id;
 
     @DatabaseField
+    public String numerolancamento;
+
+    @DatabaseField
     public String codigoparceiro;
 
     @DatabaseField
@@ -23,17 +26,22 @@ public class ParceiroVencimento implements IEntidade {
     public Date datavencimento;
 
     @DatabaseField
-    public float valor;
+    public float valordocumento;
+
+    @DatabaseField
+    public float valoremaberto;
 
     @DatabaseField
     public String status;
 
     public ParceiroVencimento(){}
-    public ParceiroVencimento(String codigoparceiro, Date dataemissao, Date datavencimento, float valor, String status) {
+    public ParceiroVencimento(String numerolancamento, String codigoparceiro, Date dataemissao, Date datavencimento, float valordocumento, float valoremaberto, String status) {
+        this.numerolancamento = numerolancamento;
         this.codigoparceiro = codigoparceiro;
         this.dataemissao = dataemissao;
         this.datavencimento = datavencimento;
-        this.valor = valor;
+        this.valordocumento = valordocumento;
+        this.valoremaberto = valoremaberto;
         this.status = status;
     }
 }
