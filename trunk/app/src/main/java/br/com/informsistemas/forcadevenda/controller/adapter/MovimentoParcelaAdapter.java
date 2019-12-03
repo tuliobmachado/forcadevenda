@@ -2,10 +2,10 @@ package br.com.informsistemas.forcadevenda.controller.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +48,7 @@ public class MovimentoParcelaAdapter extends RecyclerView.Adapter<MovimentoParce
         FormaPagamento p = FormaPagamentoDAO.getInstance(context).findByIdAuxiliar("codigoforma", fList.get(position).codigoforma);
 
         myViewHolder.txtDescricao.setText(p.descricao);
-        myViewHolder.txtValor.setText(Misc.formatMoeda(fList.get(position).valor));
+        myViewHolder.txtValor.setText(Misc.formatMoeda(fList.get(position).valor.floatValue()));
 
         for (int i : selectedIds){
             if (fList.get(position).id == i){

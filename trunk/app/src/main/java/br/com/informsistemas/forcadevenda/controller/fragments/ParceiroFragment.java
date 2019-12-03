@@ -1,14 +1,12 @@
 package br.com.informsistemas.forcadevenda.controller.fragments;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,11 +26,11 @@ import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
-import br.com.informsistemas.forcadevenda.model.utils.IOnBackPressed;
 import br.com.informsistemas.forcadevenda.model.utils.RecyclerItemClickListener;
 
 public class ParceiroFragment extends Fragment {
 
+    public Button btnSelecionarProduto;
     private List<Parceiro> listParceiro;
     private RecyclerView recyclerView;
     private ParceiroAdapter parceiroAdapter;
@@ -54,8 +51,8 @@ public class ParceiroFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recycler, container, false);
 
-        Button btn = getActivity().findViewById(R.id.btn_selecionar_produto);
-        btn.setVisibility(View.VISIBLE);
+        btnSelecionarProduto = getActivity().findViewById(R.id.btn_selecionar_produto);
+        btnSelecionarProduto.setVisibility(View.VISIBLE);
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -75,8 +72,18 @@ public class ParceiroFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().setTitle("Parceiros");
+
         if (listParceiro.size() > 0) {
-            menu.clear();
+            if (listParceiro.get(0).statusvencimento.equals("")) {
+                menu.clear();
+            }else{
+                MenuItem menuItem = menu.findItem(R.id.action_search_list);
+                menuItem.setVisible(false);
+            }
+        }else{
+            MenuItem menuItem = menu.findItem(R.id.action_titulos);
+            menuItem.setVisible(false);
         }
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -99,6 +106,7 @@ public class ParceiroFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Parceiro p = (Parceiro) data.getExtras().getSerializable("Parceiro");
         Constants.MOVIMENTO.movimento.codigoparceiro = p.codigoparceiro;
+        Constants.MOVIMENTO.movimento.descricaoparceiro = p.descricao;
 
         getTabelas(p);
 
@@ -195,6 +203,7 @@ public class ParceiroFragment extends Fragment {
         parceiroAdapter.notifyItemRemoved(position);
         parceiroAdapter.notifyItemRangeChanged(position, parceiroAdapter.getItemCount());
         Constants.MOVIMENTO.movimento.codigoparceiro = null;
+        Constants.MOVIMENTO.movimento.descricaoparceiro = "";
         Misc.setTabelasPadrao();
         getActivity().invalidateOptionsMenu();
     }
@@ -233,10 +242,14 @@ public class ParceiroFragment extends Fragment {
             }
         }
 
-        if (p.percdescontopadrao > 0){
+        if (p.percdescontopadrao.floatValue() > 0){
             Constants.MOVIMENTO.percdescontopadrao = p.percdescontopadrao;
         }
 
         Constants.MOVIMENTO.estadoParceiro = p.estado;
+    }
+
+    public Parceiro onGetParceiroSelecionado(){
+        return listParceiro.get(0);
     }
 }

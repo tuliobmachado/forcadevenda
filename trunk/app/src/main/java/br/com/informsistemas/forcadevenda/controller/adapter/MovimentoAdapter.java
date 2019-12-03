@@ -2,10 +2,10 @@ package br.com.informsistemas.forcadevenda.controller.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,31 +46,38 @@ public class MovimentoAdapter extends RecyclerView.Adapter<MovimentoAdapter.MyVi
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int position) {
         Boolean selecionado = false;
-
-        if (fList.get(position).sincronizado.equals("T")){
-            myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movSincronizado));
-        }else if (fList.get(position).sincronizado.equals("P")){
-            myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.parceiroAVencer));
-        }else {
-            myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movNaoSincronizado));
-        }
-
         Parceiro p = ParceiroDAO.getInstance(context).findByIdAuxiliar("codigoparceiro", fList.get(position).codigoparceiro);
 
-        myViewHolder.txtCodigoParceiro.setText(p.codigoparceiro);
-        myViewHolder.txtDescricao.setText(p.descricao);
-        myViewHolder.txtTotalLiquido.setText(Misc.formatMoeda(fList.get(position).totalliquido));
+        if (p != null) {
+            myViewHolder.itemView.setVisibility(View.VISIBLE);
+            myViewHolder.itemView.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
 
-        for (int i : selectedIds){
-            if (fList.get(position).id == i){
-                selecionado = true;
+            if (fList.get(position).sincronizado.equals("T")) {
+                myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movSincronizado));
+            } else if (fList.get(position).sincronizado.equals("P")) {
+                myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.parceiroAVencer));
+            } else {
+                myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movNaoSincronizado));
             }
-        }
 
-        if (selecionado){
-            myViewHolder.cardView.setForeground(new ColorDrawable(ContextCompat.getColor(context, R.color.cardSelecionado)));
+            myViewHolder.txtCodigoParceiro.setText(p.codigoparceiro);
+            myViewHolder.txtDescricao.setText(p.descricao);
+            myViewHolder.txtTotalLiquido.setText(Misc.formatMoeda(fList.get(position).totalliquido.floatValue()));
+
+            for (int i : selectedIds) {
+                if (fList.get(position).id == i) {
+                    selecionado = true;
+                }
+            }
+
+            if (selecionado) {
+                myViewHolder.cardView.setForeground(new ColorDrawable(ContextCompat.getColor(context, R.color.cardSelecionado)));
+            } else {
+                myViewHolder.cardView.setForeground(new ColorDrawable(ContextCompat.getColor(context, android.R.color.transparent)));
+            }
         }else{
-            myViewHolder.cardView.setForeground(new ColorDrawable(ContextCompat.getColor(context, android.R.color.transparent)));
+            myViewHolder.itemView.setVisibility(View.GONE);
+            myViewHolder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
         }
     }
 

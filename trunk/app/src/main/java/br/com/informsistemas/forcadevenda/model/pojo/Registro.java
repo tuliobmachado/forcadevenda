@@ -65,10 +65,52 @@ public class Registro implements IEntidade {
     @DatabaseField
     public boolean utilizafatorpauta;
 
+    @DatabaseField
+    public boolean editaacrescimo;
+
+    @DatabaseField
+    public String valoracrescimo;
+
+    @DatabaseField
+    public boolean editadesconto;
+
+    @DatabaseField
+    public String valordesconto;
+
+    @DatabaseField
+    public float maximodesconto;
+
+    @DatabaseField
+    public boolean alteracusto;
+
+    @DatabaseField
+    public boolean alterapreco;
+
+    @DatabaseField
+    public boolean exibematerialsemsaldo;
+
+    @DatabaseField
+    public int casaspercentual;
+
+    @DatabaseField
+    public int casasquantidade;
+
+    @DatabaseField
+    public int casaspreco;
+
     public String codigoaplicacao = "0002";
 
+    public int casasvalor = 4;
+
     public Registro(){}
-    public Registro(String usuario, String senha, String imei, String cnpj, String token, String codigousuario, String nome, String status, String codigofilialcontabil, String codigofuncionario, String codigotabelapreco, String codigoempresa, String codigoalmoxarifado, String codigooperacao, String estado, String codigoconfiguracao, Boolean utilizapauta, Boolean utilizafatorpauta) {
+    public Registro(String usuario, String senha, String imei, String cnpj, String token, String codigousuario,
+                    String nome, String status, String codigofilialcontabil, String codigofuncionario,
+                    String codigotabelapreco, String codigoempresa, String codigoalmoxarifado,
+                    String codigooperacao, String estado, String codigoconfiguracao, String valoracrescimo,
+                    String valordesconto, float maximodesconto, int casaspercentual, int casasquantidade,
+                    int casaspreco, Boolean utilizapauta, Boolean utilizafatorpauta,
+                    Boolean editaacrescimo, Boolean editadesconto, Boolean alteracusto, Boolean alterapreco,
+                    Boolean exibematerialsemsaldo) {
         this.usuario = usuario;
         this.senha = senha;
         this.imei = imei;
@@ -85,7 +127,18 @@ public class Registro implements IEntidade {
         this.codigooperacao = codigooperacao;
         this.estado = estado;
         this.codigoconfiguracao = codigoconfiguracao;
+        this.valoracrescimo = valoracrescimo;
+        this.valordesconto = valordesconto;
+        this.maximodesconto = maximodesconto;
         this.utilizapauta = utilizapauta;
         this.utilizafatorpauta = utilizafatorpauta;
+        this.editaacrescimo = editaacrescimo;
+        this.editadesconto = editadesconto;
+        this.alteracusto = alteracusto;
+        this.alterapreco = alterapreco;
+        this.exibematerialsemsaldo = exibematerialsemsaldo;
+        this.casaspercentual = casaspercentual;
+        this.casasquantidade = casasquantidade;
+        this.casaspreco = casaspreco;
     }
 }

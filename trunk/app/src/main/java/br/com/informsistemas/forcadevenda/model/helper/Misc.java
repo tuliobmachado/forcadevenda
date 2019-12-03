@@ -3,8 +3,11 @@ package br.com.informsistemas.forcadevenda.model.helper;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.core.content.ContextCompat;
+import android.view.View;
+import android.view.WindowManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,14 +15,13 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import br.com.informsistemas.forcadevenda.model.dao.AtualizacaoDAO;
 import br.com.informsistemas.forcadevenda.model.pojo.Atualizacao;
@@ -53,7 +55,7 @@ public class Misc {
     }
 
     public static void setTabelasPadrao() {
-        Constants.MOVIMENTO.percdescontopadrao = 0;
+        Constants.MOVIMENTO.percdescontopadrao = new BigDecimal("0");
         Constants.MOVIMENTO.codigotabelapreco = Constants.DTO.registro.codigotabelapreco;
         Constants.MOVIMENTO.codigoformapagamento = "";
         Constants.MOVIMENTO.codigoalmoxarifado = Constants.DTO.registro.codigoalmoxarifado;
@@ -62,6 +64,47 @@ public class Misc {
         Constants.MOVIMENTO.codigooperacao = Constants.DTO.registro.codigooperacao;
         Constants.MOVIMENTO.estadoParceiro = "";
 
+    }
+
+    public static Locale getLocale(){
+        return new Locale("pt", "BR");
+    }
+
+    public static float parseStringToFloat(String value){
+        if (value.equals("")){
+            return 0;
+        }
+
+        String replaceable = String.format("[%s.\\s]", NumberFormat.getCurrencyInstance(Misc.getLocale()).getCurrency().getSymbol());
+        String cleanString = value.replaceAll(replaceable, "");
+        cleanString = cleanString.replaceAll(",", ".");
+
+        return Float.parseFloat(cleanString);
+    }
+
+    public static String parseFloatToWatcher(BigDecimal value, int casasDecimais){
+        String result;
+        float multiplicacao = 0;
+        BigDecimal valorBig;
+        String casas = "1";
+        String reverseValue = new StringBuilder(String.valueOf(value)).reverse().toString();
+        int posicao = reverseValue.indexOf(".");
+
+        for (int i = 0; i < casasDecimais - 1; i++) {
+            casas = casas + "0";
+        }
+
+        multiplicacao = Float.valueOf(casas);
+
+        if (posicao < casasDecimais){
+            posicao = casasDecimais--;
+            valorBig = value.setScale(posicao, BigDecimal.ROUND_HALF_EVEN).multiply(BigDecimal.valueOf(multiplicacao));
+            result = String.valueOf(valorBig.floatValue());
+        }else{
+            result = value.toString();
+        }
+
+        return result;
     }
 
     public static <T> String getJsonString(T object, Boolean excludeExpose) {
@@ -89,8 +132,8 @@ public class Misc {
         return conectado;
     }
 
-    public static float fRound(boolean truncar, float value, int casasDecimais) {
-        float result = value;
+    public static BigDecimal fRound(boolean truncar, BigDecimal value, int casasDecimais) {
+        BigDecimal result = value;
 
         if (truncar) {
             String arg = "" + value;
@@ -98,15 +141,20 @@ public class Misc {
             if (idx != -1) {
                 if (arg.length() > idx + casasDecimais) {
                     arg = arg.substring(0, idx + casasDecimais + 1);
-                    result = Float.parseFloat(arg);
+                    result = new BigDecimal(String.valueOf(Float.parseFloat(arg)));
                 }
             }
         } else {
-            BigDecimal valorArredondado = new BigDecimal(value).setScale(casasDecimais, RoundingMode.HALF_EVEN);
-
-            result = valorArredondado.floatValue();
+            result = value.setScale(casasDecimais, BigDecimal.ROUND_HALF_EVEN);
         }
+
         return result;
+    }
+
+    public static void requestFocus(FragmentActivity frag, View view){
+        if  (view.requestFocus()){
+            frag.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
     }
 
     public static Date GetDateAtual(){
@@ -167,7 +215,7 @@ public class Misc {
             difHoras += 24;
         }
 
-        if (difHoras >= 1){
+        if ((difHoras >= 1) || (difMinutos > 15)){
             value = true;
         }
 

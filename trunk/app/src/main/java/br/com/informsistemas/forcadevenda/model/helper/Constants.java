@@ -1,12 +1,11 @@
 package br.com.informsistemas.forcadevenda.model.helper;
 
-import java.util.Date;
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.model.pojo.Atualizacao;
 import br.com.informsistemas.forcadevenda.model.pojo.Categoria;
 import br.com.informsistemas.forcadevenda.model.pojo.Material;
-import br.com.informsistemas.forcadevenda.model.pojo.MaterialEstado;
 import br.com.informsistemas.forcadevenda.model.pojo.MaterialSaldo;
 import br.com.informsistemas.forcadevenda.model.pojo.MetaFuncionario;
 import br.com.informsistemas.forcadevenda.model.pojo.Movimento;
@@ -22,7 +21,7 @@ public class Constants {
 
         public static final String BASE = "http://informnfe.com/NFeEmitir/ServicoApp.dll/api/";
 //        public static final String BASE = "http://192.168.0.190:8089/api/";
-//        public static final String BASE = "http://192.168.0.83:8089/api/";
+//        public static final String BASE = "http://192.168.0.100:8089/api/";
         public static final String LOGIN_REGISTRAR = "Login/Registrar";
         public static final String DEVICE_CONSULTAR = "Device/Consultar";
         public static final String SINCRONIA_CONSULTAR = "Sincronia/Consultar";
@@ -41,7 +40,7 @@ public class Constants {
     }
 
     public static final class APP {
-        public static final String VERSAO = "0.3.2";
+        public static final String VERSAO = "0.4.0";
     }
 
     public static final class REQUEST_LOGIN {
@@ -54,7 +53,7 @@ public class Constants {
     public static class MOVIMENTO {
         public static Movimento movimento = null;
         public static Boolean enviarPedido = false;
-        public static float percdescontopadrao = 0;
+        public static BigDecimal percdescontopadrao;
         public static String codigotabelapreco = "";
         public static String codigoformapagamento = "";
         public static String codigoempresa = "";

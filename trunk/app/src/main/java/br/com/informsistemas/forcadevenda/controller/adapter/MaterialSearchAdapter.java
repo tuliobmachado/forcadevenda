@@ -1,38 +1,23 @@
 package br.com.informsistemas.forcadevenda.controller.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewDebug;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.model.dao.MaterialEstadoDAO;
-import br.com.informsistemas.forcadevenda.model.dao.MaterialSaldoDAO;
-import br.com.informsistemas.forcadevenda.model.dao.TabelaPrecoItemDAO;
-import br.com.informsistemas.forcadevenda.model.helper.CalculoClass;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Material;
-import br.com.informsistemas.forcadevenda.model.pojo.MaterialEstado;
-import br.com.informsistemas.forcadevenda.model.pojo.MaterialSaldo;
-import br.com.informsistemas.forcadevenda.model.pojo.MovimentoItem;
-import br.com.informsistemas.forcadevenda.model.pojo.TabelaPrecoItem;
-import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
-import br.com.informsistemas.forcadevenda.model.utils.RecyclerItemClickListener;
 
 public class MaterialSearchAdapter extends RecyclerView.Adapter<MaterialSearchAdapter.MyViewHolder>  {
 
@@ -59,32 +44,39 @@ public class MaterialSearchAdapter extends RecyclerView.Adapter<MaterialSearchAd
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, int position) {
 
-        myViewHolder.txtDescricao.setText(fList.get(position).descricao);
-        myViewHolder.txtCusto.setText("R$ "+Misc.formatMoeda(fList.get(position).totalliquido));
-        myViewHolder.txtSaldo.setText("Saldo: "+ String.format("%.2f", fList.get(position).saldomaterial) + " | " + fList.get(position).unidadesaida);
+        if ((Constants.DTO.registro.exibematerialsemsaldo) || ((!Constants.DTO.registro.exibematerialsemsaldo) && (fList.get(position).saldomaterial.floatValue() > 0))) {
+            myViewHolder.itemView.setVisibility(View.VISIBLE);
+            myViewHolder.itemView.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
+            myViewHolder.txtDescricao.setText(fList.get(position).descricao);
+            myViewHolder.txtCusto.setText("R$ " + Misc.formatMoeda(fList.get(position).totalliquido.floatValue()));
+            myViewHolder.txtSaldo.setText("Saldo: " + String.format("%.2f", fList.get(position).saldomaterial) + " | " + fList.get(position).unidadesaida);
 
-        if (fList.get(position).quantidade >= 1){
-            myViewHolder.imgExcluir.setImageResource(R.drawable.ic_remove_red_24dp);
-            myViewHolder.imgExcluir.setVisibility(View.VISIBLE);
-
-            if (fList.get(position).quantidade == 1){
+            if (fList.get(position).quantidade.floatValue() >= 1) {
+                myViewHolder.imgExcluir.setImageResource(R.drawable.ic_remove_red_24dp);
                 myViewHolder.imgExcluir.setVisibility(View.VISIBLE);
-            }
 
-            if (fList.get(position).quantidade >= 2){
-                myViewHolder.txtQuantidade.setText(String.format("%.0f", fList.get(position).quantidade));
-            }else{
+                if (fList.get(position).quantidade.floatValue() == 1) {
+                    myViewHolder.imgExcluir.setVisibility(View.VISIBLE);
+                }
+
+                if (fList.get(position).quantidade.floatValue() >= 2) {
+                    myViewHolder.txtQuantidade.setText(String.format("%.0f", fList.get(position).quantidade));
+                } else {
+                    myViewHolder.txtQuantidade.setText("");
+                }
+
+                myViewHolder.imgSelecionado.setImageResource(R.drawable.ic_add_circle_adicionado_24dp);
+            } else {
+                myViewHolder.imgExcluir.setVisibility(View.INVISIBLE);
                 myViewHolder.txtQuantidade.setText("");
+                myViewHolder.imgSelecionado.setImageResource(R.drawable.ic_add_circle_gray_24dp);
             }
 
-            myViewHolder.imgSelecionado.setImageResource(R.drawable.ic_add_circle_adicionado_24dp);
+            myViewHolder.imgSelecionado.startAnimation(getRotateAnimation(excluindo));
         }else{
-            myViewHolder.imgExcluir.setVisibility(View.INVISIBLE);
-            myViewHolder.txtQuantidade.setText("");
-            myViewHolder.imgSelecionado.setImageResource(R.drawable.ic_add_circle_gray_24dp);
+            myViewHolder.itemView.setVisibility(View.GONE);
+            myViewHolder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
         }
-
-        myViewHolder.imgSelecionado.startAnimation(getRotateAnimation(excluindo));
     }
 
     @Override
@@ -123,6 +115,7 @@ public class MaterialSearchAdapter extends RecyclerView.Adapter<MaterialSearchAd
         public TextView txtSaldo;
         public ImageView imgSelecionado;
         public ImageView imgExcluir;
+        public RelativeLayout viewItemLista;
         public OnMaterialListener fOnMaterialListener;
 
         public MyViewHolder(@NonNull View itemView, OnMaterialListener onMaterialListener) {
@@ -135,6 +128,7 @@ public class MaterialSearchAdapter extends RecyclerView.Adapter<MaterialSearchAd
             txtSaldo = itemView.findViewById(R.id.txt_saldo);
             imgSelecionado = itemView.findViewById(R.id.img_adicionar);
             imgExcluir = itemView.findViewById(R.id.img_excluir);
+            viewItemLista = itemView.findViewById(R.id.lyt_recycler_item_lista);
             fOnMaterialListener = onMaterialListener;
 
             itemView.setOnClickListener(this);
