@@ -12,7 +12,7 @@ import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.model.pojo.FormaPagamento;
-import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
+import br.com.informsistemas.forcadevenda.interfaces.ItemClickListener;
 
 public class PagamentoSearchAdapter extends RecyclerView.Adapter<PagamentoSearchAdapter.MyViewHolder>  {
 

@@ -24,7 +24,7 @@ import br.com.informsistemas.forcadevenda.controller.MainActivity;
 import br.com.informsistemas.forcadevenda.controller.adapter.ParceiroConsultaAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
-import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
+import br.com.informsistemas.forcadevenda.interfaces.ItemClickListener;
 
 public class ParceiroConsultaFragment extends Fragment implements ItemClickListener {
 

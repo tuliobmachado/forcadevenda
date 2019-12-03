@@ -25,7 +25,7 @@ import br.com.informsistemas.forcadevenda.controller.adapter.ParceiroSearchAdapt
 import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
-import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
+import br.com.informsistemas.forcadevenda.interfaces.ItemClickListener;
 
 public class ParceiroSearchFragment extends Fragment implements ItemClickListener {
 
