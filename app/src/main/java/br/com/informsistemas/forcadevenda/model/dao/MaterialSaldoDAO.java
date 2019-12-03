@@ -31,7 +31,7 @@ public class MaterialSaldoDAO extends BaseDAO<MaterialSaldo> {
 
         for (MaterialSaldo m : Constants.DTO.listMaterialSaldo){
 
-            if (m.descricao.toUpperCase().contains(s.toUpperCase()) || m.unidade.toUpperCase().contains(s.toUpperCase()) || Float.toString(m.precovenda1).toUpperCase().contains(s.toUpperCase())){
+            if (m.descricao.toUpperCase().contains(s.toUpperCase()) || m.unidade.toUpperCase().contains(s.toUpperCase()) || m.precovenda1.toString().toUpperCase().contains(s.toUpperCase())){
                 materialSaldo.add(m);
             }
         }

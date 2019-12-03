@@ -2,15 +2,15 @@ package br.com.informsistemas.forcadevenda.controller.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -152,13 +153,13 @@ public class RelatorioPedidoFragment extends Fragment implements ItemClickListen
 
     private void setTotal(List<Movimento> list) {
 
-        float value = 0;
+        BigDecimal value = new BigDecimal("0");
 
         for (int i = 0; i < list.size(); i++) {
-            value = value + list.get(i).totalliquido;
+            value.add(list.get(i).totalliquido);
         }
 
-        edtTotalPedido.setText("R$ " + Misc.formatMoeda(value));
+        edtTotalPedido.setText("R$ " + Misc.formatMoeda(value.floatValue()));
     }
 
     @Override

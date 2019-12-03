@@ -3,9 +3,9 @@ package br.com.informsistemas.forcadevenda.controller;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.InputType;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -40,10 +41,12 @@ public class ResumoActivity extends AppCompatActivity {
     private EditText edtTxtObservacao;
     private Button btnSalvarPedido;
     private Button btnEnviarPedido;
-    private float total_ipi;
-    private float total_icmssubst;
-    private float total_fecoepst;
-    private float total_material;
+    private BigDecimal total_ipi;
+    private BigDecimal total_icmssubst;
+    private BigDecimal total_fecoepst;
+    private BigDecimal total_material;
+    private BigDecimal total_acrescimo;
+    private BigDecimal total_desconto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,13 @@ public class ResumoActivity extends AppCompatActivity {
         btnEnviarPedido = findViewById(R.id.btn_enviar_pedido);
         btnSalvarPedido = findViewById(R.id.btn_salvar_pedido);
         edtTxtObservacao = findViewById(R.id.edtObservacao);
+
+        total_ipi = new BigDecimal("0");
+        total_icmssubst = new BigDecimal("0");
+        total_fecoepst = new BigDecimal("0");
+        total_material = new BigDecimal("0");
+        total_acrescimo = new BigDecimal("0");
+        total_desconto = new BigDecimal("0");
 
         if (!Constants.MOVIMENTO.movimento.observacao.equals("")){
             edtTxtObservacao.setText(Constants.MOVIMENTO.movimento.observacao);
@@ -130,18 +140,37 @@ public class ResumoActivity extends AppCompatActivity {
 
     private void getDadosParceiro() {
         Parceiro p = ParceiroDAO.getInstance(this).findByIdAuxiliar("codigoparceiro", Constants.MOVIMENTO.movimento.codigoparceiro);
+        TextView txtCodigoParceiro = new TextView(this);
         TextView txtDescricao = new TextView(this);
         TextView txtCPFCGC = new TextView(this);
 
+        txtCodigoParceiro.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        if (p != null){
+            txtCodigoParceiro.setText(p.codigoparceiro);
+        }else{
+            txtCodigoParceiro.setText(Constants.MOVIMENTO.movimento.codigoparceiro);
+        }
+        txtCodigoParceiro.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+        txtCodigoParceiro.setTypeface(null, Typeface.BOLD);
+
         txtDescricao.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        txtDescricao.setText(p.descricao);
+        if (p != null) {
+            txtDescricao.setText(p.descricao);
+        }else{
+            txtDescricao.setText(Constants.MOVIMENTO.movimento.descricaoparceiro);
+        }
         txtDescricao.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
         txtDescricao.setTypeface(null, Typeface.BOLD);
 
         txtCPFCGC.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        txtCPFCGC.setText(CPFCNPJMask.getMask(p.cpfcgc));
+        if (p != null) {
+            txtCPFCGC.setText(CPFCNPJMask.getMask(p.cpfcgc));
+        }else{
+            txtCPFCGC.setText(CPFCNPJMask.getMask("00000000000000"));
+        }
         txtCPFCGC.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 
+        linearLayoutParceiro.addView(txtCodigoParceiro);
         linearLayoutParceiro.addView(txtDescricao);
         linearLayoutParceiro.addView(txtCPFCGC);
     }
@@ -153,18 +182,20 @@ public class ResumoActivity extends AppCompatActivity {
         TextView txtTitleTotal = findViewById(R.id.txt_resumo_title_material_total);
 
         txtTitleDescricao.setText(Constants.PEDIDO.movimentoItems.size()+"x PRODUTOS");
-        txtTitleTotal.setText("R$ " + Misc.formatMoeda(Constants.MOVIMENTO.movimento.totalliquido));
+        txtTitleTotal.setText("R$ " + Misc.formatMoeda(Constants.MOVIMENTO.movimento.totalliquido.floatValue()));
 
         for (int i = 0; i < Constants.PEDIDO.movimentoItems.size(); i++) {
             Material m = MaterialDAO.getInstance(this).findByIdAuxiliar("codigomaterial", Constants.PEDIDO.movimentoItems.get(i).codigomaterial);
 
             linearLayoutMaterial.addView(newTextView(Constants.PEDIDO.movimentoItems.get(i).quantidade+"x"+m.descricao));
 
-            total_fecoepst = total_fecoepst + Constants.PEDIDO.movimentoItems.get(i).valoricmsfecoepst;
-            total_ipi = total_ipi + Constants.PEDIDO.movimentoItems.get(i).valoripi;
-            total_icmssubst = total_icmssubst + Constants.PEDIDO.movimentoItems.get(i).valoricmssubst;
+            total_fecoepst = total_fecoepst.add(Constants.PEDIDO.movimentoItems.get(i).valoricmsfecoepst);
+            total_ipi = total_ipi.add(Constants.PEDIDO.movimentoItems.get(i).valoripi);
+            total_icmssubst = total_icmssubst.add(Constants.PEDIDO.movimentoItems.get(i).valoricmssubst);
+            total_acrescimo = total_acrescimo.add(Constants.PEDIDO.movimentoItems.get(i).valoracrescimoitem);
+            total_desconto = total_desconto.add(Constants.PEDIDO.movimentoItems.get(i).valordescontoitem);
 
-            total_material = total_material + (Constants.PEDIDO.movimentoItems.get(i).custo * Constants.PEDIDO.movimentoItems.get(i).quantidade);
+            total_material = total_material.add(Constants.PEDIDO.movimentoItems.get(i).custo.multiply(Constants.PEDIDO.movimentoItems.get(i).quantidade));
         }
     }
 
@@ -181,13 +212,16 @@ public class ResumoActivity extends AppCompatActivity {
         TextView txttitleTotalIPI = findViewById(R.id.txt_resumo_title_total_ipi);
         TextView txtTitleTotalICMSSubst = findViewById(R.id.txt_resumo_title_total_icmssubst);
         TextView txtTitleTotalFecoepST = findViewById(R.id.txt_resumo_title_total_fecoepst);
+        TextView txtTitleTotalDesconto = findViewById(R.id.txt_resumo_title_total_desconto);
+        TextView txtTitleTotalAcrescimo = findViewById(R.id.txt_resumo_title_total_acrescimo);
 
         txtTitleDescricao.setText("Total Material");
-        txtTitleTotal.setText("R$ " + Misc.formatMoeda(total_material));
-
-        txttitleTotalIPI.setText("R$ " + Misc.formatMoeda(total_ipi));
-        txtTitleTotalICMSSubst.setText("R$ " + Misc.formatMoeda(total_icmssubst));
-        txtTitleTotalFecoepST.setText("R$ " + Misc.formatMoeda(total_fecoepst));
+        txtTitleTotal.setText("R$ " + Misc.formatMoeda(total_material.floatValue()));
+        txtTitleTotalDesconto.setText("R$ " + Misc.formatMoeda(total_desconto.floatValue()));
+        txtTitleTotalAcrescimo.setText("R$ " + Misc.formatMoeda(total_acrescimo.floatValue()));
+        txttitleTotalIPI.setText("R$ " + Misc.formatMoeda(total_ipi.floatValue()));
+        txtTitleTotalICMSSubst.setText("R$ " + Misc.formatMoeda(total_icmssubst.floatValue()));
+        txtTitleTotalFecoepST.setText("R$ " + Misc.formatMoeda(total_fecoepst.floatValue()));
     }
 
     private TextView newTextView(String descricao){

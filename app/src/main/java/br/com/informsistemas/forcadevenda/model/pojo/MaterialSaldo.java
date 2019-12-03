@@ -4,6 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.math.BigDecimal;
+
 import br.com.informsistemas.forcadevenda.model.utils.IEntidade;
 
 @DatabaseTable(tableName = "materialsaldo")
@@ -27,14 +29,14 @@ public class MaterialSaldo implements IEntidade {
 
     @DatabaseField
     @Expose
-    public float saldo;
+    public BigDecimal saldo;
 
     @DatabaseField
     @Expose
-    public float precovenda1;
+    public BigDecimal precovenda1;
 
     public MaterialSaldo(){}
-    public MaterialSaldo(String codigomaterial, String descricao, String unidade, float saldo, float precovenda1) {
+    public MaterialSaldo(String codigomaterial, String descricao, String unidade, BigDecimal saldo, BigDecimal precovenda1) {
         this.codigomaterial = codigomaterial;
         this.descricao = descricao;
         this.unidade = unidade;

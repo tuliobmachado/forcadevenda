@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.telephony.TelephonyManager;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -82,7 +82,7 @@ public class LoginFragment extends Fragment {
         cnpj = cnpj.replaceAll("[^0-9]", "");
 
         registro = new Registro(edtUsuario.getText().toString(), edtSenha.getText().toString(),
-                imei, cnpj, loginActivity.getToken(), "", "", "", "", "", "", "", "", "", "", "", false, false);
+                imei, cnpj, loginActivity.getToken(), "", "", "", "", "", "", "", "", "", "", "", "", "", 0, 0, 0, 0, false, false, false, false, false, false, false);
 
         getRegistro();
     }
@@ -166,7 +166,13 @@ public class LoginFragment extends Fragment {
                             restResponse.data.get(0).codigotabelapreco, restResponse.data.get(0).estado,
                             restResponse.data.get(0).codigoconfiguracao, restResponse.data.get(0).codigousuario,
                             restResponse.data.get(0).nome, restResponse.data.get(0).status,
-                            restResponse.data.get(0).utilizapauta, restResponse.data.get(0).utilizafatorpauta));
+                            restResponse.data.get(0).valoracrescimo, restResponse.data.get(0).valordesconto,
+                            restResponse.data.get(0).maximodesconto, restResponse.data.get(0).casaspercentual,
+                            restResponse.data.get(0).casasquantidade, restResponse.data.get(0).casaspreco,
+                            restResponse.data.get(0).utilizapauta, restResponse.data.get(0).utilizafatorpauta,
+                            restResponse.data.get(0).editaacrescimo, restResponse.data.get(0).editadesconto,
+                            restResponse.data.get(0).alteracusto, restResponse.data.get(0).alterapreco,
+                            restResponse.data.get(0).exibematerialsemsaldo));
                 }else{
                     onLoginFailed(restResponse.meta.message);
                 }
@@ -186,7 +192,10 @@ public class LoginFragment extends Fragment {
 
     public Intent getIntent(String codigoempresa, String codigofilialcontabil, String codigoalmoxarifado, String codigooperacao,
                             String codigofuncionario, String codigotabelapreco, String estado, String codigoconfiguracao,
-                            String codigousuario, String nome, String status, Boolean utilizapauta, Boolean utilizapautafiscal){
+                            String codigousuario, String nome, String status, String valoracrescimo, String valordesconto,
+                            float maximodesconto, int casaspercentual, int casasquantidade, int casaspreco,
+                            Boolean utilizapauta, Boolean utilizapautafiscal, Boolean editaacrescimo,
+                            Boolean editadesconto, Boolean alteracusto, Boolean alterapreco, boolean exibematerialsemsaldo){
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
         registro.codigofuncionario = codigofuncionario;
@@ -202,6 +211,17 @@ public class LoginFragment extends Fragment {
         registro.status = status;
         registro.utilizapauta = utilizapauta;
         registro.utilizafatorpauta = utilizapautafiscal;
+        registro.valoracrescimo = valoracrescimo;
+        registro.editaacrescimo = editaacrescimo;
+        registro.valordesconto = valordesconto;
+        registro.editadesconto = editadesconto;
+        registro.alteracusto = alteracusto;
+        registro.maximodesconto = maximodesconto;
+        registro.alterapreco = alterapreco;
+        registro.exibematerialsemsaldo = exibematerialsemsaldo;
+        registro.casaspercentual = casaspercentual;
+        registro.casasquantidade = casasquantidade;
+        registro.casaspreco = casaspreco;
 
         bundle.putSerializable("Registro", registro);
         intent.putExtras(bundle);

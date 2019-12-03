@@ -3,10 +3,10 @@ package br.com.informsistemas.forcadevenda.controller;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +16,10 @@ import android.widget.Toast;
 import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.controller.fragments.ParceiroFragment;
 import br.com.informsistemas.forcadevenda.controller.fragments.ParceiroSearchFragment;
+import br.com.informsistemas.forcadevenda.controller.fragments.ParceiroVencimentoFragment;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
+import br.com.informsistemas.forcadevenda.model.pojo.ParceiroVencimento;
+import br.com.informsistemas.forcadevenda.model.tasks.MontagemPrecoTask;
 import br.com.informsistemas.forcadevenda.model.utils.IOnBackPressed;
 
 public class ParceiroActivity extends AppCompatActivity {
@@ -39,8 +42,8 @@ public class ParceiroActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (Constants.MOVIMENTO.movimento.codigoparceiro != null) {
-                    Intent intent = new Intent(ParceiroActivity.this, MovimentoItemActivity.class);
-                    startActivity(intent);
+                    MontagemPrecoTask montagemPrecoTask = new MontagemPrecoTask(ParceiroActivity.this);
+                    montagemPrecoTask.execute();
                 }else{
                     Toast.makeText(ParceiroActivity.this, "Necessário informar um parceiro", Toast.LENGTH_LONG).show();
                 }
@@ -57,7 +60,7 @@ public class ParceiroActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_lista, menu);
+        getMenuInflater().inflate(R.menu.menu_parceiro, menu);
         return true;
     }
 
@@ -68,9 +71,13 @@ public class ParceiroActivity extends AppCompatActivity {
             //Back button
             case R.id.action_search_list:
                 onShowSearchParceiro();
-            default:
-                return super.onOptionsItemSelected(item);
+                break;
+            case R.id.action_titulos:
+                onShowTitulosParceiro();
+                break;
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void onShowParceiro(){
@@ -99,6 +106,23 @@ public class ParceiroActivity extends AppCompatActivity {
         }
     }
 
+    private void onShowTitulosParceiro(){
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("Parceiro", parceiroFragment.onGetParceiroSelecionado());
+        ParceiroVencimentoFragment parceiroVencimentoFragment = (ParceiroVencimentoFragment) getSupportFragmentManager().findFragmentByTag("parceiroVencimentoFragment");
+
+        if (parceiroVencimentoFragment == null){
+            parceiroVencimentoFragment = new ParceiroVencimentoFragment();
+
+            parceiroVencimentoFragment.setArguments(bundle);
+            parceiroFragment.btnSelecionarProduto.setVisibility(View.GONE);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.fragment_container, parceiroVencimentoFragment, "parceiroVencimentoFragment");
+            ft.addToBackStack(null);
+            ft.commit();
+        }
+    }
+
     @Override
     public void onBackPressed() {
         int count = getSupportFragmentManager().getBackStackEntryCount();
@@ -116,5 +140,10 @@ public class ParceiroActivity extends AppCompatActivity {
             getSupportFragmentManager().popBackStack();
 
         }
+    }
+
+    public void onExibeMovimentoItem(){
+        Intent intent = new Intent(ParceiroActivity.this, MovimentoItemActivity.class);
+        startActivity(intent);
     }
 }

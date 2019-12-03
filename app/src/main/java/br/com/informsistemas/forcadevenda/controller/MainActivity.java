@@ -4,22 +4,24 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.math.BigDecimal;
 
 import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.controller.fragments.MaterialSaldoFragment;
@@ -178,9 +180,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void onShowPrincipal() {
-        if (Constants.DTO.registro.status.equals("P")) {
+        if (Constants.DTO.registro.status.equals("P") || Constants.DTO.registro.status.equals("B")) {
             Intent intent = new Intent(this, LoginActivity.class);
-            intent.putExtra("Status", "P");
+            intent.putExtra("Status", Constants.DTO.registro.status);
             startActivityForResult(intent, Constants.REQUEST_LOGIN.ACESSO_PENDENTE);
         } else {
             onShowFragment("movimentoFragment");
@@ -315,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Constants.MOVIMENTO.movimento = new Movimento(Constants.MOVIMENTO.codigoempresa,
                 Constants.MOVIMENTO.codigofilialcontabil, Constants.MOVIMENTO.codigoalmoxarifado,
                 Constants.MOVIMENTO.codigooperacao, Constants.MOVIMENTO.codigotabelapreco,
-                null, "", 0, "", Misc.GetDateAtual(), null, null, null, "", "", Misc.gerarMD5());
+                null, "", new BigDecimal("0"), "", Misc.GetDateAtual(), null, null, null, "", "", Misc.gerarMD5(), "");
         Intent intent = new Intent(MainActivity.this, ParceiroActivity.class);
         startActivityForResult(intent, 0);
     }

@@ -2,20 +2,23 @@ package br.com.informsistemas.forcadevenda.controller.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
+import br.com.informsistemas.forcadevenda.model.dao.ParceiroVencimentoDAO;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
+import br.com.informsistemas.forcadevenda.model.pojo.ParceiroVencimento;
 import br.com.informsistemas.forcadevenda.model.utils.CPFCNPJMask;
 
 public class ParceiroAdapter extends RecyclerView.Adapter<ParceiroAdapter.MyViewHolder> {
@@ -43,6 +46,19 @@ public class ParceiroAdapter extends RecyclerView.Adapter<ParceiroAdapter.MyView
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int position) {
         Boolean selecionado = false;
+        List<ParceiroVencimento> parceiroVencimentoList = ParceiroVencimentoDAO.getInstance(context).findAllVencimentoByCodigoParceiro(fList.get(position).codigoparceiro);
+
+        if (parceiroVencimentoList.size() == 0){
+            myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movSincronizado));
+        }else{
+            if (parceiroVencimentoList.get(0).status.equals("Vencido")){
+                myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movNaoSincronizado));
+            }else{
+                myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.parceiroAVencer));
+            }
+
+            fList.get(position).statusvencimento = parceiroVencimentoList.get(0).status;
+        }
 
         myViewHolder.txtCodigo.setText(fList.get(position).codigoparceiro);
         myViewHolder.txtDescricao.setText(fList.get(position).descricao);
@@ -82,6 +98,7 @@ public class ParceiroAdapter extends RecyclerView.Adapter<ParceiroAdapter.MyView
         public TextView txtCPFCGC;
         public TextView txtNomeFantasia;
         public CardView cardView;
+        public FrameLayout frmStatus;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -91,6 +108,7 @@ public class ParceiroAdapter extends RecyclerView.Adapter<ParceiroAdapter.MyView
             txtCPFCGC = itemView.findViewById(R.id.txt_cpfcgc);
             txtNomeFantasia = itemView.findViewById(R.id.txt_nome_fantasia);
             cardView = itemView.findViewById(R.id.card_parceiro);
+            frmStatus = itemView.findViewById(R.id.frm_status);
         }
     }
 }
