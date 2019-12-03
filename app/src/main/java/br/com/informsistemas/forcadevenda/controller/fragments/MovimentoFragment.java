@@ -303,7 +303,7 @@ public class MovimentoFragment extends Fragment {
     }
 
     public void atualizaLista() {
-        listMovimento = MovimentoDAO.getInstance(getActivity()).findAll();
+        listMovimento = MovimentoDAO.getInstance(getActivity()).getMovimentoPeriodo("", Misc.GetDateAtual(), Misc.GetDateAtual());
         setAdapter(listMovimento);
     }
 
