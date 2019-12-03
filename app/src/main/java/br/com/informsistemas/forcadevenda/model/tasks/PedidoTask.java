@@ -149,17 +149,17 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
     }
 
     private void atualizaSaldo(List<MaterialSaldo> materialSaldo){
+
         for (int i = 0; i < materialSaldo.size(); i++) {
             MaterialSaldo m = MaterialSaldoDAO.getInstance(fragment.getActivity()).findByIdAuxiliar("codigomaterial", materialSaldo.get(i).codigomaterial);
 
-            if (m == null){
-                m.codigomaterial = materialSaldo.get(i).codigomaterial;
-            }else {
+            if (m != null){
                 m.saldo = materialSaldo.get(i).saldo;
 
                 MaterialSaldoDAO.getInstance(fragment.getActivity()).createOrUpdate(m);
             }
         }
+
     }
 
     private void setDataParcialAtualizacao(Date data){
