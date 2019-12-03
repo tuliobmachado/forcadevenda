@@ -1,0 +1,262 @@
+package br.com.informsistemas.forcadevenda.controller.fragments;
+
+import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Bundle;
+import androidx.fragment.app.Fragment;
+import android.telephony.TelephonyManager;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+
+import java.io.IOException;
+
+import br.com.informsistemas.forcadevenda.controller.LoginActivity;
+import br.com.informsistemas.forcadevenda.R;
+import br.com.informsistemas.forcadevenda.controller.rest.RestManager;
+import br.com.informsistemas.forcadevenda.model.callback.RegistroService;
+import br.com.informsistemas.forcadevenda.model.helper.Constants;
+import br.com.informsistemas.forcadevenda.model.helper.Misc;
+import br.com.informsistemas.forcadevenda.model.pojo.Registro;
+import br.com.informsistemas.forcadevenda.model.pojo.RestResponse;
+import br.com.informsistemas.forcadevenda.model.utils.DialogClass;
+import br.com.informsistemas.forcadevenda.model.utils.Mask;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class LoginFragment extends Fragment {
+
+    private final String TAG = getClass().getSimpleName();
+    private LoginActivity loginActivity;
+    private String imei;
+    private EditText edtCNPJ;
+    private EditText edtUsuario;
+    private EditText edtSenha;
+    private Button btnRegistrar;
+    private Registro registro;
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+
+        try{
+            loginActivity = (LoginActivity) context;
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
+
+        configViews(view);
+
+        return view;
+    }
+
+    public void login(){
+        if (!validate()) {
+            onLoginFailed(null);
+            return;
+        }
+
+        btnRegistrar.setEnabled(false);
+
+        getImei();
+
+        String cnpj = edtCNPJ.getText().toString();
+        cnpj = cnpj.replaceAll("[^0-9]", "");
+
+        registro = new Registro(edtUsuario.getText().toString(), edtSenha.getText().toString(),
+                imei, cnpj, loginActivity.getToken(), "", "", "", "", "", "", "", "", "", "", "", "", "", 0, 0, 0, 0, false, false, false, false, false, false, false);
+
+        getRegistro();
+    }
+
+    public void onLoginSuccess(Intent data) {
+        Log.d(TAG, "LoginSuccess");
+        btnRegistrar.setEnabled(true);
+        getActivity().setResult(loginActivity.RESULT_OK, data);
+        getActivity().finish();
+    }
+
+    public void onLoginFailed(String msg) {
+        if (msg != null) {
+            Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+        }
+
+        btnRegistrar.setEnabled(true);
+    }
+
+    public boolean validate() {
+        boolean valid = true;
+
+        String usuario = edtUsuario.getText().toString();
+        String password = edtSenha.getText().toString();
+        String cnpj = edtCNPJ.getText().toString();
+
+        if (cnpj.isEmpty()){
+            edtCNPJ.setError("Informe um CNPJ!");
+            valid = false;
+        }else{
+            edtCNPJ.setError(null);
+        }
+
+        if (usuario.isEmpty()) {
+            edtUsuario.setError("Informe um usuário válido!");
+            valid = false;
+        } else {
+            edtUsuario.setError(null);
+        }
+
+        if (password.isEmpty()) {
+            edtSenha.setError("Informe uma senha!");
+            valid = false;
+        } else {
+            edtSenha.setError(null);
+        }
+
+        return valid;
+    }
+
+    private void getRegistro(){
+        RegistroService registroService = new RestManager().getRegistroService();
+        Call<RestResponse<Registro>> requestRegistro = registroService.postRegistro(registro);
+
+        final ProgressDialog progressDialog = DialogClass.showDialog(getActivity(), "Realizando Autenticação...");
+
+        requestRegistro.enqueue(new Callback<RestResponse<Registro>>() {
+            @Override
+            public void onResponse(Call<RestResponse<Registro>> call, Response<RestResponse<Registro>> response) {
+                RestResponse<Registro> restResponse = null;
+                String erro = "";
+
+                if (response.errorBody() != null){
+                    try {
+                        erro = response.errorBody().string();
+
+                        restResponse = new Gson().fromJson(response.errorBody().charStream(), RestResponse.class);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        onLoginFailed(erro);
+                    }
+
+                }else{
+                    restResponse = response.body();
+                }
+
+                if (restResponse.meta.status.equals("OK")){
+                    onLoginSuccess(getIntent(restResponse.data.get(0).codigoempresa,
+                            restResponse.data.get(0).codigofilialcontabil, restResponse.data.get(0).codigoalmoxarifado,
+                            restResponse.data.get(0).codigooperacao, restResponse.data.get(0).codigofuncionario,
+                            restResponse.data.get(0).codigotabelapreco, restResponse.data.get(0).estado,
+                            restResponse.data.get(0).codigoconfiguracao, restResponse.data.get(0).codigousuario,
+                            restResponse.data.get(0).nome, restResponse.data.get(0).status,
+                            restResponse.data.get(0).valoracrescimo, restResponse.data.get(0).valordesconto,
+                            restResponse.data.get(0).maximodesconto, restResponse.data.get(0).casaspercentual,
+                            restResponse.data.get(0).casasquantidade, restResponse.data.get(0).casaspreco,
+                            restResponse.data.get(0).utilizapauta, restResponse.data.get(0).utilizafatorpauta,
+                            restResponse.data.get(0).editaacrescimo, restResponse.data.get(0).editadesconto,
+                            restResponse.data.get(0).alteracusto, restResponse.data.get(0).alterapreco,
+                            restResponse.data.get(0).exibematerialsemsaldo));
+                }else{
+                    onLoginFailed(restResponse.meta.message);
+                }
+
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<RestResponse<Registro>> call, Throwable t) {
+                Log.e(TAG, "[ERRO]: "+ t.getMessage());
+                onLoginFailed(t.getMessage());
+
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    public Intent getIntent(String codigoempresa, String codigofilialcontabil, String codigoalmoxarifado, String codigooperacao,
+                            String codigofuncionario, String codigotabelapreco, String estado, String codigoconfiguracao,
+                            String codigousuario, String nome, String status, String valoracrescimo, String valordesconto,
+                            float maximodesconto, int casaspercentual, int casasquantidade, int casaspreco,
+                            Boolean utilizapauta, Boolean utilizapautafiscal, Boolean editaacrescimo,
+                            Boolean editadesconto, Boolean alteracusto, Boolean alterapreco, boolean exibematerialsemsaldo){
+        Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+        registro.codigofuncionario = codigofuncionario;
+        registro.codigotabelapreco = codigotabelapreco;
+        registro.codigousuario = codigousuario;
+        registro.nome = nome;
+        registro.codigoempresa = codigoempresa;
+        registro.codigofilialcontabil = codigofilialcontabil;
+        registro.codigoalmoxarifado = codigoalmoxarifado;
+        registro.codigooperacao = codigooperacao;
+        registro.estado = estado;
+        registro.codigoconfiguracao = codigoconfiguracao;
+        registro.status = status;
+        registro.utilizapauta = utilizapauta;
+        registro.utilizafatorpauta = utilizapautafiscal;
+        registro.valoracrescimo = valoracrescimo;
+        registro.editaacrescimo = editaacrescimo;
+        registro.valordesconto = valordesconto;
+        registro.editadesconto = editadesconto;
+        registro.alteracusto = alteracusto;
+        registro.maximodesconto = maximodesconto;
+        registro.alterapreco = alterapreco;
+        registro.exibematerialsemsaldo = exibematerialsemsaldo;
+        registro.casaspercentual = casaspercentual;
+        registro.casasquantidade = casasquantidade;
+        registro.casaspreco = casaspreco;
+
+        bundle.putSerializable("Registro", registro);
+        intent.putExtras(bundle);
+
+        return intent;
+    }
+
+    private void configViews(View view){
+        edtCNPJ = view.findViewById(R.id.edtCNPJ);
+        edtUsuario = view.findViewById(R.id.edtUsuario);
+        edtSenha = view.findViewById(R.id.edtSenha);
+        TextWatcher maskCNPJ = Mask.insert("##.###.###/####-##", edtCNPJ);
+        edtCNPJ.removeTextChangedListener(maskCNPJ);
+        edtCNPJ.addTextChangedListener(maskCNPJ);
+
+        btnRegistrar = view.findViewById(R.id.btnRegistrar);
+        btnRegistrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Constants.PERMISSION.READ_PHONE_STATE == PackageManager.PERMISSION_DENIED){
+                    Misc.SolicitaPermissao(getActivity(), new String[]{Manifest.permission.READ_PHONE_STATE}, Constants.PERMISSION_REQUESTCODE.READ_PHONE_STATE);
+                }else {
+                    login();
+                }
+            }
+        });
+    }
+
+    public void getImei(){
+        TelephonyManager tm = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            imei = tm.getImei();
+        } else {
+            imei = tm.getDeviceId();
+        }
+    }
+}
