@@ -33,7 +33,7 @@ import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Movimento;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
-import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
+import br.com.informsistemas.forcadevenda.interfaces.ItemClickListener;
 
 public class RelatorioPedidoFragment extends Fragment implements ItemClickListener {
 
