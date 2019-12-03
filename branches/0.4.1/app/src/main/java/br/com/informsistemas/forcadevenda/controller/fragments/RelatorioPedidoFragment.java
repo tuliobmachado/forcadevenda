@@ -156,7 +156,7 @@ public class RelatorioPedidoFragment extends Fragment implements ItemClickListen
         BigDecimal value = new BigDecimal("0");
 
         for (int i = 0; i < list.size(); i++) {
-            value.add(list.get(i).totalliquido);
+            value = value.add(list.get(i).totalliquido);
         }
 
         edtTotalPedido.setText("R$ " + Misc.formatMoeda(value.floatValue()));
