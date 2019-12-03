@@ -19,8 +19,8 @@ public class Constants {
 
     public static final class URL {
 
-//        public static final String BASE = "http://informnfe.com/NFeEmitir/ServicoApp.dll/api/";
-        public static final String BASE = "http://192.168.0.190:8089/api/";
+        public static final String BASE = "http://informnfe.com/NFeEmitir/ServicoApp.dll/api/";
+//        public static final String BASE = "http://192.168.0.190:8089/api/";
 //        public static final String BASE = "http://192.168.0.100:8089/api/";
         public static final String LOGIN_REGISTRAR = "Login/Registrar";
         public static final String DEVICE_CONSULTAR = "Device/Consultar";
