@@ -75,7 +75,7 @@ public class ParceiroFragment extends Fragment {
         getActivity().setTitle("Parceiros");
 
         if (listParceiro.size() > 0) {
-            if (listParceiro.get(0).statusvencimento.equals("")) {
+            if ((listParceiro.get(0).statusvencimento == null) || (listParceiro.get(0).statusvencimento.equals(""))) {
                 menu.clear();
             }else{
                 MenuItem menuItem = menu.findItem(R.id.action_search_list);
