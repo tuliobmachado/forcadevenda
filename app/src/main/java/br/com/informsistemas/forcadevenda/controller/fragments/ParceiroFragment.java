@@ -107,6 +107,7 @@ public class ParceiroFragment extends Fragment {
         Parceiro p = (Parceiro) data.getExtras().getSerializable("Parceiro");
         Constants.MOVIMENTO.movimento.codigoparceiro = p.codigoparceiro;
         Constants.MOVIMENTO.movimento.descricaoparceiro = p.descricao;
+        Constants.MOVIMENTO.movimento.cpfcgc = p.cpfcgc;
 
         getTabelas(p);
 
