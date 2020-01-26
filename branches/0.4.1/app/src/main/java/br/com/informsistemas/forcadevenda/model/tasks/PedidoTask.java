@@ -56,6 +56,9 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
                 Constants.DTO.registro.codigoalmoxarifado, new Date(), Constants.PEDIDO.movimento, Constants.PEDIDO.movimentoItems,
                 Constants.PEDIDO.movimentoParcelas);
 
+        Movimento mov = getMovimentoAtual(reqPedido.movimento.id);
+        atualizaStatusMovimento(mov, "P");
+
         Constants.PEDIDO.movimento = null;
         Constants.PEDIDO.movimentoItems = null;
         Constants.PEDIDO.movimentoParcelas = null;
@@ -83,13 +86,10 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
             }
         } catch (IOException ex) {
             showToast(ex.getMessage());
-//            Log.i("Sincronia", ex.getMessage());
             Constants.PEDIDO.PEDIDOATUAL = 0;
             Constants.PEDIDO.listPedidos = null;
             Constants.PEDIDO.listPedidos = new ArrayList<>();
             Constants.MOVIMENTO.enviarPedido = false;
-            Movimento mov = getMovimentoAtual(reqPedido.movimento.id);
-            atualizaStatusMovimento(mov, "P");
             DialogClass.dialogDismiss(dialog);
         }
 
