@@ -21,6 +21,7 @@ import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.controller.adapter.MovimentoParcelaAdapter;
+import br.com.informsistemas.forcadevenda.model.dao.FormaPagamentoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoItemDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoParcelaDAO;
 import br.com.informsistemas.forcadevenda.model.helper.CalculoClass;
@@ -98,7 +99,7 @@ public class MovimentoParcelaFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         FormaPagamento p = (FormaPagamento) data.getExtras().getSerializable("Pagamento");
 
-        MovimentoParcela movimentoParcela = new MovimentoParcela(Constants.MOVIMENTO.movimento, p.codigoforma, Constants.MOVIMENTO.movimento.totalliquido);
+        MovimentoParcela movimentoParcela = new MovimentoParcela(Constants.MOVIMENTO.movimento, p.codigoforma, p.descricao, Constants.MOVIMENTO.movimento.totalliquido);
         MovimentoParcelaDAO.getInstance(getActivity()).createOrUpdate(movimentoParcela);
     }
 
@@ -222,7 +223,8 @@ public class MovimentoParcelaFragment extends Fragment {
     }
 
     private void insereCodigoFormaPadrao(){
-        MovimentoParcela movimentoParcela = new MovimentoParcela(Constants.MOVIMENTO.movimento, Constants.MOVIMENTO.codigoformapagamento, Constants.MOVIMENTO.movimento.totalliquido);
+        FormaPagamento p = FormaPagamentoDAO.getInstance(getActivity()).findByIdAuxiliar("codigoforma", Constants.MOVIMENTO.codigoformapagamento);
+        MovimentoParcela movimentoParcela = new MovimentoParcela(Constants.MOVIMENTO.movimento, Constants.MOVIMENTO.codigoformapagamento, p.descricao, Constants.MOVIMENTO.movimento.totalliquido);
         MovimentoParcelaDAO.getInstance(getActivity()).createOrUpdate(movimentoParcela);
         listMovimentoParcela.add(movimentoParcela);
         btn.setVisibility(View.VISIBLE);

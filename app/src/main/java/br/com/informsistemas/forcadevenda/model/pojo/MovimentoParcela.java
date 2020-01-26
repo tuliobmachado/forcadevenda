@@ -27,10 +27,15 @@ public class MovimentoParcela implements IEntidade {
     @Expose
     public BigDecimal valor;
 
+    @DatabaseField
+    @Expose
+    public String formadescricao;
+
     public MovimentoParcela(){}
-    public MovimentoParcela(Movimento movimento, String codigoforma, BigDecimal valor) {
+    public MovimentoParcela(Movimento movimento, String codigoforma, String formadescricao, BigDecimal valor) {
         this.movimento = movimento;
         this.codigoforma = codigoforma;
+        this.formadescricao = formadescricao;
         this.valor = valor;
     }
 }
