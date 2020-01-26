@@ -2,6 +2,8 @@ package br.com.informsistemas.forcadevenda.model.dao;
 
 import android.content.Context;
 
+import com.j256.ormlite.stmt.QueryBuilder;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,5 +95,20 @@ public class ParceiroDAO extends BaseDAO<Parceiro> {
                 Constants.SINCRONIA.listTabelaPreco.add(parceiroList.get(i).codigotabelapreco);
             }
         }
+    }
+
+    public List<Parceiro> findAllOrderDescricao(){
+        List<Parceiro> items = new ArrayList<>();
+
+        QueryBuilder<Parceiro, Object> queryBuilder = getHelper().getDAO(Parceiro.class).queryBuilder();
+        try {
+            queryBuilder.orderBy("descricao", true);
+
+            items = queryBuilder.query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return items;
     }
 }

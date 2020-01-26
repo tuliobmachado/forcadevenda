@@ -88,7 +88,7 @@ public class DadosTabelasTask extends AsyncTask<String, Void, String> {
 
     private void resgataParceiros(){
         try{
-            Constants.DTO.listPesquisaParceiro = ParceiroDAO.getInstance(fragment.getActivity()).findAll();
+            Constants.DTO.listPesquisaParceiro = ParceiroDAO.getInstance(fragment.getActivity()).findAllOrderDescricao();
         }catch (Exception e){
             DialogClass.showToastFragment(fragment, e.getMessage());
         }
