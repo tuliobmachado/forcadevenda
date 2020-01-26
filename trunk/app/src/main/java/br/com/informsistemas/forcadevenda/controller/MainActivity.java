@@ -20,6 +20,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.math.BigDecimal;
 
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_relatorio_material) {
             onSetIndexMenu(2, 2);
         } else if (id == R.id.nav_configuracoes_limpeza) {
-            apagarPedidos();
+            apagarBanco();
             onSetItemMenu();
         } else if (id == R.id.nav_configuracoes_sincronia) {
             ((MovimentoFragment) movimentoFragment).getSincronia(true);
@@ -317,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Constants.MOVIMENTO.movimento = new Movimento(Constants.MOVIMENTO.codigoempresa,
                 Constants.MOVIMENTO.codigofilialcontabil, Constants.MOVIMENTO.codigoalmoxarifado,
                 Constants.MOVIMENTO.codigooperacao, Constants.MOVIMENTO.codigotabelapreco,
-                null, "", new BigDecimal("0"), "", Misc.GetDateAtual(), null, null, null, "", "", Misc.gerarMD5(), "");
+                null, "", new BigDecimal("0"), "", Misc.GetDateAtual(), null, null, null, "", "", Misc.gerarMD5(), "", "");
         Intent intent = new Intent(MainActivity.this, ParceiroActivity.class);
         startActivityForResult(intent, 0);
     }
@@ -337,38 +338,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void apagarPedidos(){
-        MovimentoDAO.getInstance(this).deleteAllPedidos();
-        onShowFragment("movimentoFragment");
+    private void apagarBanco(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogDefault);
+        builder.setMessage("Deseja realmente confirmar? Todos os dados serão apagados");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                DatabaseManager.getInstance().getHelper().onDeleteAllTable();
+                logout();
+                dialog.cancel();
+            }
+        });
+        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                indexMenu = 0;
+                indexSubMenu = 0;
+                navigationView.getMenu().getItem(indexMenu).setChecked(true);
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     private void logout(){
-//        if (MovimentoDAO.getInstance(this).pedidoPendente()) {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogDefault);
-//            builder.setMessage("Existem pedidos não sincronizados! Deseja realmente sair? Eles serão apagados");
-//            builder.setCancelable(false);
-//            builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    deslogar();
-//                    dialog.cancel();
-//                }
-//            });
-//            builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    indexMenu = 0;
-//                    indexSubMenu = 0;
-//                    navigationView.getMenu().getItem(indexMenu).setChecked(true);
-//                    dialog.cancel();
-//                }
-//            });
-//
-//            AlertDialog alertDialog = builder.create();
-//            alertDialog.show();
-//        }else{
         deslogar();
-//        }
     }
 
     private void deslogar(){

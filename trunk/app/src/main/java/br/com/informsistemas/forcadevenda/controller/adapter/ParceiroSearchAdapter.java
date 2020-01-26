@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -17,7 +16,7 @@ import br.com.informsistemas.forcadevenda.model.dao.ParceiroVencimentoDAO;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 import br.com.informsistemas.forcadevenda.model.pojo.ParceiroVencimento;
 import br.com.informsistemas.forcadevenda.model.utils.CPFCNPJMask;
-import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
+import br.com.informsistemas.forcadevenda.interfaces.ItemClickListener;
 
 public class ParceiroSearchAdapter extends RecyclerView.Adapter<ParceiroSearchAdapter.MyViewHolder>  {
 
