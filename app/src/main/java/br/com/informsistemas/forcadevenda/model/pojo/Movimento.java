@@ -84,10 +84,15 @@ public class Movimento implements IEntidade {
     @Expose
     public String descricaoparceiro;
 
+    @DatabaseField
+    @Expose
+    public String cpfcgc;
+
     public Movimento(){}
     public Movimento(String codigoempresa, String codigofilialcontabil, String codigoalmoxarifado, String codigooperacao,
                      String codigotabelapreco, String codigoparceiro, String observacao, BigDecimal totalliquido, String sincronizado,
-                     Date data, Date datainicio, Date datafim, Date dataalteracao, String longitude, String latitude, String MD5, String descricaoparceiro) {
+                     Date data, Date datainicio, Date datafim, Date dataalteracao, String longitude, String latitude, String MD5,
+                     String descricaoparceiro, String cpfcgc) {
         this.codigoempresa = codigoempresa;
         this.codigofilialcontabil = codigofilialcontabil;
         this.codigoalmoxarifado = codigoalmoxarifado;
@@ -105,5 +110,6 @@ public class Movimento implements IEntidade {
         this.latitude = latitude;
         this.MD5 = MD5;
         this.descricaoparceiro = descricaoparceiro;
+        this.cpfcgc = cpfcgc;
     }
 }
