@@ -48,8 +48,7 @@
             <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/nav_configuracoes_limpeza"
-                    android:title="Limpeza Pedidos"
-                    android:visible="false"/>
+                    android:title="Apagar todos os dados"/>
                 <item
                     android:id="@+id/nav_configuracoes_sincronia"
                     android:title="Solicitar Sincronia" />

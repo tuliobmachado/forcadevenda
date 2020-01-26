@@ -56,6 +56,9 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
                 Constants.DTO.registro.codigoalmoxarifado, new Date(), Constants.PEDIDO.movimento, Constants.PEDIDO.movimentoItems,
                 Constants.PEDIDO.movimentoParcelas);
 
+        Movimento mov = getMovimentoAtual(reqPedido.movimento.id);
+        atualizaStatusMovimento(mov, "P");
+
         Constants.PEDIDO.movimento = null;
         Constants.PEDIDO.movimentoItems = null;
         Constants.PEDIDO.movimentoParcelas = null;
@@ -83,13 +86,10 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
             }
         } catch (IOException ex) {
             showToast(ex.getMessage());
-//            Log.i("Sincronia", ex.getMessage());
             Constants.PEDIDO.PEDIDOATUAL = 0;
             Constants.PEDIDO.listPedidos = null;
             Constants.PEDIDO.listPedidos = new ArrayList<>();
             Constants.MOVIMENTO.enviarPedido = false;
-            Movimento mov = getMovimentoAtual(reqPedido.movimento.id);
-            atualizaStatusMovimento(mov, "P");
             DialogClass.dialogDismiss(dialog);
         }
 
@@ -149,17 +149,17 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
     }
 
     private void atualizaSaldo(List<MaterialSaldo> materialSaldo){
+
         for (int i = 0; i < materialSaldo.size(); i++) {
             MaterialSaldo m = MaterialSaldoDAO.getInstance(fragment.getActivity()).findByIdAuxiliar("codigomaterial", materialSaldo.get(i).codigomaterial);
 
-            if (m == null){
-                m.codigomaterial = materialSaldo.get(i).codigomaterial;
-            }else {
+            if (m != null){
                 m.saldo = materialSaldo.get(i).saldo;
 
                 MaterialSaldoDAO.getInstance(fragment.getActivity()).createOrUpdate(m);
             }
         }
+
     }
 
     private void setDataParcialAtualizacao(Date data){

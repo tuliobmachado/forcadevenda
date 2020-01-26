@@ -123,8 +123,16 @@ public class MovimentoItem implements IEntidade {
     @Expose
     public BigDecimal custooriginal;
 
+    @DatabaseField
+    @Expose
+    public String materialdescricao;
+
+    @DatabaseField
+    @Expose
+    public String materialunidadesaida;
+
     public MovimentoItem(){}
-    public MovimentoItem(Movimento movimento, String codigotabelapreco, String codigomaterial,
+    public MovimentoItem(Movimento movimento, String codigotabelapreco, String codigomaterial, String materialdescricao, String materialunidadesaida,
                          String unidade, BigDecimal quantidade, BigDecimal custo, BigDecimal totalitem, BigDecimal icms, BigDecimal baseicms,
                          BigDecimal valoricms, BigDecimal icmssubst, BigDecimal baseicmssubst, BigDecimal valoricmssubst, BigDecimal ipi, BigDecimal valoripi,
                          BigDecimal margemsubstituicao, BigDecimal pautafiscal, BigDecimal icmsfecoep, BigDecimal valoricmsfecoep, BigDecimal icmsfecoepst,
@@ -133,6 +141,8 @@ public class MovimentoItem implements IEntidade {
         this.movimento = movimento;
         this.codigotabelapreco = codigotabelapreco;
         this.codigomaterial = codigomaterial;
+        this.materialdescricao = materialdescricao;
+        this.materialunidadesaida = materialunidadesaida;
         this.unidade = unidade;
         this.quantidade = quantidade;
         this.custo = custo;

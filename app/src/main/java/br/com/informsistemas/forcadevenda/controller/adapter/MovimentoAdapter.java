@@ -2,10 +2,12 @@ package br.com.informsistemas.forcadevenda.controller.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,36 +50,34 @@ public class MovimentoAdapter extends RecyclerView.Adapter<MovimentoAdapter.MyVi
         Boolean selecionado = false;
         Parceiro p = ParceiroDAO.getInstance(context).findByIdAuxiliar("codigoparceiro", fList.get(position).codigoparceiro);
 
-        if (p != null) {
-            myViewHolder.itemView.setVisibility(View.VISIBLE);
-            myViewHolder.itemView.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
+        if (fList.get(position).sincronizado.equals("T")) {
+            myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movSincronizado));
+        } else if (fList.get(position).sincronizado.equals("P")) {
+            myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.parceiroAVencer));
+        } else {
+            myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movNaoSincronizado));
+        }
 
-            if (fList.get(position).sincronizado.equals("T")) {
-                myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movSincronizado));
-            } else if (fList.get(position).sincronizado.equals("P")) {
-                myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.parceiroAVencer));
-            } else {
-                myViewHolder.frmStatus.setBackgroundColor(context.getResources().getColor(R.color.movNaoSincronizado));
-            }
-
+        if (p == null){
+            myViewHolder.txtCodigoParceiro.setText(fList.get(position).codigoparceiro);
+            myViewHolder.txtDescricao.setText(fList.get(position).descricaoparceiro);
+        }else {
             myViewHolder.txtCodigoParceiro.setText(p.codigoparceiro);
             myViewHolder.txtDescricao.setText(p.descricao);
-            myViewHolder.txtTotalLiquido.setText(Misc.formatMoeda(fList.get(position).totalliquido.floatValue()));
+        }
 
-            for (int i : selectedIds) {
-                if (fList.get(position).id == i) {
-                    selecionado = true;
-                }
-            }
+        myViewHolder.txtTotalLiquido.setText(Misc.formatMoeda(fList.get(position).totalliquido.floatValue()));
 
-            if (selecionado) {
-                myViewHolder.cardView.setForeground(new ColorDrawable(ContextCompat.getColor(context, R.color.cardSelecionado)));
-            } else {
-                myViewHolder.cardView.setForeground(new ColorDrawable(ContextCompat.getColor(context, android.R.color.transparent)));
+        for (int i : selectedIds) {
+            if (fList.get(position).id == i) {
+                selecionado = true;
             }
-        }else{
-            myViewHolder.itemView.setVisibility(View.GONE);
-            myViewHolder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+        }
+
+        if (selecionado) {
+            myViewHolder.cardView.setForeground(new ColorDrawable(ContextCompat.getColor(context, R.color.cardSelecionado)));
+        } else {
+            myViewHolder.cardView.setForeground(new ColorDrawable(ContextCompat.getColor(context, android.R.color.transparent)));
         }
     }
 
@@ -85,16 +85,16 @@ public class MovimentoAdapter extends RecyclerView.Adapter<MovimentoAdapter.MyVi
     public int getItemCount() {
         if (fList != null) {
             return fList.size();
-        }else
+        } else
             return 0;
     }
 
-    public void setSelectedIds(List<Integer> selectedIds){
+    public void setSelectedIds(List<Integer> selectedIds) {
         this.selectedIds = selectedIds;
         notifyDataSetChanged();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder {
 
         public TextView txtCodigoParceiro;
         public TextView txtDescricao;

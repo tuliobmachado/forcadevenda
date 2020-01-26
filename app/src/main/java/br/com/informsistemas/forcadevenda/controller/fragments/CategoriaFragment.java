@@ -22,7 +22,7 @@ import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.controller.adapter.CategoriaAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.CategoriaDAO;
 import br.com.informsistemas.forcadevenda.model.pojo.Categoria;
-import br.com.informsistemas.forcadevenda.model.utils.ItemClickListener;
+import br.com.informsistemas.forcadevenda.interfaces.ItemClickListener;
 
 public class CategoriaFragment extends Fragment implements ItemClickListener {
 

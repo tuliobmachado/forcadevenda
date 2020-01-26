@@ -34,6 +34,7 @@ import br.com.informsistemas.forcadevenda.model.dao.AtualizacaoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoItemDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoParcelaDAO;
+import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Enums;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
@@ -174,8 +175,15 @@ public class MovimentoFragment extends Fragment {
                         Intent intent = new Intent(getActivity(), ResumoActivity.class);
                         startActivity(intent);
                     } else {
-                        intent[0] = new Intent(getActivity(), ParceiroActivity.class);
-                        getActivity().startActivityForResult(intent[0], 0);
+                        Parceiro p = ParceiroDAO.getInstance(getActivity()).findByIdAuxiliar("codigoparceiro", Constants.MOVIMENTO.movimento.codigoparceiro);
+
+                        if (p != null){
+                            intent[0] = new Intent(getActivity(), ParceiroActivity.class);
+                            getActivity().startActivityForResult(intent[0], 0);
+                        }else{
+                            Toast.makeText(getActivity(), "Não é possível alterar o pedido o Parceiro não foi encontrado, sua rota pode ter sido alterada!", Toast.LENGTH_LONG).show();
+                        }
+
                     }
                 }
             }
@@ -303,7 +311,7 @@ public class MovimentoFragment extends Fragment {
     }
 
     public void atualizaLista() {
-        listMovimento = MovimentoDAO.getInstance(getActivity()).findAll();
+        listMovimento = MovimentoDAO.getInstance(getActivity()).getMovimentoPeriodo("", Misc.GetDateAtual(), Misc.GetDateAtual());
         setAdapter(listMovimento);
     }
 
