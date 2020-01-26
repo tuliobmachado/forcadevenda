@@ -145,6 +145,7 @@ public class ResumoActivity extends AppCompatActivity {
         TextView txtCPFCGC = new TextView(this);
 
         txtCodigoParceiro.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
         if (p != null){
             txtCodigoParceiro.setText(p.codigoparceiro);
         }else{
@@ -154,6 +155,7 @@ public class ResumoActivity extends AppCompatActivity {
         txtCodigoParceiro.setTypeface(null, Typeface.BOLD);
 
         txtDescricao.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
         if (p != null) {
             txtDescricao.setText(p.descricao);
         }else{
@@ -166,7 +168,7 @@ public class ResumoActivity extends AppCompatActivity {
         if (p != null) {
             txtCPFCGC.setText(CPFCNPJMask.getMask(p.cpfcgc));
         }else{
-            txtCPFCGC.setText(CPFCNPJMask.getMask("00000000000000"));
+            txtCPFCGC.setText(CPFCNPJMask.getMask(Constants.MOVIMENTO.movimento.cpfcgc));
         }
         txtCPFCGC.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 
@@ -186,8 +188,15 @@ public class ResumoActivity extends AppCompatActivity {
 
         for (int i = 0; i < Constants.PEDIDO.movimentoItems.size(); i++) {
             Material m = MaterialDAO.getInstance(this).findByIdAuxiliar("codigomaterial", Constants.PEDIDO.movimentoItems.get(i).codigomaterial);
+            String descricaoMaterial;
 
-            linearLayoutMaterial.addView(newTextView(Constants.PEDIDO.movimentoItems.get(i).quantidade+"x"+m.descricao));
+            if (m == null){
+                descricaoMaterial = Constants.PEDIDO.movimentoItems.get(i).materialdescricao;
+            }else{
+                descricaoMaterial = m.descricao;
+            }
+
+            linearLayoutMaterial.addView(newTextView(Constants.PEDIDO.movimentoItems.get(i).quantidade+"x"+descricaoMaterial));
 
             total_fecoepst = total_fecoepst.add(Constants.PEDIDO.movimentoItems.get(i).valoricmsfecoepst);
             total_ipi = total_ipi.add(Constants.PEDIDO.movimentoItems.get(i).valoripi);
@@ -199,11 +208,16 @@ public class ResumoActivity extends AppCompatActivity {
         }
     }
 
-    private void getDadosFormaPagamentos(){
+    private void getDadosFormaPagamentos() {
         Constants.PEDIDO.movimentoParcelas = MovimentoParcelaDAO.getInstance(this).findByMovimentoId(Constants.MOVIMENTO.movimento.id);
 
         FormaPagamento p = FormaPagamentoDAO.getInstance(this).findByIdAuxiliar("codigoforma", Constants.PEDIDO.movimentoParcelas.get(0).codigoforma);
-        linearLayoutPagamento.addView(newTextView(p.descricao));
+
+        if (p == null) {
+            linearLayoutPagamento.addView(newTextView(Constants.PEDIDO.movimentoParcelas.get(0).formadescricao));
+        } else{
+            linearLayoutPagamento.addView(newTextView(p.descricao));
+        }
     }
 
     private void getDadosTotais(){
