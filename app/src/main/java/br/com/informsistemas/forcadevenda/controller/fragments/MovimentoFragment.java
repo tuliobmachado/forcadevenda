@@ -423,6 +423,10 @@ public class MovimentoFragment extends Fragment {
     }
 
     private void enviarPedido() {
+        if (!Misc.permiteRealizarPedido(getActivity())){
+            return;
+        }
+
         PedidoTask pedidoTask = new PedidoTask(this);
         pedidoTask.execute();
     }

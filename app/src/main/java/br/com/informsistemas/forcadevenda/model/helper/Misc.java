@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,6 +20,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -303,5 +305,71 @@ public class Misc {
 
         return maiorData;
 
+    }
+
+    public static Boolean permiteRealizarPedido(Context context){
+        String message = validaHoraPedido();
+
+        if (message.equals("OK")){
+            return true;
+        }else{
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+            return false;
+        }
+    }
+
+    public static String validaHoraPedido() {
+        Calendar cal = Calendar.getInstance();
+        Integer diaAtual = cal.get(Calendar.DAY_OF_WEEK);
+        SimpleDateFormat simpleDt = new SimpleDateFormat("HH:mm");
+        String message = "OK";
+
+        if (Constants.DTO.parametro.bloquearvendas) {
+            Long hInicioSemana = null;
+            Long hFimSemana = null;
+            Long hInicioSabado = null;
+            Long hFimSabado = null;
+            Long hInicioDomingo = null;
+            Long hFimDomingo = null;
+            Long hAtual = null;
+            try {
+                hInicioSemana = Constants.DTO.parametro.horainiciosemana.equals("") ? 0 : simpleDt.parse(Constants.DTO.parametro.horainiciosemana).getTime();
+                hFimSemana = Constants.DTO.parametro.horafimsemana.equals("") ? 0 : simpleDt.parse(Constants.DTO.parametro.horafimsemana).getTime();
+                hInicioSabado = Constants.DTO.parametro.horainiciosabado.equals("") ? 0 : simpleDt.parse(Constants.DTO.parametro.horainiciosabado).getTime();
+                hFimSabado = Constants.DTO.parametro.horafimsabado.equals("") ? 0 : simpleDt.parse(Constants.DTO.parametro.horafimsabado).getTime();
+                hInicioDomingo = Constants.DTO.parametro.horainiciodomingo.equals("") ? 0 : simpleDt.parse(Constants.DTO.parametro.horainiciodomingo).getTime();
+                hFimDomingo = Constants.DTO.parametro.horafimdomingo.equals("") ? 0 : simpleDt.parse(Constants.DTO.parametro.horafimdomingo).getTime();
+                hAtual = simpleDt.parse(simpleDt.format(new Date())).getTime();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (diaAtual == Calendar.SUNDAY){
+                if (!(hAtual > hInicioSabado) && !(hAtual < hFimSabado)){
+                    message = "Bloqueio de pedidos. Horário permitido: "+
+                            Constants.DTO.parametro.horainiciosabado+" às "+Constants.DTO.parametro.horafimsabado;
+
+                    return message;
+                }
+            }
+
+            if (diaAtual == Calendar.SATURDAY){
+                if (!(hAtual > hInicioDomingo) && !(hAtual < hFimDomingo)){
+                    message = "Bloqueio de pedidos. Horário permitido: "+
+                            Constants.DTO.parametro.horainiciodomingo+" às "+Constants.DTO.parametro.horafimdomingo;
+
+                    return message;
+                }
+            }
+
+            if (!(hAtual > hInicioSemana) || !(hAtual < hFimSemana)){
+                message = "Bloqueio de pedidos. Horário permitido: "+
+                        Constants.DTO.parametro.horainiciosemana+" às "+Constants.DTO.parametro.horafimsemana;
+
+                return message;
+            }
+        }
+
+        return message;
     }
 }

@@ -20,6 +20,7 @@ import br.com.informsistemas.forcadevenda.model.pojo.Categoria;
 import br.com.informsistemas.forcadevenda.model.pojo.CategoriaMaterial;
 import br.com.informsistemas.forcadevenda.model.pojo.MaterialSaldo;
 import br.com.informsistemas.forcadevenda.model.pojo.MetaFuncionario;
+import br.com.informsistemas.forcadevenda.model.pojo.Parametro;
 import br.com.informsistemas.forcadevenda.model.pojo.ParceiroVencimento;
 import br.com.informsistemas.forcadevenda.model.pojo.Material;
 import br.com.informsistemas.forcadevenda.model.pojo.MaterialEstado;
@@ -35,7 +36,7 @@ import br.com.informsistemas.forcadevenda.model.utils.IEntidade;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String databaseName = "forcavenda.db";
-    private static final int databaseVersion = 1;
+    private static final int databaseVersion = 2;
 
     private Map<Class, Dao<IEntidade, Object>> daos = new HashMap<Class, Dao<IEntidade, Object>>();
 
@@ -48,6 +49,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
             TableUtils.createTable(cs, Atualizacao.class);
             TableUtils.createTable(cs, Registro.class);
+            TableUtils.createTable(cs, Parametro.class);
             TableUtils.createTable(cs, Parceiro.class);
             TableUtils.createTable(cs, ParceiroVencimento.class);
             TableUtils.createTable(cs, Categoria.class);
@@ -87,6 +89,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         switch (oldVersion){
             case 1:
+                try {
+                    TableUtils.createTable(cs, Parametro.class);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
         }
 
         for (String sql: allSQL){
@@ -111,6 +118,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(cs, Categoria.class, true);
             TableUtils.dropTable(cs, ParceiroVencimento.class, true);
             TableUtils.dropTable(cs, Parceiro.class, true);
+            TableUtils.dropTable(cs, Parametro.class, true);
             TableUtils.dropTable(cs, Registro.class, true);
             TableUtils.dropTable(cs, Atualizacao.class, true);
 

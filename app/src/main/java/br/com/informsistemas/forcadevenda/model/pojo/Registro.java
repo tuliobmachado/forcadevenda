@@ -3,6 +3,8 @@ package br.com.informsistemas.forcadevenda.model.pojo;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.List;
+
 import br.com.informsistemas.forcadevenda.model.utils.IEntidade;
 
 @DatabaseTable(tableName = "registro")
@@ -101,6 +103,8 @@ public class Registro implements IEntidade {
     public String codigoaplicacao = "0002";
 
     public int casasvalor = 4;
+
+    public List<Parametro> listparametros;
 
     public Registro(){}
     public Registro(String usuario, String senha, String imei, String cnpj, String token, String codigousuario,

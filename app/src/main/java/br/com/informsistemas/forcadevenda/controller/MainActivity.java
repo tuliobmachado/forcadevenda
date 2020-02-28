@@ -31,10 +31,12 @@ import br.com.informsistemas.forcadevenda.controller.fragments.ParceiroConsultaF
 import br.com.informsistemas.forcadevenda.controller.fragments.RelatorioPedidoFragment;
 import br.com.informsistemas.forcadevenda.model.dao.DatabaseManager;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoDAO;
+import br.com.informsistemas.forcadevenda.model.dao.ParametroDAO;
 import br.com.informsistemas.forcadevenda.model.dao.RegistroDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Movimento;
+import br.com.informsistemas.forcadevenda.model.pojo.Parametro;
 import br.com.informsistemas.forcadevenda.model.pojo.Registro;
 import br.com.informsistemas.forcadevenda.model.utils.IOnBackPressed;
 
@@ -64,6 +66,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if (Constants.DTO.parametro == null){
+                    Toast.makeText(MainActivity.this, "Necessário realizar login novamente!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                if (!Misc.permiteRealizarPedido(MainActivity.this)){
+                    return;
+                }
+
                 onShowMeta(10);
             }
         });
@@ -157,6 +169,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (reg != null) {
             if (Constants.DTO.registro == null) {
                 RegistroDAO.getInstance(this).createOrUpdate(reg);
+
+                Parametro parametro = new Parametro(reg, reg.listparametros.get(0).bloquearvendas,
+                        reg.listparametros.get(0).horainiciosemana, reg.listparametros.get(0).horafimsemana,
+                        reg.listparametros.get(0).horainiciosabado, reg.listparametros.get(0).horafimsabado,
+                        reg.listparametros.get(0).horainiciodomingo, reg.listparametros.get(0).horafimdomingo);
+
+                ParametroDAO.getInstance(this).createOrUpdate(parametro);
             } else {
                 Constants.DTO.registro.status = reg.status;
                 RegistroDAO.getInstance(this).createOrUpdate(Constants.DTO.registro);
@@ -167,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void onShow() {
         Constants.DTO.registro = RegistroDAO.getInstance(this).findFirst();
+        Constants.DTO.parametro = ParametroDAO.getInstance(this).findFirst();
 
         if (Constants.DTO.registro == null) {
             onShowLogin();
@@ -370,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void deslogar(){
         RegistroDAO.getInstance(this).deleteAll();
+        ParametroDAO.getInstance(this).deleteAll();
         indexMenu = 0;
         indexSubMenu = 0;
         navigationView.getMenu().getItem(indexMenu).setChecked(true);
