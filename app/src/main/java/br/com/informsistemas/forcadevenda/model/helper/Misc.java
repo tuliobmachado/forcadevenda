@@ -307,6 +307,22 @@ public class Misc {
 
     }
 
+    public static String retornaMensagemHora(String hInicio, String hFim){
+        String message = null;
+
+        if (hInicio.equals("") && hFim.length() > 0){
+            message = "Bloqueio de pedidos. Horário permitido até as "+hFim;
+        }else if (hInicio.length() > 0 && hFim.equals("")){
+            message = "Bloqueio de pedidos. Horário permitido a partir das "+hInicio;
+        }else if (hInicio.equals("") && hFim.equals("")){
+            message = "Bloqueio de pedidos. Não é permitido realizar perdidos no dial atual";
+        }else{
+            message = "Bloqueio de pedidos. Horário permitido: "+hInicio+" às "+hFim;
+        }
+
+        return message;
+    }
+
     public static Boolean permiteRealizarPedido(Context context){
         String message = validaHoraPedido();
 
@@ -344,29 +360,21 @@ public class Misc {
                 e.printStackTrace();
             }
 
-            if (diaAtual == Calendar.SUNDAY){
-                if (!(hAtual > hInicioSabado) && !(hAtual < hFimSabado)){
-                    message = "Bloqueio de pedidos. Horário permitido: "+
-                            Constants.DTO.parametro.horainiciosabado+" às "+Constants.DTO.parametro.horafimsabado;
-
-                    return message;
-                }
-            }
-
             if (diaAtual == Calendar.SATURDAY){
-                if (!(hAtual > hInicioDomingo) && !(hAtual < hFimDomingo)){
-                    message = "Bloqueio de pedidos. Horário permitido: "+
-                            Constants.DTO.parametro.horainiciodomingo+" às "+Constants.DTO.parametro.horafimdomingo;
-
-                    return message;
+                if (((hInicioSabado == 0) && (hFimSabado == 0)) || (!(hInicioSabado == 0) && !(hAtual > hInicioSabado)) || (!(hFimSabado == 0) && !(hAtual < hFimSabado))){
+                    return retornaMensagemHora(Constants.DTO.parametro.horainiciosabado,
+                            Constants.DTO.parametro.horafimsabado);
                 }
-            }
-
-            if (!(hAtual > hInicioSemana) || !(hAtual < hFimSemana)){
-                message = "Bloqueio de pedidos. Horário permitido: "+
-                        Constants.DTO.parametro.horainiciosemana+" às "+Constants.DTO.parametro.horafimsemana;
-
-                return message;
+            }else
+            if (diaAtual == Calendar.SUNDAY){
+                if (((hInicioDomingo == 0) && (hFimDomingo == 0)) || (!(hInicioDomingo == 0) && !(hAtual > hInicioDomingo)) || (!(hFimDomingo == 0) && !(hAtual < hFimDomingo))){
+                    return retornaMensagemHora(Constants.DTO.parametro.horainiciodomingo,
+                            Constants.DTO.parametro.horafimdomingo);
+                }
+            }else
+            if (((hInicioSemana == 0) && (hFimSemana == 0)) || (!(hInicioSemana == 0) && !(hAtual > hInicioSemana)) || (!(hFimSemana == 0) && !(hAtual < hFimSemana))){
+                return retornaMensagemHora(Constants.DTO.parametro.horainiciosemana,
+                        Constants.DTO.parametro.horafimsemana);
             }
         }
 

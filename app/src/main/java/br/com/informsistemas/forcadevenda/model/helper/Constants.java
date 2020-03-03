@@ -12,6 +12,7 @@ import br.com.informsistemas.forcadevenda.model.pojo.Movimento;
 import br.com.informsistemas.forcadevenda.model.pojo.FormaPagamento;
 import br.com.informsistemas.forcadevenda.model.pojo.MovimentoItem;
 import br.com.informsistemas.forcadevenda.model.pojo.MovimentoParcela;
+import br.com.informsistemas.forcadevenda.model.pojo.Parametro;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 import br.com.informsistemas.forcadevenda.model.pojo.Registro;
 
@@ -22,7 +23,7 @@ public class Constants {
 //        public static final String BASE = "http://informnfe.com/NFeEmitir/ServicoAppH.dll/api/";
         public static final String BASE = "http://informnfe.com/NFeEmitir/ServicoApp.dll/api/";
 //        public static final String BASE = "http://192.168.0.190:8089/api/";
-//        public static final String BASE = "http://192.168.0.82:8089/api/";
+//        public static final String BASE = "http://192.168.0.98:8089/api/";
         public static final String LOGIN_REGISTRAR = "Login/Registrar";
         public static final String DEVICE_CONSULTAR = "Device/Consultar";
         public static final String SINCRONIA_CONSULTAR = "Sincronia/Consultar";
@@ -41,7 +42,7 @@ public class Constants {
     }
 
     public static final class APP {
-        public static final String VERSAO = "0.4.1";
+        public static final String VERSAO = "0.4.2a";
     }
 
     public static final class REQUEST_LOGIN {
@@ -74,6 +75,7 @@ public class Constants {
 
     public static class DTO {
         public static Registro registro = null;
+        public static Parametro parametro = null;
         public static List<Atualizacao> listAtualizacaoServidor = null;
         public static List<Parceiro> listPesquisaParceiro = null;
         public static List<Material> listPesquisaMaterial = null;
