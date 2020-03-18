@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -251,12 +253,21 @@ public class LoginFragment extends Fragment {
     }
 
     public void getImei(){
-        TelephonyManager tm = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            imei = tm.getImei();
-        } else {
-            imei = tm.getDeviceId();
+            imei = Settings.Secure.getString(getActivity().getContentResolver(),Settings.Secure.ANDROID_ID);
+
+        }else {
+
+            final TelephonyManager mTelephony = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+
+            if (mTelephony.getDeviceId() != null) {
+                imei = mTelephony.getDeviceId();
+            } else {
+                imei = Settings.Secure.getString(
+                        getActivity().getContentResolver(),
+                        Settings.Secure.ANDROID_ID);
+            }
         }
     }
 }
