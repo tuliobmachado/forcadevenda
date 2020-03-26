@@ -1,4 +1,4 @@
-package br.com.informsistemas.forcadevenda.controller.fragments;
+package br.com.informsistemas.forcadevenda.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,25 +20,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.adapter.ParceiroAdapter;
+import br.com.informsistemas.forcadevenda.controller.adapter.MovimentoParcelaAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.FormaPagamentoDAO;
-import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
+import br.com.informsistemas.forcadevenda.model.dao.MovimentoItemDAO;
+import br.com.informsistemas.forcadevenda.model.dao.MovimentoParcelaDAO;
+import br.com.informsistemas.forcadevenda.model.helper.CalculoClass;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
-import br.com.informsistemas.forcadevenda.model.helper.Misc;
-import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
+import br.com.informsistemas.forcadevenda.model.pojo.MovimentoItem;
+import br.com.informsistemas.forcadevenda.model.pojo.MovimentoParcela;
+import br.com.informsistemas.forcadevenda.model.pojo.FormaPagamento;
 import br.com.informsistemas.forcadevenda.model.utils.RecyclerItemClickListener;
 
-public class ParceiroFragment extends Fragment {
+public class MovimentoParcelaFragment extends Fragment {
 
-    public Button btnSelecionarProduto;
-    private List<Parceiro> listParceiro;
+    private List<MovimentoParcela> listMovimentoParcela;
     private RecyclerView recyclerView;
-    private ParceiroAdapter parceiroAdapter;
+    private MovimentoParcelaAdapter movimentoParcelaAdapter;
     private RecyclerView.OnItemTouchListener listener;
     private boolean isMultiSelect = false;
     private ActionMode actionMode;
     private ActionMode.Callback callback;
     private List<Integer> selectedIds = new ArrayList<>();
+    private Button btn;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,8 +54,8 @@ public class ParceiroFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recycler, container, false);
 
-        btnSelecionarProduto = getActivity().findViewById(R.id.btn_selecionar_produto);
-        btnSelecionarProduto.setVisibility(View.VISIBLE);
+        btn = getActivity().findViewById(R.id.btn_resumo_pedido);
+        btn.setVisibility(View.VISIBLE);
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -61,9 +64,9 @@ public class ParceiroFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
-        getParceiro();
+        getMovimentoParcela();
 
-        setAdapter(listParceiro);
+        setAdapter(listMovimentoParcela);
         listener = getListener();
         recyclerView.addOnItemTouchListener(listener);
 
@@ -72,18 +75,8 @@ public class ParceiroFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        getActivity().setTitle("Parceiros");
-
-        if (listParceiro.size() > 0) {
-            if ((listParceiro.get(0).statusvencimento == null) || (listParceiro.get(0).statusvencimento.equals(""))) {
-                menu.clear();
-            }else{
-                MenuItem menuItem = menu.findItem(R.id.action_search_list);
-                menuItem.setVisible(false);
-            }
-        }else{
-            MenuItem menuItem = menu.findItem(R.id.action_titulos);
-            menuItem.setVisible(false);
+        if (listMovimentoParcela.size() > 0) {
+            menu.clear();
         }
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -104,33 +97,33 @@ public class ParceiroFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Parceiro p = (Parceiro) data.getExtras().getSerializable("Parceiro");
-        Constants.MOVIMENTO.movimento.codigoparceiro = p.codigoparceiro;
-        Constants.MOVIMENTO.movimento.descricaoparceiro = p.descricao;
-        Constants.MOVIMENTO.movimento.cpfcgc = p.cpfcgc;
+        FormaPagamento p = (FormaPagamento) data.getExtras().getSerializable("Pagamento");
 
-        getTabelas(p);
-
-        listParceiro.add(p);
+        MovimentoParcela movimentoParcela = new MovimentoParcela(Constants.MOVIMENTO.movimento, p.codigoforma, p.descricao, Constants.MOVIMENTO.movimento.totalliquido);
+        MovimentoParcelaDAO.getInstance(getActivity()).createOrUpdate(movimentoParcela);
     }
 
-    private void getParceiro(){
-        if (listParceiro == null){
-            listParceiro = new ArrayList<>();
-        }
+    private void getMovimentoParcela(){
+        RecalcularTotalMovimento();
 
-        if (Constants.MOVIMENTO.movimento.id != null){
-            Parceiro p = ParceiroDAO.getInstance(getActivity()).findByIdAuxiliar("codigoparceiro", Constants.MOVIMENTO.movimento.codigoparceiro);
+        listMovimentoParcela = MovimentoParcelaDAO.getInstance(getActivity()).findByMovimentoId(Constants.MOVIMENTO.movimento.id);
 
-            getTabelas(p);
+        if (listMovimentoParcela.size() == 0){
+            if (!Constants.MOVIMENTO.codigoformapagamento.equals("")){
+                insereCodigoFormaPadrao();
+            }
+        }else{
+            if (listMovimentoParcela.get(0).valor != Constants.MOVIMENTO.movimento.totalliquido){
+                listMovimentoParcela.get(0).valor = Constants.MOVIMENTO.movimento.totalliquido;
 
-            listParceiro.add(p);
+                MovimentoParcelaDAO.getInstance(getActivity()).createOrUpdate(listMovimentoParcela.get(0));
+            }
         }
     }
 
-    private void setAdapter(List<Parceiro> list){
-        parceiroAdapter = new ParceiroAdapter(getActivity(), list);
-        recyclerView.setAdapter(parceiroAdapter);
+    private void setAdapter(List<MovimentoParcela> list){
+        movimentoParcelaAdapter = new MovimentoParcelaAdapter(getActivity(), list);
+        recyclerView.setAdapter(movimentoParcelaAdapter);
     }
 
     private RecyclerView.OnItemTouchListener getListener(){
@@ -139,7 +132,7 @@ public class ParceiroFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 if (isMultiSelect){
-                    multiSelect(listParceiro.get(position).id);
+                    multiSelect(listMovimentoParcela.get(position).id);
                 }
             }
 
@@ -154,7 +147,7 @@ public class ParceiroFragment extends Fragment {
                     }
                 }
 
-                multiSelect(listParceiro.get(position).id);
+                multiSelect(listMovimentoParcela.get(position).id);
             }
         });
     }
@@ -178,8 +171,8 @@ public class ParceiroFragment extends Fragment {
                     case R.id.action_delete:
 
                         for (int i : selectedIds){
-                            for (int y = 0; y < listParceiro.size(); y++) {
-                                if (listParceiro.get(y).id == i){
+                            for (int y = 0; y < listMovimentoParcela.size(); y++) {
+                                if (listMovimentoParcela.get(y).id == i){
                                     deleteItem(y);
                                 }
                             }
@@ -194,18 +187,16 @@ public class ParceiroFragment extends Fragment {
                 actionMode = null;
                 isMultiSelect = false;
                 selectedIds = new ArrayList<>();
-                parceiroAdapter.setSelectedIds(selectedIds);
+                movimentoParcelaAdapter.setSelectedIds(selectedIds);
             }
         };
     }
 
     private void deleteItem(int position){
-        listParceiro.remove(position);
-        parceiroAdapter.notifyItemRemoved(position);
-        parceiroAdapter.notifyItemRangeChanged(position, parceiroAdapter.getItemCount());
-        Constants.MOVIMENTO.movimento.codigoparceiro = null;
-        Constants.MOVIMENTO.movimento.descricaoparceiro = "";
-        Misc.setTabelasPadrao();
+        MovimentoParcelaDAO.getInstance(getActivity()).delete(listMovimentoParcela.get(position));
+        listMovimentoParcela.remove(position);
+        movimentoParcelaAdapter.notifyItemRemoved(position);
+        movimentoParcelaAdapter.notifyItemRangeChanged(position, movimentoParcelaAdapter.getItemCount());
         getActivity().invalidateOptionsMenu();
     }
 
@@ -227,30 +218,24 @@ public class ParceiroFragment extends Fragment {
                 actionMode.finish();
             }
 
-            parceiroAdapter.setSelectedIds(selectedIds);
+            movimentoParcelaAdapter.setSelectedIds(selectedIds);
         }
     }
 
-    private void getTabelas(Parceiro p){
-        if (!p.codigotabelapreco.equals("")){
-            Constants.MOVIMENTO.codigotabelapreco = p.codigotabelapreco;
-            Constants.MOVIMENTO.movimento.codigotabelapreco = p.codigotabelapreco;
-        }
-
-        if (!p.codigoformapagamento.equals("")){
-            if (FormaPagamentoDAO.getInstance(getActivity()).findByIdAuxiliar("codigoforma", p.codigoformapagamento) != null) {
-                Constants.MOVIMENTO.codigoformapagamento = p.codigoformapagamento;
-            }
-        }
-
-        if (p.percdescontopadrao.floatValue() > 0){
-            Constants.MOVIMENTO.percdescontopadrao = p.percdescontopadrao;
-        }
-
-        Constants.MOVIMENTO.estadoParceiro = p.estado;
+    private void insereCodigoFormaPadrao(){
+        FormaPagamento p = FormaPagamentoDAO.getInstance(getActivity()).findByIdAuxiliar("codigoforma", Constants.MOVIMENTO.codigoformapagamento);
+        MovimentoParcela movimentoParcela = new MovimentoParcela(Constants.MOVIMENTO.movimento, Constants.MOVIMENTO.codigoformapagamento, p.descricao, Constants.MOVIMENTO.movimento.totalliquido);
+        MovimentoParcelaDAO.getInstance(getActivity()).createOrUpdate(movimentoParcela);
+        listMovimentoParcela.add(movimentoParcela);
+        btn.setVisibility(View.VISIBLE);
     }
 
-    public Parceiro onGetParceiroSelecionado(){
-        return listParceiro.get(0);
+    private void RecalcularTotalMovimento(){
+        List<MovimentoItem> listMovItens = MovimentoItemDAO.getInstance(getActivity()).findByMovimentoId(Constants.MOVIMENTO.movimento.id);
+
+        if (listMovItens.size() > 0) {
+            CalculoClass calculoClass = new CalculoClass(getActivity(), null);
+            calculoClass.recalcularMovimento(Constants.MOVIMENTO.movimento, listMovItens);
+        }
     }
 }

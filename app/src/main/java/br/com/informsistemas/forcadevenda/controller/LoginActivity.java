@@ -1,7 +1,9 @@
 package br.com.informsistemas.forcadevenda.controller;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,9 +16,10 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.fragments.AcessoFragment;
-import br.com.informsistemas.forcadevenda.controller.fragments.LoginFragment;
+import br.com.informsistemas.forcadevenda.fragments.AcessoFragment;
+import br.com.informsistemas.forcadevenda.fragments.LoginFragment;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
+import br.com.informsistemas.forcadevenda.model.helper.Misc;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -93,6 +96,17 @@ public class LoginActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == Constants.PERMISSION_REQUESTCODE.READ_PHONE_STATE){
             Constants.PERMISSION.READ_PHONE_STATE = grantResults[0];
+
+            if (Constants.PERMISSION.ACCESS_FINE_LOCATION == PackageManager.PERMISSION_DENIED){
+                Misc.SolicitaPermissao(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constants.PERMISSION_REQUESTCODE.ACCESS_FINE_LOCATION);
+            }
+        }
+
+        if (requestCode == Constants.PERMISSION_REQUESTCODE.ACCESS_FINE_LOCATION){
+            Constants.PERMISSION.ACCESS_FINE_LOCATION = grantResults[0];
+        }
+
+        if (Constants.PERMISSION.READ_PHONE_STATE == PackageManager.PERMISSION_GRANTED && Constants.PERMISSION.ACCESS_FINE_LOCATION == PackageManager.PERMISSION_GRANTED) {
             ((LoginFragment) fragmentLogin).login();
         }
     }

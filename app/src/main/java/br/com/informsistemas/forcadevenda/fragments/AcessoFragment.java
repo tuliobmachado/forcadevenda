@@ -1,4 +1,4 @@
-package br.com.informsistemas.forcadevenda.controller.fragments;
+package br.com.informsistemas.forcadevenda.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;

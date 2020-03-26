@@ -15,7 +15,7 @@ import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.controller.MainActivity;
-import br.com.informsistemas.forcadevenda.controller.fragments.MovimentoFragment;
+import br.com.informsistemas.forcadevenda.fragments.MovimentoFragment;
 import br.com.informsistemas.forcadevenda.controller.rest.Request.RequestSincAtualizacao;
 import br.com.informsistemas.forcadevenda.controller.rest.RestManager;
 import br.com.informsistemas.forcadevenda.model.callback.SincroniaService;

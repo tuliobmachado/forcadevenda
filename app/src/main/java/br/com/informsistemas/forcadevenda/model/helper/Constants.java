@@ -1,5 +1,8 @@
 package br.com.informsistemas.forcadevenda.model.helper;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -93,10 +96,19 @@ public class Constants {
 
     public static class PERMISSION {
         public static int READ_PHONE_STATE;
+        public static int ACCESS_FINE_LOCATION;
     }
 
     public static class PERMISSION_REQUESTCODE {
         public static final int DENY = -99;
         public static final int READ_PHONE_STATE = 0;
+        public static final int ACCESS_FINE_LOCATION = 1;
+    }
+
+    public static class LOCATION {
+        public static FusedLocationProviderClient fusedLocationProviderClient = null;
+        public static LocationCallback locationCallback = null;
+        public static double LONGITUDE = 0;
+        public static double LATITUDE = 0;
     }
 }

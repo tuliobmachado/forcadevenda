@@ -1,11 +1,12 @@
-package br.com.informsistemas.forcadevenda.controller.fragments;
+package br.com.informsistemas.forcadevenda.fragments;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,26 +15,31 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.SearchView;
 
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.adapter.PagamentoSearchAdapter;
-import br.com.informsistemas.forcadevenda.model.dao.FormaPagamentoDAO;
+import br.com.informsistemas.forcadevenda.controller.MainActivity;
+import br.com.informsistemas.forcadevenda.controller.adapter.ParceiroConsultaAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
-import br.com.informsistemas.forcadevenda.model.helper.Constants;
-import br.com.informsistemas.forcadevenda.model.pojo.FormaPagamento;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 import br.com.informsistemas.forcadevenda.interfaces.ItemClickListener;
 
-public class FormaPagamentoSearchFragment extends Fragment implements ItemClickListener {
+public class ParceiroConsultaFragment extends Fragment implements ItemClickListener {
 
-    private List<FormaPagamento> listPagamento;
+    private List<Parceiro> listParceiro;
     private SearchView searchView;
     private RecyclerView recyclerView;
-    private PagamentoSearchAdapter pagamentoSearchAdapter;
+    private ParceiroConsultaAdapter parceiroConsultaAdapter;
+    private TabLayout tabLayout;
+
+    @Override
+    public void onDestroy() {
+        searchView.clearFocus();
+        tabLayout.setVisibility(View.GONE);
+        super.onDestroy();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,7 +52,14 @@ public class FormaPagamentoSearchFragment extends Fragment implements ItemClickL
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recycler, container, false);
 
-        Button btn = getActivity().findViewById(R.id.btn_resumo_pedido);
+        tabLayout = getActivity().findViewById(R.id.tab_layout_parceiro);
+        tabLayout.setVisibility(View.GONE);
+
+        getActivity().setTitle("Consulta Parceiro");
+        ((MainActivity) getActivity()).onSetIndexMenu(1, 1);
+        ((MainActivity) getActivity()).onSetItemMenu();
+
+        FloatingActionButton btn = getActivity().findViewById(R.id.fab_adicionar_pedido);
         btn.setVisibility(View.GONE);
 
         recyclerView = view.findViewById(R.id.recycler_view);
@@ -57,15 +70,8 @@ public class FormaPagamentoSearchFragment extends Fragment implements ItemClickL
 
         recyclerView.setLayoutManager(llm);
 
-        Parceiro parceiro = ParceiroDAO.getInstance(getActivity()).findByIdAuxiliar("codigoparceiro", Constants.MOVIMENTO.movimento.codigoparceiro);
-
-        if (parceiro.formaspermitidas.equals("")) {
-            listPagamento = FormaPagamentoDAO.getInstance(getActivity()).findAll();
-        }else{
-            listPagamento = FormaPagamentoDAO.getInstance(getActivity()).findByFormasPermitidas(parceiro.formaspermitidas);
-        }
-
-        setAdapter(listPagamento);
+        listParceiro = ParceiroDAO.getInstance(getActivity()).getListParceiro();
+        setAdapter(listParceiro);
 
         return view;
     }
@@ -85,18 +91,19 @@ public class FormaPagamentoSearchFragment extends Fragment implements ItemClickL
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                listPagamento = FormaPagamentoDAO.getInstance(getActivity()).pesquisaLista(newText);
-                setAdapter(listPagamento);
+                listParceiro = ParceiroDAO.getInstance(getActivity()).pesquisaLista(newText);
+                setAdapter(listParceiro);
                 return false;
             }
         });
 //        searchView.setFocusable(true);
 //        searchView.setIconified(false);
-        searchView.setQueryHint("Pesquisar Pagamento...");
+        searchView.setQueryHint("Pesquisar Parceiro...");
 
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
@@ -109,20 +116,34 @@ public class FormaPagamentoSearchFragment extends Fragment implements ItemClickL
 
     }
 
-    private void setAdapter(List<FormaPagamento> list){
-        pagamentoSearchAdapter = new PagamentoSearchAdapter(getActivity(), list, this);
-        recyclerView.setAdapter(pagamentoSearchAdapter);
+    private void setAdapter(List<Parceiro> list) {
+        parceiroConsultaAdapter = new ParceiroConsultaAdapter(getActivity(), list, this);
+        recyclerView.setAdapter(parceiroConsultaAdapter);
+    }
+
+    private Bundle getDadosArguments(int position){
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("Parceiro", listParceiro.get(position));
+
+        return bundle;
     }
 
     @Override
     public void onItemClick(int position) {
-        Intent intent = new Intent();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("Pagamento", listPagamento.get(position));
-        intent.putExtras(bundle);
         searchView.clearFocus();
-        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-        getActivity().getSupportFragmentManager().popBackStack();
+
+        ParceiroDadosFragment parceiroDadosFragment = (ParceiroDadosFragment) getActivity().getSupportFragmentManager().findFragmentByTag("parceiroDadosFragment");
+
+        if (parceiroDadosFragment == null) {
+            parceiroDadosFragment = new ParceiroDadosFragment();
+        }
+
+        parceiroDadosFragment.setTargetFragment(ParceiroConsultaFragment.this, 0);
+        parceiroDadosFragment.setArguments(getDadosArguments(position));
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_container, parceiroDadosFragment, "parceiroDadosFragment");
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.fragments.MovimentoFragment;
+import br.com.informsistemas.forcadevenda.fragments.MovimentoFragment;
 import br.com.informsistemas.forcadevenda.controller.rest.Request.RequestSincCategoria;
 import br.com.informsistemas.forcadevenda.controller.rest.Request.RequestSincCategoriaMaterial;
 import br.com.informsistemas.forcadevenda.controller.rest.Request.RequestSincFormaPagamento;

@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.fragments.MovimentoFragment;
+import br.com.informsistemas.forcadevenda.fragments.MovimentoFragment;
 import br.com.informsistemas.forcadevenda.model.dao.CategoriaDAO;
 import br.com.informsistemas.forcadevenda.model.dao.CategoriaMaterialDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MaterialDAO;

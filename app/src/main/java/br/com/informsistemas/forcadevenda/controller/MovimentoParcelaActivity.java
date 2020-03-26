@@ -12,8 +12,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.fragments.MovimentoParcelaFragment;
-import br.com.informsistemas.forcadevenda.controller.fragments.FormaPagamentoSearchFragment;
+import br.com.informsistemas.forcadevenda.fragments.MovimentoParcelaFragment;
+import br.com.informsistemas.forcadevenda.fragments.FormaPagamentoSearchFragment;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoParcelaDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 

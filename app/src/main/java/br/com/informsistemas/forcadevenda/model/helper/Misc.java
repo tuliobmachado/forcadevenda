@@ -2,13 +2,18 @@ package br.com.informsistemas.forcadevenda.model.helper;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.core.content.ContextCompat;
+
+import android.os.Looper;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -284,6 +289,22 @@ public class Misc {
 
     public static void SolicitaPermissao(Activity activity, String[] permission, int requestCode) {
         ActivityCompat.requestPermissions(activity, permission, requestCode);
+    }
+
+    public static void onRequestLocation(Activity activity){
+        //LocationRequest locationRequest = new LocationRequest();
+        //locationRequest.setInterval(1000);
+        //locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        //Constants.LOCATION.fusedLocationProviderClient.requestLocationUpdates(locationRequest, Constants.LOCATION.locationCallback, Looper.getMainLooper());
+        Constants.LOCATION.fusedLocationProviderClient.getLastLocation().addOnSuccessListener(activity, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null){
+                    Constants.LOCATION.LATITUDE = location.getLatitude();
+                    Constants.LOCATION.LONGITUDE = location.getLongitude();
+                }
+            }
+        });
     }
 
     public static Date getMaiorDataAtualizacao(Context context, String nometabela) {

@@ -14,11 +14,10 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.fragments.ParceiroFragment;
-import br.com.informsistemas.forcadevenda.controller.fragments.ParceiroSearchFragment;
-import br.com.informsistemas.forcadevenda.controller.fragments.ParceiroVencimentoFragment;
+import br.com.informsistemas.forcadevenda.fragments.ParceiroFragment;
+import br.com.informsistemas.forcadevenda.fragments.ParceiroSearchFragment;
+import br.com.informsistemas.forcadevenda.fragments.ParceiroVencimentoFragment;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
-import br.com.informsistemas.forcadevenda.model.pojo.ParceiroVencimento;
 import br.com.informsistemas.forcadevenda.model.tasks.MontagemPrecoTask;
 import br.com.informsistemas.forcadevenda.model.utils.IOnBackPressed;
 

@@ -1,6 +1,8 @@
-package br.com.informsistemas.forcadevenda.controller.fragments;
+package br.com.informsistemas.forcadevenda.fragments;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -116,8 +118,12 @@ public class MovimentoFragment extends Fragment {
 
         if (Misc.verificaConexao(getActivity())) {
             if (Constants.MOVIMENTO.enviarPedido) {
-                enviarPedido();
-                Constants.MOVIMENTO.enviarPedido = false;
+                if (Constants.PERMISSION.ACCESS_FINE_LOCATION == PackageManager.PERMISSION_DENIED) {
+                    Misc.SolicitaPermissao(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constants.PERMISSION_REQUESTCODE.ACCESS_FINE_LOCATION);
+                }else {
+                    enviarPedido();
+                    Constants.MOVIMENTO.enviarPedido = false;
+                }
             } else {
                 if (AtualizacaoDAO.getInstance(getActivity()).VerificaSincronia()) {
                     getSincronia(true);
@@ -422,7 +428,7 @@ public class MovimentoFragment extends Fragment {
         dadosTabelasTask.execute();
     }
 
-    private void enviarPedido() {
+    public void enviarPedido() {
         PedidoTask pedidoTask = new PedidoTask(this);
         pedidoTask.execute();
     }

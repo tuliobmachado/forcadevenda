@@ -1,4 +1,4 @@
-package br.com.informsistemas.forcadevenda.controller.fragments;
+package br.com.informsistemas.forcadevenda.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,23 +14,26 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SearchView;
 
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.adapter.CategoriaAdapter;
-import br.com.informsistemas.forcadevenda.model.dao.CategoriaDAO;
-import br.com.informsistemas.forcadevenda.model.pojo.Categoria;
+import br.com.informsistemas.forcadevenda.controller.adapter.PagamentoSearchAdapter;
+import br.com.informsistemas.forcadevenda.model.dao.FormaPagamentoDAO;
+import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
+import br.com.informsistemas.forcadevenda.model.helper.Constants;
+import br.com.informsistemas.forcadevenda.model.pojo.FormaPagamento;
+import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 import br.com.informsistemas.forcadevenda.interfaces.ItemClickListener;
 
-public class CategoriaFragment extends Fragment implements ItemClickListener {
+public class FormaPagamentoSearchFragment extends Fragment implements ItemClickListener {
 
-    private List<Categoria> listCategoria;
+    private List<FormaPagamento> listPagamento;
     private SearchView searchView;
     private RecyclerView recyclerView;
-    private CategoriaAdapter categoriaAdapter;
-    private Categoria categoriaSelecionada;
+    private PagamentoSearchAdapter pagamentoSearchAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,19 +46,26 @@ public class CategoriaFragment extends Fragment implements ItemClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recycler, container, false);
 
+        Button btn = getActivity().findViewById(R.id.btn_resumo_pedido);
+        btn.setVisibility(View.GONE);
+
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-
-        categoriaSelecionada = (Categoria) getArguments().getSerializable("Categoria");
 
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
 
         recyclerView.setLayoutManager(llm);
 
-        listCategoria = CategoriaDAO.getInstance(getActivity()).getListCategoria();
+        Parceiro parceiro = ParceiroDAO.getInstance(getActivity()).findByIdAuxiliar("codigoparceiro", Constants.MOVIMENTO.movimento.codigoparceiro);
 
-        setAdapter(listCategoria);
+        if (parceiro.formaspermitidas.equals("")) {
+            listPagamento = FormaPagamentoDAO.getInstance(getActivity()).findAll();
+        }else{
+            listPagamento = FormaPagamentoDAO.getInstance(getActivity()).findByFormasPermitidas(parceiro.formaspermitidas);
+        }
+
+        setAdapter(listPagamento);
 
         return view;
     }
@@ -75,19 +85,18 @@ public class CategoriaFragment extends Fragment implements ItemClickListener {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                listCategoria = CategoriaDAO.getInstance(getActivity()).pesquisaLista(newText);
-                setAdapter(listCategoria);
+                listPagamento = FormaPagamentoDAO.getInstance(getActivity()).pesquisaLista(newText);
+                setAdapter(listPagamento);
                 return false;
             }
         });
 //        searchView.setFocusable(true);
 //        searchView.setIconified(false);
-        searchView.setQueryHint("Pesquisar Categorias...");
+        searchView.setQueryHint("Pesquisar Pagamento...");
 
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
@@ -100,24 +109,20 @@ public class CategoriaFragment extends Fragment implements ItemClickListener {
 
     }
 
-    private void setAdapter(List<Categoria> list){
-        categoriaAdapter = new CategoriaAdapter(getActivity(), list, this);
-        if (categoriaSelecionada != null){
-            categoriaAdapter.setIdSelecionado(categoriaSelecionada.id);
-        }else{
-            categoriaAdapter.setIdSelecionado(1);
-        }
-        recyclerView.setAdapter(categoriaAdapter);
+    private void setAdapter(List<FormaPagamento> list){
+        pagamentoSearchAdapter = new PagamentoSearchAdapter(getActivity(), list, this);
+        recyclerView.setAdapter(pagamentoSearchAdapter);
     }
 
     @Override
     public void onItemClick(int position) {
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
-        bundle.putSerializable("Categoria", listCategoria.get(position));
+        bundle.putSerializable("Pagamento", listPagamento.get(position));
         intent.putExtras(bundle);
         searchView.clearFocus();
         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 
     @Override

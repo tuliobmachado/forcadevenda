@@ -16,8 +16,8 @@ import android.widget.Toast;
 import java.io.Serializable;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.fragments.MovimentoItemFragment;
-import br.com.informsistemas.forcadevenda.controller.fragments.MaterialSearchFragment;
+import br.com.informsistemas.forcadevenda.fragments.MovimentoItemFragment;
+import br.com.informsistemas.forcadevenda.fragments.MaterialSearchFragment;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoItemDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.utils.IOnBackPressed;

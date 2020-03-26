@@ -1,14 +1,23 @@
 package br.com.informsistemas.forcadevenda.controller;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.view.GravityCompat;
@@ -17,6 +26,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import android.provider.Settings;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,18 +36,18 @@ import android.widget.Toast;
 import java.math.BigDecimal;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.fragments.MaterialSaldoFragment;
-import br.com.informsistemas.forcadevenda.controller.fragments.MovimentoFragment;
-import br.com.informsistemas.forcadevenda.controller.fragments.ParceiroConsultaFragment;
-import br.com.informsistemas.forcadevenda.controller.fragments.RelatorioPedidoFragment;
+import br.com.informsistemas.forcadevenda.fragments.MaterialSaldoFragment;
+import br.com.informsistemas.forcadevenda.fragments.MovimentoFragment;
+import br.com.informsistemas.forcadevenda.fragments.ParceiroConsultaFragment;
+import br.com.informsistemas.forcadevenda.fragments.RelatorioPedidoFragment;
 import br.com.informsistemas.forcadevenda.model.dao.DatabaseManager;
-import br.com.informsistemas.forcadevenda.model.dao.MovimentoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.RegistroDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Movimento;
 import br.com.informsistemas.forcadevenda.model.pojo.Registro;
 import br.com.informsistemas.forcadevenda.model.utils.IOnBackPressed;
+import br.com.informsistemas.forcadevenda.service.LocationService;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -45,11 +56,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Fragment movimentoFragment;
     private int indexMenu;
     private int indexSubMenu;
+    private LocationManager locationManager;
+    private boolean gpsStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -80,9 +94,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         indexSubMenu = 0;
         navigationView.getMenu().getItem(indexMenu).setChecked(true);
 
+        if (Constants.LOCATION.fusedLocationProviderClient == null) {
+            Constants.LOCATION.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+            //Constants.LOCATION.locationCallback = new LocationCallback() {
+            //    @Override
+            //    public void onLocationResult(LocationResult locationResult) {
+            //        super.onLocationResult(locationResult);
+            //        Constants.LOCATION.LATITUDE = locationResult.getLastLocation().getLatitude();
+            //        Constants.LOCATION.LONGITUDE = locationResult.getLastLocation().getLongitude();
+            //    }
+            //};
+        }
+
         ChecaPermissoes();
 
         onShow();
+
+        onGPSStatus();
+
+        if(gpsStatus == true)
+        {
+            Toast.makeText(this, "Your Location Services Is Enabled", Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(this, "Your Location Services Is Disabled", Toast.LENGTH_LONG).show();
+        }
+
+        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivity(intent);
     }
 
     @Override
@@ -181,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void onShowPrincipal() {
+        Constants.DTO.registro.status = "A";
         if (Constants.DTO.registro.status.equals("P") || Constants.DTO.registro.status.equals("B")) {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.putExtra("Status", Constants.DTO.registro.status);
@@ -239,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case "relatorioPedidoFragment":
                 RelatorioPedidoFragment relatorioPedidoFragment = (RelatorioPedidoFragment) getSupportFragmentManager().findFragmentByTag(tag);
 
-                if (relatorioPedidoFragment == null){
+                if (relatorioPedidoFragment == null) {
                     relatorioPedidoFragment = new RelatorioPedidoFragment();
                 }
 
@@ -256,19 +295,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogDefault);
         builder.setTitle("Meta");
         builder.setMessage(
-                Constants.DTO.metaFuncionario.descricao+"\n"+
-                        "Meta Mensal:      R$ "+Misc.formatMoeda(Constants.DTO.metaFuncionario.metamensal)+"\n"+
-                        "Meta Diária:         R$ "+Misc.formatMoeda(Constants.DTO.metaFuncionario.metadiaria)+"\n"+
-                        "Meta Realizada:  R$ "+Misc.formatMoeda(Constants.DTO.metaFuncionario.metarealizada)+"\n"+
-                        "Meta A Realizar: R$ "+Misc.formatMoeda(Constants.DTO.metaFuncionario.metaarealizar)
+                Constants.DTO.metaFuncionario.descricao + "\n" +
+                        "Meta Mensal:      R$ " + Misc.formatMoeda(Constants.DTO.metaFuncionario.metamensal) + "\n" +
+                        "Meta Diária:         R$ " + Misc.formatMoeda(Constants.DTO.metaFuncionario.metadiaria) + "\n" +
+                        "Meta Realizada:  R$ " + Misc.formatMoeda(Constants.DTO.metaFuncionario.metarealizada) + "\n" +
+                        "Meta A Realizar: R$ " + Misc.formatMoeda(Constants.DTO.metaFuncionario.metaarealizar)
         );
         builder.setCancelable(false);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (requestCode == 10){
+                if (requestCode == 10) {
                     onShowPedido();
-                }else{
+                } else {
                     onSetItemMenu();
                 }
             }
@@ -314,18 +353,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void onShowPedido() {
-        Misc.setTabelasPadrao();
-        Constants.MOVIMENTO.movimento = new Movimento(Constants.MOVIMENTO.codigoempresa,
-                Constants.MOVIMENTO.codigofilialcontabil, Constants.MOVIMENTO.codigoalmoxarifado,
-                Constants.MOVIMENTO.codigooperacao, Constants.MOVIMENTO.codigotabelapreco,
-                null, "", new BigDecimal("0"), "", Misc.GetDateAtual(), null, null, null, "", "", Misc.gerarMD5(), "", "");
-        Intent intent = new Intent(MainActivity.this, ParceiroActivity.class);
-        startActivityForResult(intent, 0);
+        if (Constants.PERMISSION.ACCESS_FINE_LOCATION == PackageManager.PERMISSION_DENIED) {
+            Misc.SolicitaPermissao(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constants.PERMISSION_REQUESTCODE.ACCESS_FINE_LOCATION);
+        } else {
+            Misc.onRequestLocation(this);
+            Misc.setTabelasPadrao();
+            Constants.MOVIMENTO.movimento = new Movimento(Constants.MOVIMENTO.codigoempresa,
+                    Constants.MOVIMENTO.codigofilialcontabil, Constants.MOVIMENTO.codigoalmoxarifado,
+                    Constants.MOVIMENTO.codigooperacao, Constants.MOVIMENTO.codigotabelapreco,
+                    null, "", new BigDecimal("0"), "", Misc.GetDateAtual(), null, null, null, "", "", Misc.gerarMD5(), "", "");
+            Intent intent = new Intent(MainActivity.this, ParceiroActivity.class);
+            startActivityForResult(intent, 0);
+        }
     }
 
     public void onSetIndexMenu(int iMenu, int iSubMenu) {
         indexMenu = iMenu;
         indexSubMenu = iSubMenu;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == Constants.PERMISSION_REQUESTCODE.ACCESS_FINE_LOCATION) {
+            Constants.PERMISSION.ACCESS_FINE_LOCATION = grantResults[0];
+        }
+
+        if (Constants.PERMISSION.ACCESS_FINE_LOCATION == PackageManager.PERMISSION_GRANTED) {
+            if (Constants.MOVIMENTO.enviarPedido) {
+                ((MovimentoFragment) movimentoFragment).enviarPedido();
+            } else {
+                onShowPedido();
+            }
+        }
     }
 
     public void onSetItemMenu() {
@@ -338,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void apagarBanco(){
+    private void apagarBanco() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogDefault);
         builder.setMessage("Deseja realmente confirmar? Todos os dados serão apagados");
         builder.setCancelable(false);
@@ -364,11 +423,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         alertDialog.show();
     }
 
-    private void logout(){
+    private void logout() {
         deslogar();
     }
 
-    private void deslogar(){
+    private void deslogar() {
         RegistroDAO.getInstance(this).deleteAll();
         indexMenu = 0;
         indexSubMenu = 0;
@@ -377,7 +436,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         onShow();
     }
 
-    private void ChecaPermissoes(){
+    private void ChecaPermissoes() {
         Constants.PERMISSION.READ_PHONE_STATE = Misc.GetReturnPermission(this, Manifest.permission.READ_PHONE_STATE);
+        Constants.PERMISSION.ACCESS_FINE_LOCATION = Misc.GetReturnPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+    }
+
+    public void onGPSStatus(){
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        gpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 }

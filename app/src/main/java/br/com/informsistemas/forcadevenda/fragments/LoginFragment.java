@@ -1,4 +1,4 @@
-package br.com.informsistemas.forcadevenda.controller.fragments;
+package br.com.informsistemas.forcadevenda.fragments;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -243,8 +243,10 @@ public class LoginFragment extends Fragment {
         btnRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Constants.PERMISSION.READ_PHONE_STATE == PackageManager.PERMISSION_DENIED){
+                if (Constants.PERMISSION.READ_PHONE_STATE == PackageManager.PERMISSION_DENIED) {
                     Misc.SolicitaPermissao(getActivity(), new String[]{Manifest.permission.READ_PHONE_STATE}, Constants.PERMISSION_REQUESTCODE.READ_PHONE_STATE);
+                }else if (Constants.PERMISSION.ACCESS_FINE_LOCATION == PackageManager.PERMISSION_DENIED){
+                    Misc.SolicitaPermissao(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constants.PERMISSION_REQUESTCODE.ACCESS_FINE_LOCATION);
                 }else {
                     login();
                 }

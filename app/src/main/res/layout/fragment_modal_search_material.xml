@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".controller.fragments.RelatorioPedidoModalFragment">
+    tools:context=".fragments.RelatorioPedidoModalFragment">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
