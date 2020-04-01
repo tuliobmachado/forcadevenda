@@ -1,19 +1,29 @@
 package br.com.informsistemas.forcadevenda.model.helper;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
+
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.core.content.ContextCompat;
 
+import android.net.Uri;
+import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -28,10 +38,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import br.com.informsistemas.forcadevenda.activity.ResumoActivity;
 import br.com.informsistemas.forcadevenda.model.dao.AtualizacaoDAO;
+import br.com.informsistemas.forcadevenda.model.dao.MovimentoDAO;
 import br.com.informsistemas.forcadevenda.model.pojo.Atualizacao;
 import br.com.informsistemas.forcadevenda.model.pojo.Categoria;
 import br.com.informsistemas.forcadevenda.model.pojo.Material;
+import br.com.informsistemas.forcadevenda.model.pojo.Movimento;
 import br.com.informsistemas.forcadevenda.model.utils.DateDeserializer;
 
 public class Misc {
@@ -71,12 +84,12 @@ public class Misc {
 
     }
 
-    public static Locale getLocale(){
+    public static Locale getLocale() {
         return new Locale("pt", "BR");
     }
 
-    public static float parseStringToFloat(String value){
-        if (value.equals("")){
+    public static float parseStringToFloat(String value) {
+        if (value.equals("")) {
             return 0;
         }
 
@@ -87,7 +100,7 @@ public class Misc {
         return Float.parseFloat(cleanString);
     }
 
-    public static String parseFloatToWatcher(BigDecimal value, int casasDecimais){
+    public static String parseFloatToWatcher(BigDecimal value, int casasDecimais) {
         String result;
         float multiplicacao = 0;
         BigDecimal valorBig;
@@ -101,15 +114,33 @@ public class Misc {
 
         multiplicacao = Float.valueOf(casas);
 
-        if (posicao < casasDecimais){
+        if (posicao < casasDecimais) {
             posicao = casasDecimais--;
             valorBig = value.setScale(posicao, BigDecimal.ROUND_HALF_EVEN).multiply(BigDecimal.valueOf(multiplicacao));
             result = String.valueOf(valorBig.floatValue());
-        }else{
+        } else {
             result = value.toString();
         }
 
         return result;
+    }
+
+    public static void onShowLocationGPS(Activity activity, String descricaoParceiro, double longitude, double latitude){
+        String uri = "";
+        Intent intent;
+        String descricao = descricaoParceiro.trim();
+        try {
+            uri = String.format(Locale.ENGLISH,"geo:" + latitude + "," +longitude + "?q=" + latitude+","+longitude+" ("+descricao+")");
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            activity.startActivity(intent);
+        } catch (ActivityNotFoundException ex) {
+            try {
+                Intent unrestrictedIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                activity.startActivity(unrestrictedIntent);
+            } catch (ActivityNotFoundException innerEx) {
+            }
+        }
     }
 
     public static <T> String getJsonString(T object, Boolean excludeExpose) {
@@ -156,13 +187,13 @@ public class Misc {
         return result;
     }
 
-    public static void requestFocus(FragmentActivity frag, View view){
-        if  (view.requestFocus()){
+    public static void requestFocus(FragmentActivity frag, View view) {
+        if (view.requestFocus()) {
             frag.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     }
 
-    public static Date GetDateAtual(){
+    public static Date GetDateAtual() {
         Date data = null;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
         try {
@@ -174,7 +205,7 @@ public class Misc {
         return data;
     }
 
-    public static Boolean CompareDate(Date dataInicial, Date dataFinal){
+    public static Boolean CompareDate(Date dataInicial, Date dataFinal) {
         Boolean value = false;
         Date dtInicio, dtFinal;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -183,7 +214,7 @@ public class Misc {
             dtInicio = simpleDateFormat.parse(simpleDateFormat.format(dataInicial));
             dtFinal = simpleDateFormat.parse(simpleDateFormat.format(dataFinal));
 
-            if (dtInicio.compareTo(dtFinal) > 0){
+            if (dtInicio.compareTo(dtFinal) > 0) {
                 return true;
             }
         } catch (ParseException e) {
@@ -193,7 +224,7 @@ public class Misc {
         return value;
     }
 
-    public static Boolean CompareTime(Date dataInicial, Date dataFinal){
+    public static Boolean CompareTime(Date dataInicial, Date dataFinal) {
         Boolean value = false;
         String dtInicio, dtFinal;
         Integer hrInicio, minInicio, hrFinal, minFinal;
@@ -220,7 +251,7 @@ public class Misc {
             difHoras += 24;
         }
 
-        if ((difHoras >= 1) || (difMinutos > 15)){
+        if ((difHoras >= 1) || (difMinutos > 15)) {
             value = true;
         }
 
@@ -228,7 +259,7 @@ public class Misc {
     }
 
 
-    public static String gerarMD5(){
+    public static String gerarMD5() {
         String chave = Constants.DTO.registro.codigofuncionario + formatDate(new Date(), "yyyyMMddHHmmss");
         String value = DigestUtils.md5Hex(chave);
 
@@ -261,7 +292,7 @@ public class Misc {
         return date;
     }
 
-    public static Date getStringToDate(String data, String formate){
+    public static Date getStringToDate(String data, String formate) {
         Date dt = null;
         SimpleDateFormat format = new SimpleDateFormat(formate);
 
@@ -291,20 +322,36 @@ public class Misc {
         ActivityCompat.requestPermissions(activity, permission, requestCode);
     }
 
-    public static void onRequestLocation(Activity activity){
-        //LocationRequest locationRequest = new LocationRequest();
-        //locationRequest.setInterval(1000);
-        //locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        //Constants.LOCATION.fusedLocationProviderClient.requestLocationUpdates(locationRequest, Constants.LOCATION.locationCallback, Looper.getMainLooper());
-        Constants.LOCATION.fusedLocationProviderClient.getLastLocation().addOnSuccessListener(activity, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null){
-                    Constants.LOCATION.LATITUDE = location.getLatitude();
-                    Constants.LOCATION.LONGITUDE = location.getLongitude();
-                }
-            }
-        });
+    public static boolean onGPSActive(Activity activity) {
+        LocationManager locationManager;
+        boolean result = false;
+
+        locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        result = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        return result;
+    }
+
+    public static void onSetGPS(Context context, Movimento movimento, boolean pedido){
+        if (pedido) {
+            movimento.longitude = Constants.LOCATION.LONGITUDE;
+            movimento.latitude = Constants.LOCATION.LATITUDE;
+        }else{
+            movimento.enviolongitude = Constants.LOCATION.LONGITUDE;
+            movimento.enviolatitude = Constants.LOCATION.LATITUDE;
+        }
+
+        if (!pedido){
+            MovimentoDAO.getInstance(context).createOrUpdate(movimento);
+        }
+
+        Constants.LOCATION.LONGITUDE = 0;
+        Constants.LOCATION.LATITUDE = 0;
+    }
+
+    public static void onOpenSettingsGPS(Activity activity) {
+        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        activity.startActivity(intent);
     }
 
     public static Date getMaiorDataAtualizacao(Context context, String nometabela) {

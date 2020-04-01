@@ -1,5 +1,6 @@
 package br.com.informsistemas.forcadevenda.model.pojo;
 
+import com.google.android.material.internal.Experimental;
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -70,11 +71,11 @@ public class Movimento implements IEntidade {
 
     @DatabaseField
     @Expose
-    public String longitude;
+    public double longitude;
 
     @DatabaseField
     @Expose
-    public String latitude;
+    public double latitude;
 
     @DatabaseField
     @Expose
@@ -88,11 +89,23 @@ public class Movimento implements IEntidade {
     @Expose
     public String cpfcgc;
 
+    @DatabaseField
+    @Expose
+    public double enviolongitude;
+
+    @DatabaseField
+    @Expose
+    public double enviolatitude;
+
+    @DatabaseField
+    @Expose
+    public String atualizarlocalizacao;
+
     public Movimento(){}
     public Movimento(String codigoempresa, String codigofilialcontabil, String codigoalmoxarifado, String codigooperacao,
                      String codigotabelapreco, String codigoparceiro, String observacao, BigDecimal totalliquido, String sincronizado,
-                     Date data, Date datainicio, Date datafim, Date dataalteracao, String longitude, String latitude, String MD5,
-                     String descricaoparceiro, String cpfcgc) {
+                     Date data, Date datainicio, Date datafim, Date dataalteracao, String MD5, String descricaoparceiro, String cpfcgc,
+                     double longitude, double latitude, double enviolongitude, double enviolatitude, String atualizarlocalizacao) {
         this.codigoempresa = codigoempresa;
         this.codigofilialcontabil = codigofilialcontabil;
         this.codigoalmoxarifado = codigoalmoxarifado;
@@ -111,5 +124,8 @@ public class Movimento implements IEntidade {
         this.MD5 = MD5;
         this.descricaoparceiro = descricaoparceiro;
         this.cpfcgc = cpfcgc;
+        this.enviolatitude = enviolatitude;
+        this.enviolongitude = enviolongitude;
+        this.atualizarlocalizacao = atualizarlocalizacao;
     }
 }

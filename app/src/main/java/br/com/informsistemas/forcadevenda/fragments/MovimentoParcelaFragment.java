@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.adapter.MovimentoParcelaAdapter;
+import br.com.informsistemas.forcadevenda.adapter.MovimentoParcelaAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.FormaPagamentoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoItemDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoParcelaDAO;

@@ -20,15 +20,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.adapter.ParceiroAdapter;
+import br.com.informsistemas.forcadevenda.adapter.ParceiroAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.FormaPagamentoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 import br.com.informsistemas.forcadevenda.model.utils.RecyclerItemClickListener;
+import br.com.informsistemas.forcadevenda.viewholder.ParceiroViewHolder;
 
-public class ParceiroFragment extends Fragment {
+public class ParceiroFragment extends Fragment implements ParceiroViewHolder.onParceiroListener {
 
     public Button btnSelecionarProduto;
     private List<Parceiro> listParceiro;
@@ -129,7 +130,7 @@ public class ParceiroFragment extends Fragment {
     }
 
     private void setAdapter(List<Parceiro> list){
-        parceiroAdapter = new ParceiroAdapter(getActivity(), list);
+        parceiroAdapter = new ParceiroAdapter(getActivity(), list, this);
         recyclerView.setAdapter(parceiroAdapter);
     }
 
@@ -252,5 +253,15 @@ public class ParceiroFragment extends Fragment {
 
     public Parceiro onGetParceiroSelecionado(){
         return listParceiro.get(0);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
+    }
+
+    @Override
+    public void onLocalizacaoClick(int position) {
+        Misc.onShowLocationGPS(getActivity(), listParceiro.get(position).descricao, listParceiro.get(position).longitude, listParceiro.get(position).latitude);
     }
 }

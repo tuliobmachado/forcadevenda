@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.adapter.MovimentoItemAdapter;
+import br.com.informsistemas.forcadevenda.adapter.MovimentoItemAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoItemDAO;
 import br.com.informsistemas.forcadevenda.model.helper.CalculoClass;

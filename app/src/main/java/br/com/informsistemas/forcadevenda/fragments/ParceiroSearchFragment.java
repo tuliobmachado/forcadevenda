@@ -16,18 +16,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import java.util.Date;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.adapter.ParceiroSearchAdapter;
+import br.com.informsistemas.forcadevenda.adapter.ParceiroSearchAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
+import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 import br.com.informsistemas.forcadevenda.interfaces.ItemClickListener;
+import br.com.informsistemas.forcadevenda.viewholder.ParceiroViewHolder;
 
-public class ParceiroSearchFragment extends Fragment implements ItemClickListener {
+public class ParceiroSearchFragment extends Fragment implements ParceiroViewHolder.onParceiroListener {
 
     private List<Parceiro> listParceiro;
     private SearchView searchView;
@@ -125,7 +128,7 @@ public class ParceiroSearchFragment extends Fragment implements ItemClickListene
     }
 
     @Override
-    public void onItemClickLong(int position) {
-
+    public void onLocalizacaoClick(int position) {
+        Misc.onShowLocationGPS(getActivity(), listParceiro.get(position).descricao, listParceiro.get(position).longitude, listParceiro.get(position).latitude);
     }
 }

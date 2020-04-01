@@ -35,11 +35,11 @@ import br.com.informsistemas.forcadevenda.model.utils.IEntidade;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String databaseName = "forcavenda.db";
-    private static final int databaseVersion = 1;
+    private static final int databaseVersion = 2;
 
     private Map<Class, Dao<IEntidade, Object>> daos = new HashMap<Class, Dao<IEntidade, Object>>();
 
-    public DatabaseHelper(Context context){
+    public DatabaseHelper(Context context) {
         super(context, databaseName, null, databaseVersion);
     }
 
@@ -85,16 +85,28 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, ConnectionSource cs, int oldVersion, int newVersion) {
         List<String> allSQL = new ArrayList<>();
 
-        switch (oldVersion){
+        switch (oldVersion) {
             case 1:
+                allSQL.add("PRAGMA foreign_keys=off");
+                allSQL.add("BEGIN TRANSACTION");
+                allSQL.add("ALTER TABLE movimento RENAME TO movimento_old");
+                allSQL.add("CREATE TABLE movimento (`MD5` VARCHAR , `codigoalmoxarifado` VARCHAR , `codigoempresa` VARCHAR , `codigofilialcontabil` VARCHAR , `codigooperacao` VARCHAR , `codigoparceiro` VARCHAR , `codigotabelapreco` VARCHAR , `cpfcgc` VARCHAR , `data` VARCHAR , `dataalteracao` VARCHAR , `datafim` VARCHAR , `datainicio` VARCHAR , `descricaoparceiro` VARCHAR , `id` INTEGER PRIMARY KEY AUTOINCREMENT , `latitude` DOUBLE PRECISION , `longitude` DOUBLE PRECISION , `enviolatitude` DOUBLE PRECISION , `enviolongitude` DOUBLE PRECISION , `observacao` VARCHAR , `sincronizado` VARCHAR , `totalliquido` VARCHAR)");
+                allSQL.add("INSERT INTO movimento (id, codigoempresa, codigofilialcontabil, codigoalmoxarifado, codigoparceiro, codigooperacao, codigotabelapreco, observacao, totalliquido, sincronizado, data, datainicio, datafim, dataalteracao, MD5, descricaoparceiro, cpfcgc, longitude, latitude, enviolongitude, enviolatitude) SELECT id, codigoempresa, codigofilialcontabil, codigoalmoxarifado, codigoparceiro, codigooperacao, codigotabelapreco, observacao, totalliquido, sincronizado, data, datainicio, datafim, dataalteracao, MD5, descricaoparceiro, cpfcgc, 0, 0, 0, 0 FROM movimento_old");
+                allSQL.add("DROP TABLE movimento_old");
+                allSQL.add("COMMIT");
+                allSQL.add("PRAGMA foreign_keys=on");
+                allSQL.add("ALTER TABLE movimento ADD COLUMN atualizarlocalizacao VARCHAR");
+                allSQL.add("UPDATE movimento set atualizarlocalizacao = 'F'");
+                allSQL.add("ALTER TABLE cadparceiro ADD COLUMN longitude DOUBLE PRECISION");
+                allSQL.add("ALTER TABLE cadparceiro ADD COLUMN latitude DOUBLE PRECISION");
         }
 
-        for (String sql: allSQL){
+        for (String sql : allSQL) {
             db.execSQL(sql);
         }
     }
 
-    public void onDeleteAllTable(){
+    public void onDeleteAllTable() {
         ConnectionSource cs = this.getConnectionSource();
 
         try {
@@ -115,7 +127,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(cs, Atualizacao.class, true);
 
             onCreate(this.getWritableDatabase(), cs);
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -23,6 +24,7 @@ import br.com.informsistemas.forcadevenda.model.dao.AtualizacaoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MaterialSaldoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
+import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Atualizacao;
 import br.com.informsistemas.forcadevenda.model.pojo.MaterialSaldo;
 import br.com.informsistemas.forcadevenda.model.pojo.Movimento;

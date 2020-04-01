@@ -19,8 +19,8 @@ import android.widget.SearchView;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.MainActivity;
-import br.com.informsistemas.forcadevenda.controller.adapter.MaterialSaldoAdapter;
+import br.com.informsistemas.forcadevenda.activity.MainActivity;
+import br.com.informsistemas.forcadevenda.adapter.MaterialSaldoAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.MaterialSaldoDAO;
 import br.com.informsistemas.forcadevenda.model.pojo.MaterialSaldo;
 

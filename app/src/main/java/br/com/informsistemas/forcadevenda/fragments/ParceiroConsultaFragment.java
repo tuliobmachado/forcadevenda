@@ -20,13 +20,15 @@ import android.widget.SearchView;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.MainActivity;
-import br.com.informsistemas.forcadevenda.controller.adapter.ParceiroConsultaAdapter;
+import br.com.informsistemas.forcadevenda.activity.MainActivity;
+import br.com.informsistemas.forcadevenda.adapter.ParceiroConsultaAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
+import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 import br.com.informsistemas.forcadevenda.interfaces.ItemClickListener;
+import br.com.informsistemas.forcadevenda.viewholder.ParceiroViewHolder;
 
-public class ParceiroConsultaFragment extends Fragment implements ItemClickListener {
+public class ParceiroConsultaFragment extends Fragment implements ParceiroViewHolder.onParceiroListener {
 
     private List<Parceiro> listParceiro;
     private SearchView searchView;
@@ -147,7 +149,7 @@ public class ParceiroConsultaFragment extends Fragment implements ItemClickListe
     }
 
     @Override
-    public void onItemClickLong(int position) {
-
+    public void onLocalizacaoClick(int position) {
+        Misc.onShowLocationGPS(getActivity(), listParceiro.get(position).descricao, listParceiro.get(position).longitude, listParceiro.get(position).latitude);
     }
 }

@@ -19,7 +19,7 @@ import android.widget.SearchView;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.adapter.CategoriaAdapter;
+import br.com.informsistemas.forcadevenda.adapter.CategoriaAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.CategoriaDAO;
 import br.com.informsistemas.forcadevenda.model.pojo.Categoria;
 import br.com.informsistemas.forcadevenda.interfaces.ItemClickListener;

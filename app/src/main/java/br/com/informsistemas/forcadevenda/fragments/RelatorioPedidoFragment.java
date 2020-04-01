@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.MainActivity;
-import br.com.informsistemas.forcadevenda.controller.ResumoActivity;
-import br.com.informsistemas.forcadevenda.controller.adapter.RelatorioPedidoAdapter;
+import br.com.informsistemas.forcadevenda.activity.MainActivity;
+import br.com.informsistemas.forcadevenda.activity.ResumoActivity;
+import br.com.informsistemas.forcadevenda.adapter.RelatorioPedidoAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;

@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.adapter.MaterialSearchAdapter;
+import br.com.informsistemas.forcadevenda.adapter.MaterialSearchAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.MaterialDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoItemDAO;
 import br.com.informsistemas.forcadevenda.model.helper.CalculoClass;

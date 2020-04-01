@@ -24,7 +24,7 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 
-import br.com.informsistemas.forcadevenda.controller.LoginActivity;
+import br.com.informsistemas.forcadevenda.activity.LoginActivity;
 import br.com.informsistemas.forcadevenda.R;
 import br.com.informsistemas.forcadevenda.controller.rest.RestManager;
 import br.com.informsistemas.forcadevenda.model.callback.RegistroService;

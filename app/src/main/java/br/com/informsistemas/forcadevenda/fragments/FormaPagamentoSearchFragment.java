@@ -20,7 +20,7 @@ import android.widget.SearchView;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.adapter.PagamentoSearchAdapter;
+import br.com.informsistemas.forcadevenda.adapter.PagamentoSearchAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.FormaPagamentoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.ParceiroDAO;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;

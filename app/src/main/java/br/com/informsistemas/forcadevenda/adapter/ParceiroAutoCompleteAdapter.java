@@ -1,4 +1,4 @@
-package br.com.informsistemas.forcadevenda.controller.adapter;
+package br.com.informsistemas.forcadevenda.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;

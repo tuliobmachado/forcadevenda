@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import java.math.BigDecimal;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.ParceiroActivity;
+import br.com.informsistemas.forcadevenda.activity.ParceiroActivity;
 import br.com.informsistemas.forcadevenda.model.dao.MaterialDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MaterialSaldoDAO;
 import br.com.informsistemas.forcadevenda.model.helper.CalculoClass;

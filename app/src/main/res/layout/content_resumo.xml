@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".controller.ResumoActivity"
+    tools:context=".activity.ResumoActivity"
     tools:showIn="@layout/activity_main">
 
 
@@ -317,6 +317,34 @@
                     android:maxLines="10"
                     android:textCursorDrawable="@null"
                     app:backgroundTint="@android:color/black"/>
+
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_row="1"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:id="@+id/layout_atualizar_localizacao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <CheckBox android:id="@+id/chk_atualizar_localizacao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorPrimary"
+                    android:text="Atualizar Localização do Parceiro"/>
 
             </LinearLayout>
 

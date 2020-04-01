@@ -22,7 +22,7 @@ import android.widget.EditText;
 import java.util.Calendar;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.adapter.ParceiroAutoCompleteAdapter;
+import br.com.informsistemas.forcadevenda.adapter.ParceiroAutoCompleteAdapter;
 import br.com.informsistemas.forcadevenda.model.helper.Constants;
 import br.com.informsistemas.forcadevenda.model.helper.Misc;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;

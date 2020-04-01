@@ -17,8 +17,8 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.MainActivity;
-import br.com.informsistemas.forcadevenda.controller.adapter.ParceiroVencimentoAdapter;
+import br.com.informsistemas.forcadevenda.activity.MainActivity;
+import br.com.informsistemas.forcadevenda.adapter.ParceiroVencimentoAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.ParceiroVencimentoDAO;
 import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 import br.com.informsistemas.forcadevenda.model.pojo.ParceiroVencimento;

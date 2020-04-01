@@ -3,6 +3,7 @@
     <color name="colorPrimary">#11B2B2</color>
     <color name="colorPrimaryDark">#11B2B2</color>
     <color name="colorAccent">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
 
     <color name="cardSelecionado">#5011B2B2</color>
     <color name="color_adicionado">#4caf50</color>

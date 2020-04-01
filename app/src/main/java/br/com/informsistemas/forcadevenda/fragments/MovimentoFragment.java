@@ -7,12 +7,15 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,10 +31,10 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.MainActivity;
-import br.com.informsistemas.forcadevenda.controller.ParceiroActivity;
-import br.com.informsistemas.forcadevenda.controller.ResumoActivity;
-import br.com.informsistemas.forcadevenda.controller.adapter.MovimentoAdapter;
+import br.com.informsistemas.forcadevenda.activity.MainActivity;
+import br.com.informsistemas.forcadevenda.activity.ParceiroActivity;
+import br.com.informsistemas.forcadevenda.activity.ResumoActivity;
+import br.com.informsistemas.forcadevenda.adapter.MovimentoAdapter;
 import br.com.informsistemas.forcadevenda.model.dao.AtualizacaoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoDAO;
 import br.com.informsistemas.forcadevenda.model.dao.MovimentoItemDAO;
@@ -55,6 +58,7 @@ import br.com.informsistemas.forcadevenda.model.pojo.Parceiro;
 import br.com.informsistemas.forcadevenda.model.pojo.ParceiroVencimento;
 import br.com.informsistemas.forcadevenda.model.pojo.TabelaPrecoItem;
 import br.com.informsistemas.forcadevenda.model.tasks.DadosTabelasTask;
+import br.com.informsistemas.forcadevenda.model.tasks.LocalizacaoTask;
 import br.com.informsistemas.forcadevenda.model.tasks.PedidoTask;
 import br.com.informsistemas.forcadevenda.model.tasks.RequestSincroniaTask;
 import br.com.informsistemas.forcadevenda.model.tasks.ResponseSincroniaTask;
@@ -102,7 +106,7 @@ public class MovimentoFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
-        listMovimento = MovimentoDAO.getInstance(getActivity()).getMovimentoPeriodo("",Misc.GetDateAtual(), Misc.GetDateAtual());
+        listMovimento = MovimentoDAO.getInstance(getActivity()).getMovimentoPeriodo("", Misc.GetDateAtual(), Misc.GetDateAtual());
 
         setAdapter(listMovimento);
         listener = getListener();
@@ -118,22 +122,18 @@ public class MovimentoFragment extends Fragment {
 
         if (Misc.verificaConexao(getActivity())) {
             if (Constants.MOVIMENTO.enviarPedido) {
-                if (Constants.PERMISSION.ACCESS_FINE_LOCATION == PackageManager.PERMISSION_DENIED) {
-                    Misc.SolicitaPermissao(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constants.PERMISSION_REQUESTCODE.ACCESS_FINE_LOCATION);
-                }else {
-                    enviarPedido();
-                    Constants.MOVIMENTO.enviarPedido = false;
-                }
+                enviarPedido();
+                Constants.MOVIMENTO.enviarPedido = false;
             } else {
                 if (AtualizacaoDAO.getInstance(getActivity()).VerificaSincronia()) {
                     getSincronia(true);
-                }else{
+                } else {
                     getSincronia(false);
                 }
 
             }
         } else {
-            if (!Constants.MOVIMENTO.enviarPedido){
+            if (!Constants.MOVIMENTO.enviarPedido) {
                 getDados();
             }
         }
@@ -183,10 +183,10 @@ public class MovimentoFragment extends Fragment {
                     } else {
                         Parceiro p = ParceiroDAO.getInstance(getActivity()).findByIdAuxiliar("codigoparceiro", Constants.MOVIMENTO.movimento.codigoparceiro);
 
-                        if (p != null){
+                        if (p != null) {
                             intent[0] = new Intent(getActivity(), ParceiroActivity.class);
                             getActivity().startActivityForResult(intent[0], 0);
-                        }else{
+                        } else {
                             Toast.makeText(getActivity(), "Não é possível alterar o pedido o Parceiro não foi encontrado, sua rota pode ter sido alterada!", Toast.LENGTH_LONG).show();
                         }
 
@@ -249,7 +249,7 @@ public class MovimentoFragment extends Fragment {
                         for (int i : selectedIds) {
                             checaMovimento(i);
                         }
-                        if (Constants.PEDIDO.listPedidos.size() > 0){
+                        if (Constants.PEDIDO.listPedidos.size() > 0) {
                             Constants.PEDIDO.PEDIDOATUAL = 1;
                             verificaPedido(Constants.PEDIDO.PEDIDOATUAL);
                         }
@@ -276,7 +276,7 @@ public class MovimentoFragment extends Fragment {
             movimentoAdapter.notifyItemRemoved(position);
             movimentoAdapter.notifyItemRangeChanged(position, movimentoAdapter.getItemCount());
             getActivity().invalidateOptionsMenu();
-        }else{
+        } else {
             Toast.makeText(getActivity(), "Não é possível excluir um pedido pendente!", Toast.LENGTH_LONG).show();
         }
     }
@@ -357,7 +357,7 @@ public class MovimentoFragment extends Fragment {
                         somaTabelaSincronia();
                         break;
                     case "PVMATERIALESTADO":
-                        getSinc(MaterialEstado.class, Constants.DTO.listAtualizacaoServidor.get(i),"Material 2/3", codigoconfiguracao, dataAtualizacao, tipoSincronia);
+                        getSinc(MaterialEstado.class, Constants.DTO.listAtualizacaoServidor.get(i), "Material 2/3", codigoconfiguracao, dataAtualizacao, tipoSincronia);
                         somaTabelaSincronia();
                         break;
                     case "MATERIALSALDO":
@@ -365,7 +365,7 @@ public class MovimentoFragment extends Fragment {
                         somaTabelaSincronia();
                         break;
                     case "PVCADPARCEIRO":
-                        getSinc(Parceiro.class, Constants.DTO.listAtualizacaoServidor.get(i),"Parceiro 1/2", codigoconfiguracao, dataAtualizacao, tipoSincronia);
+                        getSinc(Parceiro.class, Constants.DTO.listAtualizacaoServidor.get(i), "Parceiro 1/2", codigoconfiguracao, dataAtualizacao, tipoSincronia);
                         somaTabelaSincronia();
                         break;
                     case "PARCEIROVENCIMENTO":
@@ -373,11 +373,11 @@ public class MovimentoFragment extends Fragment {
                         somaTabelaSincronia();
                         break;
                     case "PVCADFORMAPAGAMENTO":
-                        getSinc(FormaPagamento.class, Constants.DTO.listAtualizacaoServidor.get(i),"Forma Pagamento", codigoconfiguracao, dataAtualizacao, tipoSincronia);
+                        getSinc(FormaPagamento.class, Constants.DTO.listAtualizacaoServidor.get(i), "Forma Pagamento", codigoconfiguracao, dataAtualizacao, tipoSincronia);
                         somaTabelaSincronia();
                         break;
                     case "PVTABELAPRECOITEM":
-                        getSinc(TabelaPrecoItem.class, Constants.DTO.listAtualizacaoServidor.get(i),"Tabela Preço", codigoconfiguracao, dataAtualizacao, tipoSincronia);
+                        getSinc(TabelaPrecoItem.class, Constants.DTO.listAtualizacaoServidor.get(i), "Tabela Preço", codigoconfiguracao, dataAtualizacao, tipoSincronia);
                         somaTabelaSincronia();
                         break;
                     case "PVCADGRUPO":
@@ -385,7 +385,7 @@ public class MovimentoFragment extends Fragment {
                         somaTabelaSincronia();
                         break;
                     case "PVMATERIALGRUPO":
-                        getSinc(CategoriaMaterial.class, Constants.DTO.listAtualizacaoServidor.get(i),"Categoria Material", codigoconfiguracao, dataAtualizacao, tipoSincronia);
+                        getSinc(CategoriaMaterial.class, Constants.DTO.listAtualizacaoServidor.get(i), "Categoria Material", codigoconfiguracao, dataAtualizacao, tipoSincronia);
                         somaTabelaSincronia();
                         break;
                     case "METAFUNCIONARIO":
@@ -429,59 +429,70 @@ public class MovimentoFragment extends Fragment {
     }
 
     public void enviarPedido() {
+        if (Constants.PERMISSION.ACCESS_FINE_LOCATION == PackageManager.PERMISSION_DENIED) {
+            Misc.SolicitaPermissao(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constants.PERMISSION_REQUESTCODE.ACCESS_FINE_LOCATION);
+        }else {
+            LocalizacaoTask localizacaoTask = new LocalizacaoTask(getActivity(), false);
+            localizacaoTask.execute();
+        }
+    }
+
+    public void onPedido(){
+        Misc.onSetGPS(getActivity(), Constants.PEDIDO.movimento, false);
+
         PedidoTask pedidoTask = new PedidoTask(this);
         pedidoTask.execute();
     }
 
-    private void checaMovimento(Integer id){
+    private void checaMovimento(Integer id) {
         List<MovimentoItem> listMovimentoItem = MovimentoItemDAO.getInstance(getActivity()).findByMovimentoId(id);
         List<MovimentoParcela> lisMovimentoParcela = MovimentoParcelaDAO.getInstance(getActivity()).findByMovimentoId(id);
 
-        if ((listMovimentoItem.size() > 0) && ( lisMovimentoParcela.size() > 0)) {
+        if ((listMovimentoItem.size() > 0) && (lisMovimentoParcela.size() > 0)) {
             Constants.PEDIDO.listPedidos.add(id);
-        }else{
+        } else {
             Toast.makeText(getActivity(), "Não é possível sincronizar um pedido não finalizado!", Toast.LENGTH_LONG).show();
         }
     }
 
-    private boolean checaMovimentoPendente(Integer id){
+    private boolean checaMovimentoPendente(Integer id) {
         boolean value = true;
 
         Movimento mov = listMovimento.get(id);
 
-        if (mov.sincronizado.equals("P")){
+        if (mov.sincronizado.equals("P")) {
             value = false;
         }
 
         return value;
     }
 
-    public void verificaPedido(Integer pedidoAtual){
-        if (pedidoAtual <= Constants.PEDIDO.listPedidos.size()){
-            Constants.PEDIDO.movimento = MovimentoDAO.getInstance(getActivity()).findById(Constants.PEDIDO.listPedidos.get(pedidoAtual-1));
+    public void verificaPedido(Integer pedidoAtual) {
+        if (pedidoAtual <= Constants.PEDIDO.listPedidos.size()) {
+            Constants.PEDIDO.movimento = MovimentoDAO.getInstance(getActivity()).findById(Constants.PEDIDO.listPedidos.get(pedidoAtual - 1));
             Constants.PEDIDO.movimentoItems = MovimentoItemDAO.getInstance(getActivity()).findByMovimentoId(Constants.PEDIDO.movimento.id);
             Constants.PEDIDO.movimentoParcelas = MovimentoParcelaDAO.getInstance(getActivity()).findByMovimentoId(Constants.PEDIDO.movimento.id);
 
             enviarPedido();
 
             Constants.PEDIDO.PEDIDOATUAL = pedidoAtual + 1;
-        }else{
+        } else {
             Constants.PEDIDO.PEDIDOATUAL = 0;
             Constants.PEDIDO.listPedidos = null;
             Constants.PEDIDO.listPedidos = new ArrayList<>();
         }
     }
 
-    public void atualizaDataSincronia(Atualizacao atualizacao, Enums.TIPO_SINCRONIA tipoSincronia){
+    public void atualizaDataSincronia(Atualizacao atualizacao, Enums.TIPO_SINCRONIA tipoSincronia) {
         Atualizacao att = AtualizacaoDAO.getInstance(getActivity()).findByNomeTabela(atualizacao.nometabela);
 
-        if (att != null){
-            switch (tipoSincronia){
+        if (att != null) {
+            switch (tipoSincronia) {
                 case TOTAL:
-                    if (atualizacao.nometabela.equals("METAFUNCIONARIO") || atualizacao.nometabela.equals("MATERIALSALDO") || atualizacao.nometabela.equals("PARCEIROVENCIMENTO")){
+                    if (atualizacao.nometabela.equals("METAFUNCIONARIO") || atualizacao.nometabela.equals("MATERIALSALDO") || atualizacao.nometabela.equals("PARCEIROVENCIMENTO")) {
                         att.datasinctotal = new Date();
                         att.dataultimasincronia = new Date();
-                    }else {
+                    } else {
                         att.datasinctotal = atualizacao.datasinctotal;
                     }
                     break;
@@ -492,8 +503,8 @@ public class MovimentoFragment extends Fragment {
                     att.datasincmarcado = atualizacao.datasincmarcado;
                     break;
             }
-        }else{
-            if (atualizacao.nometabela.equals("METAFUNCIONARIO") || atualizacao.nometabela.equals("MATERIALSALDO") || atualizacao.nometabela.equals("PARCEIROVENCIMENTO")){
+        } else {
+            if (atualizacao.nometabela.equals("METAFUNCIONARIO") || atualizacao.nometabela.equals("MATERIALSALDO") || atualizacao.nometabela.equals("PARCEIROVENCIMENTO")) {
                 atualizacao.datasinctotal = new Date();
                 atualizacao.dataultimasincronia = new Date();
             }

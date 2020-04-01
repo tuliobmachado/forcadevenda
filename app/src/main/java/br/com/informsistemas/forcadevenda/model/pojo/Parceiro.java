@@ -116,6 +116,12 @@ public class Parceiro implements IEntidade {
     @DatabaseField
     public String formaspermitidas;
 
+    @DatabaseField
+    public double longitude;
+
+    @DatabaseField
+    public double latitude;
+
     public String statusvencimento;
 
     public Parceiro(){}
@@ -124,7 +130,7 @@ public class Parceiro implements IEntidade {
                     Date datanascimento, BigDecimal limitecredito, BigDecimal valoremaberto, BigDecimal taxa, String obs, String tipo,
                     String numerologradouro, String cep, String codigomunicipio, String nomefantasia, String email, Date atualizacao, String alterado,
                     String emailnfe, String campolivrea3, String campolivrea4, String codigotabelapreco, BigDecimal percdescontopadrao,
-                    String codigoformapagamento, String formaspermitidas) {
+                    String codigoformapagamento, String formaspermitidas, double longitude, double latitude) {
         this.codigoparceiro = codigoparceiro;
         this.descricao = descricao;
         this.cpfcgc = cpfcgc;
@@ -159,6 +165,8 @@ public class Parceiro implements IEntidade {
         this.percdescontopadrao = percdescontopadrao;
         this.codigoformapagamento = codigoformapagamento;
         this.formaspermitidas = formaspermitidas;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public String toString(){

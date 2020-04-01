@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
-import br.com.informsistemas.forcadevenda.controller.MainActivity;
+import br.com.informsistemas.forcadevenda.activity.MainActivity;
 import br.com.informsistemas.forcadevenda.fragments.MovimentoFragment;
 import br.com.informsistemas.forcadevenda.controller.rest.Request.RequestSincAtualizacao;
 import br.com.informsistemas.forcadevenda.controller.rest.RestManager;
