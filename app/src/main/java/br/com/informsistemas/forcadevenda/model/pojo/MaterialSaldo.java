@@ -21,6 +21,10 @@ public class MaterialSaldo implements IEntidade {
 
     @DatabaseField
     @Expose
+    public String codigoauxiliar;
+
+    @DatabaseField
+    @Expose
     public String descricao;
 
     @DatabaseField
@@ -36,8 +40,9 @@ public class MaterialSaldo implements IEntidade {
     public BigDecimal precovenda1;
 
     public MaterialSaldo(){}
-    public MaterialSaldo(String codigomaterial, String descricao, String unidade, BigDecimal saldo, BigDecimal precovenda1) {
+    public MaterialSaldo(String codigomaterial, String codigoauxiliar, String descricao, String unidade, BigDecimal saldo, BigDecimal precovenda1) {
         this.codigomaterial = codigomaterial;
+        this.codigoauxiliar = codigoauxiliar;
         this.descricao = descricao;
         this.unidade = unidade;
         this.saldo = saldo;

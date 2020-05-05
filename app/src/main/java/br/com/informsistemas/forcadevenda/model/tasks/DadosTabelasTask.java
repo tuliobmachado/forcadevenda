@@ -80,6 +80,7 @@ public class DadosTabelasTask extends AsyncTask<String, Void, String> {
             materialSaldoList.get(i).descricao = m.descricao;
             materialSaldoList.get(i).unidade = m.unidadesaida;
             materialSaldoList.get(i).precovenda1 = m.precovenda1;
+            materialSaldoList.get(i).codigoauxiliar = m.codigoauxiliar;
 
         }
 
@@ -164,7 +165,7 @@ public class DadosTabelasTask extends AsyncTask<String, Void, String> {
             List<Material> listMaterialAuxiliar = MaterialDAO.getInstance(fragment.getActivity()).findByNotIn("codigomaterial", codigoMaterialSaldo);
 
             for (int i = 0; i < listMaterialAuxiliar.size(); i++) {
-                MaterialSaldo materialSaldo = new MaterialSaldo(listMaterialAuxiliar.get(i).codigomaterial, null, null, new BigDecimal("0"), new BigDecimal("0"));
+                MaterialSaldo materialSaldo = new MaterialSaldo(listMaterialAuxiliar.get(i).codigomaterial, listMaterialAuxiliar.get(i).codigoauxiliar, null, null, new BigDecimal("0"), new BigDecimal("0"));
 
                 MaterialSaldoDAO.getInstance(fragment.getActivity()).createOrUpdate(materialSaldo);
             }
