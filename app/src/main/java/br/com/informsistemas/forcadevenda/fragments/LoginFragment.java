@@ -84,7 +84,7 @@ public class LoginFragment extends Fragment {
         cnpj = cnpj.replaceAll("[^0-9]", "");
 
         registro = new Registro(edtUsuario.getText().toString(), edtSenha.getText().toString(),
-                imei, cnpj, loginActivity.getToken(), "", "", "", "", "", "", "", "", "", "", "", "", "", 0, 0, 0, 0, false, false, false, false, false, false, false);
+                imei, cnpj, loginActivity.getToken(), "", "", "", "", "", "", "", "", "", "", "", "", "", 0, 0, 0, 0, false, false, false, false, false, false, false, false);
 
         getRegistro();
     }
@@ -162,19 +162,7 @@ public class LoginFragment extends Fragment {
                 }
 
                 if (restResponse.meta.status.equals("OK")){
-                    onLoginSuccess(getIntent(restResponse.data.get(0).codigoempresa,
-                            restResponse.data.get(0).codigofilialcontabil, restResponse.data.get(0).codigoalmoxarifado,
-                            restResponse.data.get(0).codigooperacao, restResponse.data.get(0).codigofuncionario,
-                            restResponse.data.get(0).codigotabelapreco, restResponse.data.get(0).estado,
-                            restResponse.data.get(0).codigoconfiguracao, restResponse.data.get(0).codigousuario,
-                            restResponse.data.get(0).nome, restResponse.data.get(0).status,
-                            restResponse.data.get(0).valoracrescimo, restResponse.data.get(0).valordesconto,
-                            restResponse.data.get(0).maximodesconto, restResponse.data.get(0).casaspercentual,
-                            restResponse.data.get(0).casasquantidade, restResponse.data.get(0).casaspreco,
-                            restResponse.data.get(0).utilizapauta, restResponse.data.get(0).utilizafatorpauta,
-                            restResponse.data.get(0).editaacrescimo, restResponse.data.get(0).editadesconto,
-                            restResponse.data.get(0).alteracusto, restResponse.data.get(0).alterapreco,
-                            restResponse.data.get(0).exibematerialsemsaldo));
+                    onLoginSuccess(getIntent(restResponse.data.get(0)));
                 }else{
                     onLoginFailed(restResponse.meta.message);
                 }
@@ -192,38 +180,34 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    public Intent getIntent(String codigoempresa, String codigofilialcontabil, String codigoalmoxarifado, String codigooperacao,
-                            String codigofuncionario, String codigotabelapreco, String estado, String codigoconfiguracao,
-                            String codigousuario, String nome, String status, String valoracrescimo, String valordesconto,
-                            float maximodesconto, int casaspercentual, int casasquantidade, int casaspreco,
-                            Boolean utilizapauta, Boolean utilizapautafiscal, Boolean editaacrescimo,
-                            Boolean editadesconto, Boolean alteracusto, Boolean alterapreco, boolean exibematerialsemsaldo){
+    public Intent getIntent(Registro reg){
         Intent intent = new Intent();
         Bundle bundle = new Bundle();
-        registro.codigofuncionario = codigofuncionario;
-        registro.codigotabelapreco = codigotabelapreco;
-        registro.codigousuario = codigousuario;
-        registro.nome = nome;
-        registro.codigoempresa = codigoempresa;
-        registro.codigofilialcontabil = codigofilialcontabil;
-        registro.codigoalmoxarifado = codigoalmoxarifado;
-        registro.codigooperacao = codigooperacao;
-        registro.estado = estado;
-        registro.codigoconfiguracao = codigoconfiguracao;
-        registro.status = status;
-        registro.utilizapauta = utilizapauta;
-        registro.utilizafatorpauta = utilizapautafiscal;
-        registro.valoracrescimo = valoracrescimo;
-        registro.editaacrescimo = editaacrescimo;
-        registro.valordesconto = valordesconto;
-        registro.editadesconto = editadesconto;
-        registro.alteracusto = alteracusto;
-        registro.maximodesconto = maximodesconto;
-        registro.alterapreco = alterapreco;
-        registro.exibematerialsemsaldo = exibematerialsemsaldo;
-        registro.casaspercentual = casaspercentual;
-        registro.casasquantidade = casasquantidade;
-        registro.casaspreco = casaspreco;
+        registro.codigofuncionario = reg.codigofuncionario;
+        registro.codigotabelapreco = reg.codigotabelapreco;
+        registro.codigousuario = reg.codigousuario;
+        registro.nome = reg.nome;
+        registro.codigoempresa = reg.codigoempresa;
+        registro.codigofilialcontabil = reg.codigofilialcontabil;
+        registro.codigoalmoxarifado = reg.codigoalmoxarifado;
+        registro.codigooperacao = reg.codigooperacao;
+        registro.estado = reg.estado;
+        registro.codigoconfiguracao = reg.codigoconfiguracao;
+        registro.status = reg.status;
+        registro.utilizapauta = reg.utilizapauta;
+        registro.utilizafatorpauta = reg.utilizafatorpauta;
+        registro.valoracrescimo = reg.valoracrescimo;
+        registro.editaacrescimo = reg.editaacrescimo;
+        registro.valordesconto = reg.valordesconto;
+        registro.editadesconto = reg.editadesconto;
+        registro.alteracusto = reg.alteracusto;
+        registro.maximodesconto = reg.maximodesconto;
+        registro.alterapreco = reg.alterapreco;
+        registro.exibematerialsemsaldo = reg.exibematerialsemsaldo;
+        registro.casaspercentual = reg.casaspercentual;
+        registro.casasquantidade = reg.casasquantidade;
+        registro.casaspreco = reg.casaspreco;
+        registro.sincroniaautomatica = reg.sincroniaautomatica;
 
         bundle.putSerializable("Registro", registro);
         intent.putExtras(bundle);

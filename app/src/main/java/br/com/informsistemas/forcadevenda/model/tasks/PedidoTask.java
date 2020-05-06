@@ -124,7 +124,9 @@ public class PedidoTask extends AsyncTask<String, Void, List<ResponsePedido>> {
                         DialogClass.dialogDismiss(dialog);
 
                         if (Constants.PEDIDO.PEDIDOATUAL > Constants.PEDIDO.listPedidos.size()) {
-                            ((MovimentoFragment) fragment).getSincronia(false);
+                            if (Constants.DTO.registro.sincroniaautomatica) {
+                                ((MovimentoFragment) fragment).getSincronia(false);
+                            }
                             ((MovimentoFragment) fragment).atualizaLista();
                         } else {
                             ((MovimentoFragment) fragment).verificaPedido(Constants.PEDIDO.PEDIDOATUAL);

@@ -125,12 +125,14 @@ public class MovimentoFragment extends Fragment {
                 enviarPedido();
                 Constants.MOVIMENTO.enviarPedido = false;
             } else {
-                if (AtualizacaoDAO.getInstance(getActivity()).VerificaSincronia()) {
-                    getSincronia(true);
-                } else {
-                    getSincronia(false);
-                }
+                if (Constants.DTO.registro.sincroniaautomatica) {
+                    if (AtualizacaoDAO.getInstance(getActivity()).VerificaSincronia()) {
+                        getSincronia(true);
+                    } else {
 
+                        getSincronia(false);
+                    }
+                }
             }
         } else {
             if (!Constants.MOVIMENTO.enviarPedido) {

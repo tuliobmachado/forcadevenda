@@ -101,6 +101,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 allSQL.add("ALTER TABLE cadparceiro ADD COLUMN latitude DOUBLE PRECISION");
             case 2:
                 allSQL.add("ALTER TABLE materialsaldo ADD COLUMN codigoauxiliar VARCHAR");
+                allSQL.add("ALTER TABLE registro ADD COLUMN sincroniaautomatica INTEGER DEFAULT 0");
         }
 
         for (String sql : allSQL) {
