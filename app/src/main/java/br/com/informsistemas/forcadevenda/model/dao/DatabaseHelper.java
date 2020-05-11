@@ -35,7 +35,7 @@ import br.com.informsistemas.forcadevenda.model.utils.IEntidade;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String databaseName = "forcavenda.db";
-    private static final int databaseVersion = 2;
+    private static final int databaseVersion = 3;
 
     private Map<Class, Dao<IEntidade, Object>> daos = new HashMap<Class, Dao<IEntidade, Object>>();
 
@@ -99,6 +99,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 allSQL.add("UPDATE movimento set atualizarlocalizacao = 'F'");
                 allSQL.add("ALTER TABLE cadparceiro ADD COLUMN longitude DOUBLE PRECISION");
                 allSQL.add("ALTER TABLE cadparceiro ADD COLUMN latitude DOUBLE PRECISION");
+            case 2:
+                allSQL.add("ALTER TABLE materialsaldo ADD COLUMN codigoauxiliar VARCHAR");
         }
 
         for (String sql : allSQL) {
