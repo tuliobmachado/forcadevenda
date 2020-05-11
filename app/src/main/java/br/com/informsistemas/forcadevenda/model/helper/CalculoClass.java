@@ -205,7 +205,7 @@ public class CalculoClass {
 
             material.pautafiscal = new BigDecimal("0");
 
-            if (material.cst_csosn.equals("60")){
+            if (material.cst_csosn.equals("60") || material.cst_csosn.equals("00")){
                 material.baseicmssubst = new BigDecimal("0");
             }
         }
