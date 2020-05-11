@@ -264,29 +264,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void onShowMeta(final int requestCode) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogDefault);
-        builder.setTitle("Meta");
-        builder.setMessage(
-                Constants.DTO.metaFuncionario.descricao + "\n" +
-                        "Meta Mensal:      R$ " + Misc.formatMoeda(Constants.DTO.metaFuncionario.metamensal) + "\n" +
-                        "Meta Diária:         R$ " + Misc.formatMoeda(Constants.DTO.metaFuncionario.metadiaria) + "\n" +
-                        "Meta Realizada:  R$ " + Misc.formatMoeda(Constants.DTO.metaFuncionario.metarealizada) + "\n" +
-                        "Meta A Realizar: R$ " + Misc.formatMoeda(Constants.DTO.metaFuncionario.metaarealizar)
-        );
-        builder.setCancelable(false);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (requestCode == 10) {
-                    onShowPedido();
-                } else {
-                    onSetItemMenu();
+        if (Constants.DTO.metaFuncionario == null){
+            Toast.makeText(this, "Necessário solicitar uma sincronia!", Toast.LENGTH_LONG).show();
+        }else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogDefault);
+            builder.setTitle("Meta");
+            builder.setMessage(
+                    Constants.DTO.metaFuncionario.descricao + "\n" +
+                            "Meta Mensal:      R$ " + Misc.formatMoeda(Constants.DTO.metaFuncionario.metamensal) + "\n" +
+                            "Meta Diária:         R$ " + Misc.formatMoeda(Constants.DTO.metaFuncionario.metadiaria) + "\n" +
+                            "Meta Realizada:  R$ " + Misc.formatMoeda(Constants.DTO.metaFuncionario.metarealizada) + "\n" +
+                            "Meta A Realizar: R$ " + Misc.formatMoeda(Constants.DTO.metaFuncionario.metaarealizar)
+            );
+            builder.setCancelable(false);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (requestCode == 10) {
+                        onShowPedido();
+                    } else {
+                        onSetItemMenu();
+                    }
                 }
-            }
-        });
+            });
 
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
     }
 
     @Override
