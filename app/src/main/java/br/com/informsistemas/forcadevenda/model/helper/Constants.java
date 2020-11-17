@@ -23,7 +23,7 @@ public class Constants {
     public static final class URL {
 
 //        public static final String BASE = "http://informnfe.com/NFeEmitir/ServicoAppH.dll/api/";
-        public static final String BASE = "http://informnfe.com/NFeEmitir/ServicoApp.dll/api/";
+        public static final String BASE = "http://informnfe.com/NFeEmitir/ServicoAppv1.dll/api/";
 //        public static final String BASE = "http://192.168.0.190:8089/api/";
 //        public static final String BASE = "http://192.168.0.82:8089/api/";
         public static final String LOGIN_REGISTRAR = "Login/Registrar";
@@ -44,7 +44,7 @@ public class Constants {
     }
 
     public static final class APP {
-        public static final String VERSAO = "0.4.1";
+        public static final String VERSAO = "0.4.2c";
     }
 
     public static final class REQUEST_LOGIN {

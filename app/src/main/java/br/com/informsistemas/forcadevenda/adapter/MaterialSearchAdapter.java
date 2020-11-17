@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.informsistemas.forcadevenda.R;
@@ -44,6 +45,9 @@ public class MaterialSearchAdapter extends RecyclerView.Adapter<MaterialSearchAd
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, int position) {
 
+        String vCasasQuantidade = String.valueOf(Constants.DTO.registro.casasquantidade);
+//                Misc.parseFloatToWatcher(fList.get(position).quantidade, Constants.DTO.registro.casasquantidade);
+
         if ((Constants.DTO.registro.exibematerialsemsaldo) || ((!Constants.DTO.registro.exibematerialsemsaldo) && (fList.get(position).saldomaterial.floatValue() > 0))) {
             myViewHolder.itemView.setVisibility(View.VISIBLE);
             myViewHolder.itemView.setLayoutParams(new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
@@ -59,8 +63,8 @@ public class MaterialSearchAdapter extends RecyclerView.Adapter<MaterialSearchAd
                     myViewHolder.imgExcluir.setVisibility(View.VISIBLE);
                 }
 
-                if (fList.get(position).quantidade.floatValue() >= 2) {
-                    myViewHolder.txtQuantidade.setText(String.format("%.0f", fList.get(position).quantidade));
+                if ((fList.get(position).quantidade.floatValue() >= 2) || !(fList.get(position).quantidade.floatValue() % 1.0f == 0.0f)){
+                    myViewHolder.txtQuantidade.setText(String.format("%."+vCasasQuantidade+"f", fList.get(position).quantidade));
                 } else {
                     myViewHolder.txtQuantidade.setText("");
                 }
@@ -138,14 +142,15 @@ public class MaterialSearchAdapter extends RecyclerView.Adapter<MaterialSearchAd
 
         @Override
         public void onClick(View v) {
+            BigDecimal quantidade = new BigDecimal(1);
             switch (v.getId()) {
                 case R.id.img_excluir:
                     excluindo = true;
-                    fOnMaterialListener.onBotaoExcluirClick(getAdapterPosition());
+                    fOnMaterialListener.onBotaoExcluirClick(getAdapterPosition(), quantidade);
                     break;
                 default:
                     excluindo = false;
-                    fOnMaterialListener.onMaterialClick(getAdapterPosition());
+                    fOnMaterialListener.onMaterialClick(getAdapterPosition(), quantidade);
                     break;
             }
         }
@@ -158,8 +163,8 @@ public class MaterialSearchAdapter extends RecyclerView.Adapter<MaterialSearchAd
     }
 
     public interface OnMaterialListener{
-        void onBotaoExcluirClick(int position);
-        void onMaterialClick(int position);
+        void onBotaoExcluirClick(int position, BigDecimal quantidade);
+        void onMaterialClick(int position, BigDecimal quantidade);
         void onMaterialLongClick(int position);
     }
 }
